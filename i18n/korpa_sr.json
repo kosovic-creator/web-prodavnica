@@ -1,0 +1,19 @@
+{
+  "naslov": "Korpa",
+  "proizvod": "Proizvod",
+  "kolicina": "Količina",
+  "cena": "Cena",
+  "akcije": "Akcije",
+  "prazna": "Vaša korpa je prazna.",
+  "morate_biti_prijavljeni": "Morate biti prijavljeni da biste pristupili korpi.",
+  "ukupno": "Ukupno",
+  "placanje": "Plaćanje",
+  "prijava": "Prijava",
+  "artikal_dod": "Artikal dodat u korpu",
+  "artikal_izb": "Artikal uklonjen iz korpe",
+  "kolicina_azur": "Količina ažurirana",
+  "ukloni": "Ukloni iz korpe",
+  "nastavi_kupovinu": "Nastavi kupovinu",
+  "dostava": "Dostava",
+  "zavrsi_kupovinu": "Završi kupovinu"
+}
