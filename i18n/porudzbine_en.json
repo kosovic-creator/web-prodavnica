@@ -15,5 +15,7 @@
   "success_delete": "Order deleted successfully.",
   "cancel": "Cancel",
   "update": "Update",
-  "login": "Login"
+  "created": "Created",
+  "id": "ID",
+  "user": "User"
 }

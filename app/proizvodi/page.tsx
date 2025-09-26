@@ -102,7 +102,7 @@ function ProizvodiContent() {
           <div className="font-bold text-violet-700 mb-2">{selectedProizvod.cena} €</div>
           <div className={`text-xs font-semibold mb-2 ${selectedProizvod.kolicina === 0 ? 'text-red-600' : 'text-gray-400'}`}>{t('kolicina')}: {selectedProizvod.kolicina}</div>
           {selectedProizvod.kolicina === 0 && (
-            <div className="text-red-600 text-sm font-bold mb-2">Nema na zalihama</div>
+            <div className="text-red-600 text-sm font-bold mb-2">{t('nema_na_zalihama')}</div>
           )}
           <button
             className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition mb-2"

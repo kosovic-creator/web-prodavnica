@@ -15,6 +15,9 @@
   "success_delete": "Porudžbina uspešno obrisana.",
   "cancel": "Otkaži",
   "update": "Ažuriraj",
-  "login": "Prijava"
-
+  "order_list": "Lista porudžbina",
+  "order_details": "Detalji porudžbine",
+  "user": "Korisnik",
+  "created": "Kreiran",
+  "id": "ID"
 }

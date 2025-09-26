@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, unlink } from 'fs/promises';
+import { writeFile, unlink, mkdir } from 'fs/promises';
+import { existsSync } from 'fs';
 import path from 'path';
 
 // Demo: privremena memorija za slike
@@ -17,7 +18,13 @@ export async function POST(req: NextRequest) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const fileName = Date.now() + '-' + file.name.replace(/\s/g, '');
-  const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
+  const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+  const filePath = path.join(uploadsDir, fileName);
+
+  // Ensure uploads directory exists
+  if (!existsSync(uploadsDir)) {
+    await mkdir(uploadsDir, { recursive: true });
+  }
 
   await writeFile(filePath, buffer);
 
@@ -71,7 +78,14 @@ export async function PUT(req: NextRequest) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const fileName = Date.now() + '-' + file.name.replace(/\s/g, '');
-  const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
+  const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+  const filePath = path.join(uploadsDir, fileName);
+
+  // Ensure uploads directory exists
+  if (!existsSync(uploadsDir)) {
+    await mkdir(uploadsDir, { recursive: true });
+  }
+
   await writeFile(filePath, buffer);
   const slikaUrl = `/uploads/${fileName}`;
   slike.push({ id, url: slikaUrl });

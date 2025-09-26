@@ -7,33 +7,9 @@ import Image from 'next/image';
 import { Korisnik } from '@/types';
 import { Porudzbina } from '@/types';
 import { Proizvod } from '@/types';
-import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
 
-// Zod šeme
-const korisnikSchema = (t: (key: string) => string) => z.object({
-  ime: z.string().min(2, { message: t('ime_error') }),
-  prezime: z.string().min(2, { message: t('prezime_error') }),
-  email: z.string().email({ message: t('email_error') }),
-  telefon: z.string().min(5, { message: t('telefon_error') }).max(15).regex(/^\+?[0-9\s]*$/, { message: t('telefon_error') }).optional(),
-  drzava: z.string().min(2, { message: t('drzava_error') }),
-  grad: z.string().min(2, { message: t('grad_error') }).optional(),
-  postanskiBroj: z.string().min(2, { message: t('postanskiBroj_error') }).optional(),
-  adresa: z.string().min(2, { message: t('adresa_error') }).optional(),
-  uloga: z.enum(['korisnik', 'admin'], { message: t('uloga_error') }),
-  lozinka: z.string().min(6, { message: t('lozinka_error') }),
-});
-
-const proizvodSchema = (t: (key: string) => string) => z.object({
-  naziv: z.string().min(2, { message: t('naziv_error') }),
-  cena: z.number().min(0, { message: t('cena_error') }),
-  slika: z.string().optional(),
-  opis: z.string().optional(),
-  karakteristike: z.string().optional(),
-  kategorija: z.string().optional(),
-  kolicina: z.number().min(1, { message: t('kolicina_error') }),
-});
 
 
 export default function AdminHome() {
@@ -41,26 +17,12 @@ export default function AdminHome() {
   const { t } = useTranslation(['korisnici', 'proizvodi', 'porudzbine']);
   const [tab, setTab] = useState<'korisnici' | 'proizvodi' | 'porudzbine'>('korisnici');
   const [porudzbine, setPorudzbine] = useState<Porudzbina[]>([]);
-  const [editPorudzbinaId, setEditPorudzbinaId] = useState<string | null>(null);
-  const [proizvodForm, setProizvodForm] = useState({ naziv: '', cena: 0, slika: '', opis: '', karakteristike: '', kategorija: '', kolicina: 1 });
+
   const [proizvodi, setProizvodi] = React.useState<Proizvod[]>([]);
   const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
-  const [korisnikForm, setKorisnikForm] = useState({
-    ime: '',
-    prezime: '',
-    email: '',
-    telefon: '',
-    drzava: '',
-    grad: '',
-    postanskiBroj: '',
-    adresa: '',
-    uloga: 'korisnik',
-    lozinka: ''
-  });
-  const [editKorisnikId, setEditKorisnikId] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [search, setSearch] = useState('');
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const [search] = useState('');
+
 
   useEffect(() => {
     fetch('/api/korisnici?page=1&pageSize=10')
@@ -83,130 +45,7 @@ export default function AdminHome() {
         setProizvodi(data.proizvodi || []);
       });
   }, []);
-
-
-
-  const handleProizvodSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const parse = proizvodSchema((key) => t(key, { ns: 'proizvodi' })).safeParse(proizvodForm);
-    if (!parse.success) {
-      const fieldErrors: { [key: string]: string } = {};
-      parse.error.issues.forEach(issue => {
-        if (issue.path[0]) fieldErrors[String(issue.path[0])] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-
-    let slikaUrl = '';
-    if (file) {
-      const formDataSlika = new FormData();
-      formDataSlika.append('slika', file);
-      formDataSlika.append('id', proizvodForm.naziv); // ili drugi jedinstveni id
-
-      const resSlika = await fetch('/api/proizvodi/slika', {
-        method: 'POST',
-        body: formDataSlika,
-      });
-      const dataSlika = await resSlika.json();
-      slikaUrl = dataSlika.slika || '';
-    }
-
-    const formData = {
-      naziv: proizvodForm.naziv,
-      cena: proizvodForm.cena,
-      opis: proizvodForm.opis,
-      karakteristike: proizvodForm.karakteristike,
-      kategorija: proizvodForm.kategorija,
-      kolicina: proizvodForm.kolicina,
-      slika: slikaUrl,
-    };
-
-    await fetch('/api/proizvodi', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-
-    setProizvodForm({ naziv: '', cena: 0, slika: '', opis: '', karakteristike: '', kategorija: '', kolicina: 1 });
-    setFile(null);
-
-    fetch('/api/proizvodi?page=1&pageSize=10')
-      .then(res => res.json())
-      .then(data => {
-        setProizvodi(data.proizvodi);
-      });
-  };
-
-  const handleProizvodEdit = async (id: string) => {
-    // Primer: otvori formu za edit, ili direktno izmeni
-    // Ovde možeš dodati logiku za editovanje proizvoda
-    // npr. setProizvodForm sa podacima proizvoda za edit
-    const proizvod = proizvodi.find(p => p.id === id);
-    if (proizvod) {
-      setProizvodForm({
-        naziv: proizvod.naziv,
-        cena: proizvod.cena || 0,
-        slika: proizvod.slika || '',
-        opis: proizvod.opis || '',
-        karakteristike: proizvod.karakteristike || '',
-        kategorija: proizvod.kategorija || '',
-        kolicina: proizvod.kolicina,
-      });
-      setEditPorudzbinaId(id);
-    }
-  };
-
-  const handleProizvodUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!editPorudzbinaId) return;
-
-    let slikaUrl = proizvodForm.slika || '';
-    if (file) {
-      const formDataSlika = new FormData();
-      formDataSlika.append('slika', file);
-      formDataSlika.append('id', proizvodForm.naziv); // ili drugi jedinstveni id
-
-      const resSlika = await fetch('/api/proizvodi/slika', {
-        method: 'PUT',
-        body: formDataSlika,
-      });
-      const dataSlika = await resSlika.json();
-      slikaUrl = dataSlika.slika || '';
-    }
-
-    const formData = {
-      id: editPorudzbinaId,
-      naziv: proizvodForm.naziv,
-      cena: proizvodForm.cena,
-      opis: proizvodForm.opis,
-      karakteristike: proizvodForm.karakteristike,
-      kategorija: proizvodForm.kategorija,
-      kolicina: proizvodForm.kolicina,
-      slika: slikaUrl,
-    };
-
-    await fetch('/api/proizvodi', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-
-    setProizvodForm({ naziv: '', cena: 0, slika: '', opis: '', karakteristike: '', kategorija: '', kolicina: 1 });
-    setFile(null);
-    setEditPorudzbinaId(null);
-
-    fetch('/api/proizvodi?page=1&pageSize=10')
-      .then(res => res.json())
-      .then(data => setProizvodi(data.proizvodi || []));
-  };
-
-  interface HandleProizvodDeleteParams {
-    id: string;
-  }
-
-  const handleProizvodDelete = async (id: HandleProizvodDeleteParams['id']): Promise<void> => {
+const handleProizvodDelete = async (id: number): Promise<void> => {
     await fetch('/api/proizvodi', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -218,60 +57,7 @@ export default function AdminHome() {
       .then((data: { proizvodi: Proizvod[] }) => setProizvodi(data.proizvodi || []));
   };
 
-  // Dodavanje korisnika
-  const handleKorisnikSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const parse = korisnikSchema((key) => t(key, { ns: 'korisnici' })).safeParse(korisnikForm);
-    if (!parse.success) {
-      // Mapiraj greške po polju
-      const fieldErrors: { [key: string]: string } = {};
-      parse.error.issues.forEach(issue => {
-        if (issue.path[0]) fieldErrors[String(issue.path[0])] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    await fetch('/api/korisnici', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(korisnikForm),
-    });
-    setKorisnikForm({ ime: '', prezime: '', email: '', telefon: '', drzava: '', grad: '', postanskiBroj: '', adresa: '', uloga: 'korisnik', lozinka: '' });
-    // Ponovo učitaj korisnike
-    fetch('/api/korisnici?page=1&pageSize=10')
-      .then(res => res.json())
-      .then(data => setKorisnici(data.korisnici || []));
-  };
-
-  // Edit korisnika
-  const handleKorisnikEdit = (k: Korisnik) => {
-    setKorisnikForm({ ime: k.ime ?? '', prezime: k.prezime ?? '', email: k.email ?? '', telefon: k.telefon ?? '', drzava: k.drzava ?? '', grad: k.grad ?? '', postanskiBroj: k.postanskiBroj !== undefined && k.postanskiBroj !== null ? String(k.postanskiBroj) : '', adresa: k.adresa ?? '', uloga: k.uloga ?? '', lozinka: '' });
-    setEditKorisnikId(k.id);
-  };
-
-  // Update korisnika
-  const handleKorisnikUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!editKorisnikId) return;
-    const res = await fetch('/api/korisnici', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: editKorisnikId, ...korisnikForm }),
-    });
-    const result = await res.json();
-    if (!res.ok) {
-      alert(result.error || 'Greška!');
-      return;
-    }
-    setKorisnikForm({ ime: '', prezime: '', email: '', telefon: '', drzava: '', grad: '', postanskiBroj: '', adresa: '', uloga: 'korisnik', lozinka: '' });
-    setEditKorisnikId(null);
-    fetch('/api/korisnici?page=1&pageSize=10')
-      .then(res => res.json())
-      .then(data => setKorisnici(data.korisnici || []));
-  };
-
-  // Delete korisnika
+// Delete korisnika
   const handleKorisnikDelete = async (id: string) => {
     await fetch('/api/korisnici', {
       method: 'DELETE',
@@ -393,14 +179,14 @@ export default function AdminHome() {
                   <table className="w-full border border-violet-200 rounded-lg shadow-md text-sm">
                     <thead>
                       <tr className="bg-violet-100 text-violet-700">
-                        <th className="px-8 py-3 text-left align-middle">{t('image')}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('product_name')}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('price')}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('karakteristike') || 'Karakteristike'}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('kategorija') || 'Kategorija'}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('quantity')}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('created')}</th>
-                        <th className="px-8 py-3 text-left align-middle">{t('actions')}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('slika', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('naziv', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('cena', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('karakteristike', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('kategorija', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('kolicina', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle">{t('kreiran', { ns: 'proizvodi' })}</th>
+                        <th className="px-8 py-3 text-left align-middle"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -415,8 +201,8 @@ export default function AdminHome() {
                             <td className="px-8 py-3 text-left align-middle">{p.kolicina}</td>
                             <td className="px-8 py-3 text-left align-middle">{p.kreiran ? new Date(p.kreiran).toLocaleDateString() : '-'}</td>
                             <td className="px-8 py-3 text-left align-middle flex gap-2">
-                              <button className="text-blue-600 hover:underline" onClick={() => router.push(`/admin/proizvodi/${p.id}`)}>{t('edit')}</button>
-                              <button className="text-red-600 hover:underline" onClick={() => handleProizvodDelete(p.id)}>{t('delete')}</button>
+                              <button className="text-blue-600 hover:underline" onClick={() => router.push(`/admin/proizvodi/${p.id}`)}>{t('uredi', { ns: 'proizvodi' })}</button>
+                              <button className="text-red-600 hover:underline" onClick={() => handleProizvodDelete(Number(p.id))}>{t('obrisi', { ns: 'proizvodi' })}</button>
                             </td>
                           </tr>
                         ))}
@@ -429,16 +215,16 @@ export default function AdminHome() {
         )}
         {tab === 'porudzbine' && (
           <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="font-semibold mb-6 text-xl text-violet-700">{t('order_list')}</h2>
+            <h2 className="font-semibold mb-6 text-xl text-violet-700">{t('order_list', { ns: 'porudzbine' })}</h2>
             <div className="overflow-x-auto">
               <table className="w-full border border-violet-200 rounded-lg shadow-md text-sm">
                 <thead>
                   <tr className="bg-violet-100 text-violet-700">
-                    <th className="px-8 py-3 text-left align-middle">{t('id')}</th>
-                    <th className="px-8 py-3 text-left align-middle">{t('user')}</th>
-                    <th className="px-8 py-3 text-left align-middle">{t('total')}</th>
-                    <th className="px-8 py-3 text-left align-middle">{t('status')}</th>
-                    <th className="px-8 py-3 text-left align-middle">{t('created')}</th>
+                    <th className="px-8 py-3 text-left align-middle">{t('id', { ns: 'porudzbine' })}</th>
+                    <th className="px-8 py-3 text-left align-middle">{t('user', { ns: 'porudzbine' })}</th>
+                    <th className="px-8 py-3 text-left align-middle">{t('total', { ns: 'porudzbine' })}</th>
+                    <th className="px-8 py-3 text-left align-middle">{t('status', { ns: 'porudzbine' })}</th>
+                    <th className="px-8 py-3 text-left align-middle">{t('created', { ns: 'porudzbine' })}</th>
                   </tr>
                 </thead>
                 <tbody>

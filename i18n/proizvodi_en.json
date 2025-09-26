@@ -1,5 +1,11 @@
-{
-  "proizvodi": "Artikles",
+{"uredi": "Edit",
+  "dodaj": "Add",
+  "otkazi": "Cancel",
+  "nazad": "Back",
+  "sacuvaj_izmene": "Save changes",
+  "brisi": "Delete",
+  "potvrdi": "Confirm",
+  "proizvodi": "Articles",
   "dodaj_artikal": "Add article",
   "naslov": "Article Management",
   "naziv": "Name of the article",

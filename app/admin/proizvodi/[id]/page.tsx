@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
+import ImageUpload from '@/components/ImageUpload';
 
 function IzmeniProizvodPage() {
   const params = useParams<{ id: string }>();
@@ -40,6 +41,14 @@ function IzmeniProizvodPage() {
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+    const handleImageChange = (imageUrl: string) => {
+        setForm({ ...form, slika: imageUrl });
+    };
+
+    const handleImageRemove = () => {
+        setForm({ ...form, slika: '' });
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,21 +180,12 @@ function IzmeniProizvodPage() {
                       />
                       {fieldErrors.kolicina && <p className="text-red-500 text-sm mt-1">{fieldErrors.kolicina}</p>}
                   </div>
-                  <div className="mb-4">
-                      <label className="block text-gray-700 font-medium mb-2" htmlFor="slika">
-                          {t('proizvodi:slika')}
-                      </label>
-                      <input
-                          id="slika"
-                          name="slika"
-                          value={form.slika || ""}
-                          onChange={handleChange}
-                          type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:slika_placeholder')}
-                      />
-                      {/* {fieldErrors.slika && <p className="text-red-500 text-sm mt-1">{fieldErrors.slika}</p>} */}
-                  </div>
+                  <ImageUpload
+                      currentImage={form.slika}
+                      onImageChange={handleImageChange}
+                      onImageRemove={handleImageRemove}
+                      productId={id}
+                  />
                   <button
                       type="submit"
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
