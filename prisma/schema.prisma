@@ -61,7 +61,7 @@ model ProizvodTranslation {
   naziv       String?
   opis        String?
   karakteristike String?
-  kategorija          String
+  kategorija  String
   proizvod    Proizvod @relation(fields: [proizvodId], references: [id], onDelete: Cascade)
 
   @@unique([proizvodId, jezik])

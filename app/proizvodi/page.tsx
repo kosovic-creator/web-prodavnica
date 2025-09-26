@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { Proizvod } from '@/types';
 import Image from 'next/image';
@@ -9,9 +9,7 @@ import '@/i18n/config';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams } from 'next/navigation';
 
-
-
-export default function ProizvodiPage() {
+function ProizvodiContent() {
   const { t } = useTranslation('proizvodi');
   const { data: session } = useSession();
   const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
@@ -25,11 +23,15 @@ export default function ProizvodiPage() {
 
 
   useEffect(() => {
-    // Fetch podataka iz baze na osnovu jezika
-    fetch(`/api/proizvodi?lang=${lang}`)
+    fetch(`/api/proizvod?lang=${lang}`, {
+      cache: 'no-store'
+    })
       .then(res => res.json())
-      .then(setProizvodi);
-  }, [lang]);
+      .then(data => {
+        setProizvodi(Array.isArray(data) ? data : data.proizvodi || []);
+        setTotal(data.total || (Array.isArray(data) ? data.length : 0));
+      });
+  }, [lang, page, pageSize]); // Dodaj lang kao dependency
 
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
@@ -170,5 +172,10 @@ export default function ProizvodiPage() {
   );
 }
 
-
-
+export default function ProizvodiPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center">Učitavanje proizvoda...</div>}>
+      <ProizvodiContent />
+    </Suspense>
+  );
+}
