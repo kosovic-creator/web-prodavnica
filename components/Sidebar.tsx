@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaBoxOpen, FaClipboardList, FaUser } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
+import i18n from '@/i18n/config';
 
 import '@/i18n/config';
 
@@ -14,7 +15,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
-  const { t, i18n } = useTranslation('sidebar');
+  const { t } = useTranslation('sidebar');
   const pathname = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
@@ -25,6 +26,18 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
       return () => clearTimeout(timer);
     }
   }, [open, onClose]);
+
+  const changeLanguage = (lang: string) => {
+    // Mijenjaj i18n jezik za interface
+    i18n.changeLanguage(lang);
+
+    // Dodaj lang parametar u URL za podatke iz baze
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('lang', lang);
+
+    // Navigiraj na istu stranicu sa novim lang parametrom
+    router.push(`${pathname}?${searchParams.toString()}`);
+  };
 
   if (!open) return null;
 
@@ -40,23 +53,15 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             <li>
               <button
                 onClick={() => {
-                  router.push('/proizvodi?lang=sr');
+
+                  router.push('/proizvodi');
                 }}
                 className="flex items-center gap-2 py-2 px-4 rounded hover:bg-violet-50 transition"
               >
-                <FaBoxOpen className="text-violet-600" /> Crnogorski
+                <FaBoxOpen className="text-violet-600" /> Proizvodi
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => {
-                  router.push('/proizvodi?lang=en');
-                }}
-                className="flex items-center gap-2 py-2 px-4 rounded hover:bg-violet-50 transition"
-              >
-                <FaBoxOpen className="text-violet-600" /> Engleski
-              </button>
-            </li>
+           
             {/* Porudzbine */}
             {session?.user && (
               <li>
@@ -82,10 +87,10 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           </ul>
         </nav>
         <div className="flex gap-2 p-4 border-t mt-auto">
-          <button onClick={() => i18n.changeLanguage('en')} className="p-1 rounded hover:bg-gray-100" aria-label="English">
+          <button onClick={() => changeLanguage('en')} className="p-1 rounded hover:bg-gray-100" aria-label="English">
             <span role="img" aria-label="English">🇬🇧</span>
           </button>
-          <button onClick={() => i18n.changeLanguage('sr')} className="p-1 rounded hover:bg-gray-100" aria-label="Srpski">
+          <button onClick={() => changeLanguage('sr')} className="p-1 rounded hover:bg-gray-100" aria-label="Srpski">
             <span role="img" aria-label="Srpski">🇷🇸</span>
           </button>
         </div>

@@ -7,6 +7,7 @@ import { FaShoppingCart, FaHome, FaUser, FaSignInAlt, FaSignOutAlt, FaUserPlus, 
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n/config';
 import { useKorpa } from "@/components/KorpaContext";
+import { useRouter, usePathname } from "next/navigation";
 
 
 export default function Navbar({ setSidebarOpen }: { setSidebarOpen?: (open: boolean) => void }) {
@@ -15,6 +16,8 @@ export default function Navbar({ setSidebarOpen }: { setSidebarOpen?: (open: boo
   const [brojUKorpi, setBrojUKorpi] = useState(0);
   const { brojStavki } = useKorpa();
   const isAdmin = session?.user?.uloga === 'admin';
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const broj = Number(localStorage.getItem('brojUKorpi') || 0);
@@ -26,6 +29,18 @@ export default function Navbar({ setSidebarOpen }: { setSidebarOpen?: (open: boo
     window.addEventListener('korpaChanged', handler);
     return () => window.removeEventListener('korpaChanged', handler);
   }, []);
+
+  const changeLanguage = (lang: string) => {
+    // Mijenjaj i18n jezik za interface
+    i18n.changeLanguage(lang);
+
+    // Dodaj lang parametar u URL za podatke iz baze
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('lang', lang);
+
+    // Navigiraj na istu stranicu sa novim lang parametrom
+    router.push(`${pathname}?${searchParams.toString()}`);
+  };
 
   return (
     <nav className="flex items-center gap-4 p-4 border-b border-gray-200 bg-white shadow-sm">
@@ -106,14 +121,14 @@ export default function Navbar({ setSidebarOpen }: { setSidebarOpen?: (open: boo
       {/* Jezik */}
       <div className="flex gap-4 ml-auto items-center">
         <button
-          onClick={() => i18n.changeLanguage('en')}
+          onClick={() => changeLanguage('en')}
           aria-label="English"
           className="p-0 rounded focus:outline-none hover:scale-110 transition-transform"
         >
           <span role="img" aria-label="English" className="text-3xl md:text-4xl">🇬🇧</span>
         </button>
         <button
-          onClick={() => i18n.changeLanguage('sr')}
+          onClick={() => changeLanguage('sr')}
           aria-label="Crnogorski"
           className="p-0 rounded focus:outline-none hover:scale-110 transition-transform"
         >
