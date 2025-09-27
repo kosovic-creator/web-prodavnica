@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { FaUpload, FaTrash, FaImage } from 'react-icons/fa';
 
@@ -18,6 +18,8 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const changeFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (file: File) => {
     if (!file) return;
@@ -65,6 +67,18 @@ export default function ImageUpload({
     const file = e.target.files?.[0];
     if (file) {
       handleFileUpload(file);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (!uploading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleChangeButtonClick = () => {
+    if (!uploading && changeFileInputRef.current) {
+      changeFileInputRef.current.click();
     }
   };
 
@@ -125,17 +139,23 @@ export default function ImageUpload({
               />
             </div>
             <div className="flex gap-2 justify-center">
-              <label className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition flex items-center gap-2">
+              <button
+                type="button"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition flex items-center gap-2"
+                onClick={handleChangeButtonClick}
+                disabled={uploading}
+              >
                 <FaUpload />
                 Promeni sliku
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  disabled={uploading}
-                />
-              </label>
+              </button>
+              <input
+                ref={changeFileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                disabled={uploading}
+              />
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -170,17 +190,23 @@ export default function ImageUpload({
               <p className="text-gray-600 mb-4">
                 Prevucite sliku ovde ili kliknite da izaberete
               </p>
-              <label className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition inline-flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition inline-flex items-center gap-2"
+                    onClick={handleButtonClick}
+                    disabled={uploading}
+                  >
                 <FaUpload />
                 Izaberite sliku
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  disabled={uploading}
-                />
-              </label>
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                    disabled={uploading}
+                  />
               <p className="text-sm text-gray-500 mt-2">
                 PNG, JPG, GIF do 5MB
               </p>

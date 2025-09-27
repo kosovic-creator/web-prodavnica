@@ -20,25 +20,50 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Upload to Cloudinary
-    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          resource_type: 'auto',
-          folder: 'web-trgovina',
-          public_id: `${id}_${Date.now()}`,
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result as CloudinaryUploadResult);
-        }
-      ).end(buffer);
-    });
+    // Try Cloudinary first, fallback to local if fails
+    try {
+      const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'auto',
+            folder: 'web-trgovina',
+            public_id: `${id}_${Date.now()}`,
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result as CloudinaryUploadResult);
+          }
+        ).end(buffer);
+      });
 
-    return NextResponse.json({
-      success: true,
-      slika: result.secure_url
-    });
+      return NextResponse.json({
+        success: true,
+        slika: result.secure_url
+      });
+    } catch (cloudinaryError) {
+      console.log('Cloudinary failed, using local storage:', cloudinaryError);
+
+      // Fallback to local storage
+      const { writeFile, mkdir } = await import('fs/promises');
+      const { existsSync } = await import('fs');
+      const path = await import('path');
+
+      const fileName = Date.now() + '-' + file.name.replace(/\s/g, '');
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      const filePath = path.join(uploadsDir, fileName);
+
+      if (!existsSync(uploadsDir)) {
+        await mkdir(uploadsDir, { recursive: true });
+      }
+
+      await writeFile(filePath, buffer);
+      const slikaUrl = `/uploads/${fileName}`;
+
+      return NextResponse.json({
+        success: true,
+        slika: slikaUrl
+      });
+    }
 
   } catch (error) {
     console.error('Upload error:', error);
@@ -56,10 +81,14 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Extract public_id from Cloudinary URL
-    const publicId = slikaUrl.split('/').slice(-2).join('/').split('.')[0];
-
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(publicId);
+    if (slikaUrl.includes('cloudinary.com')) {
+      try {
+        const publicId = slikaUrl.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.log('Error deleting from Cloudinary:', error);
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -89,7 +118,7 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    // Upload new image
+    // Upload new image to Cloudinary
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
