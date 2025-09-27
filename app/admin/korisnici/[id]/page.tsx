@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Korisnik } from '@/types';
 import { useTranslation } from 'react-i18next';
 import { korisnikSchema } from '@/zod';
+import { FaSave, FaTimes } from 'react-icons/fa';
 
 function KorisnikPage() {
   const params = useParams();
@@ -59,7 +60,10 @@ function KorisnikPage() {
     }
     router.push('/admin?page=korisnici');
   };
-
+  const handleCancel = () => {
+    // Vrati se na admin stranicu bez čuvanja promena
+    router.push('/admin?page=korisnici');
+  };
   return (
     <div className="admin-container">
       <div className="max-w-xl mx-auto rounded-xl  p-8">
@@ -192,13 +196,24 @@ function KorisnikPage() {
             />
             {fieldErrors.uloga && <p className="text-red-500 text-sm mt-1">{fieldErrors.uloga}</p>}
           </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            {t('korisnici:sacuvaj')}
-          </button>
-          {error && <div className="text-red-600">{error}</div>}
+          <div className="flex gap-4 mt-6">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+            >
+              <FaSave />
+              {t('korisnici:sacuvaj')}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
+            >
+              <FaTimes />
+              {t('korisnici:otkazi')}
+            </button>
+            {error && <div className="text-red-600">{error}</div>}
+          </div>
         </form>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 
 
 
@@ -34,6 +35,23 @@ function DodajProizvodPage() {
 
     const handleImageRemove = () => {
         setForm({ ...form, slika: '' });
+    };
+
+    const handleCancel = () => {
+        // Resetuj form
+        setForm({
+            naziv: '',
+            cena: '',
+            opis: '',
+            karakteristike: '',
+            kategorija: '',
+            kolicina: '',
+            slika: '',
+        });
+        setError(null);
+        setFieldErrors({});
+        // Vrati se na admin stranicu
+        router.push('/admin?page=proizvodi');
     };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,16 +88,12 @@ function DodajProizvodPage() {
     router.push('/admin?page=proizvodi');
   };
 
-    function setEditMode(arg0: boolean): void {
-        throw new Error('Function not implemented.');
-    }
-
   return (
       <div className="max-w-xl mx-auto p-8">
-          <h2 className="text-2xl font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
+          <h2 className="text-2xl text-blue-600 font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
               <div className="mb-4">
-                  <label className="block text-gray-700 font-medium mb-2" htmlFor="naziv">
+                  <label className="block font-medium mb-2" htmlFor="naziv">
                       {t('proizvodi:naziv')}
                   </label>
                   <input
@@ -175,29 +189,23 @@ function DodajProizvodPage() {
                   onImageRemove={handleImageRemove}
                   productId={`new-${Date.now()}`}
               />
-              <div className="mb-4">
-
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                  {t('proizvodi:sacuvaj')}
-              </button>
-               <button
-                      type="button"
-                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition" onClick={() => setEditMode(false)}
+              <div className="flex gap-4 mt-6">
+                  <button
+                      type="submit"
+                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
                   >
-                      {t('proizvodi:otkazi')}
+                      <FaPlus />
+                      {t('proizvodi:sacuvaj')}
                   </button>
                   <button
                       type="button"
-                      className="bg-amber-800 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition" onClick={() => router.push('/admin?page=proizvodi')}
+                      onClick={handleCancel}
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
                   >
-                      {t('proizvodi:nazad')}
+                      <FaTimes />
+                      {t('proizvodi:otkazi')}
                   </button>
-                  {error && <div className="text-red-600 mt-4">{error}</div>}
               </div>
-
               {error && <div className="text-red-600 mt-4">{error}</div>}
       </form>
     </div>

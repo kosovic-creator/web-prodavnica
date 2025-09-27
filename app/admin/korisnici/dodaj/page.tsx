@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { korisnikSchema } from '@/zod';
+import { FaUserPlus, FaTimes } from 'react-icons/fa';
 
 function DodajKorisnikaPage() {
   const { t } = useTranslation(['korisnici']);
@@ -72,7 +73,26 @@ function DodajKorisnikaPage() {
     }
     router.push('/admin?page=korisnici');
   };
-
+  const handleCancel = () => {
+    // Resetuj form
+    setForm({
+      email: '',
+      ime: '',
+      prezime: '',
+      telefon: '',
+      drzava: '',
+      grad: '',
+      postanskiBroj: '',
+      adresa: '',
+      uloga: '',
+      lozinka: '',
+      slika: '',
+    });
+    setError(null);
+    setFieldErrors({});
+    // Vrati se na admin stranicu
+    router.push('/admin?page=korisnici');
+  };
   return (
     <div className="admin-container">
       <div className="max-w-xl mx-auto rounded-xl  p-8">
@@ -236,13 +256,24 @@ function DodajKorisnikaPage() {
             />
             {fieldErrors.slika && <p className="text-red-500 text-sm mt-1">{fieldErrors.slika}</p>}
           </div>
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            {t('dodaj_novog_korisnika')}
-          </button>
+          <div className="flex gap-4 mt-6">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+            >
+              <FaUserPlus />
+              {t('korisnici:dodaj_korisnika')}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
+            >
+              <FaTimes />
+              {t('korisnici:otkazi')}
+            </button>
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          </div>
         </form>
       </div>
     </div>

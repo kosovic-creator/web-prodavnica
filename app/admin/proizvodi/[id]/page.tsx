@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
+import { FaSave, FaTimes } from 'react-icons/fa';
 
 
 function IzmeniProizvodPage() {
@@ -24,8 +25,7 @@ function IzmeniProizvodPage() {
 
   const [form, setForm] = useState<ProizvodForm | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-  const [editMode, setEditMode] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (id) {
@@ -85,6 +85,11 @@ function IzmeniProizvodPage() {
     }
     router.push('/admin?page=proizvodi');
   };
+
+    const handleCancel = () => {
+        // Vrati se na admin stranicu bez čuvanja promena
+        router.push('/admin?page=proizvodi');
+    };
 
   return (
       <div className="admin-container">
@@ -188,27 +193,24 @@ function IzmeniProizvodPage() {
                       onImageRemove={handleImageRemove}
                       productId={id}
                   />
-                  <div className="mb-4">
-                  <button
-                      type="submit"
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                  >
-                      {t('proizvodi:sacuvaj')}
-                  </button>
-                   <button
-                      type="button"
-                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition" onClick={() => setEditMode(false)}
-                  >
-                      {t('proizvodi:otkazi')}
-                  </button>
-                  <button
-                      type="button"
-                      className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition" onClick={() => router.push('/admin?page=proizvodi')}
-                  >
-                      {t('proizvodi:nazad')}
-                  </button>
-                  {error && <div className="text-red-600 mt-4">{error}</div>}
+                  <div className="flex gap-4 mt-6">
+                      <button
+                          type="submit"
+                          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                      >
+                          <FaSave />
+                          {t('proizvodi:sacuvaj')}
+                      </button>
+                      <button
+                          type="button"
+                          onClick={handleCancel}
+                          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
+                      >
+                          <FaTimes />
+                          {t('proizvodi:otkazi')}
+                      </button>
                   </div>
+                  {error && <div className="text-red-600 mt-4">{error}</div>}
               </form>
           </div>
     </div>

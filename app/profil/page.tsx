@@ -2,7 +2,7 @@
 import { useSession } from 'next-auth/react';
 import Image from "next/image";
 import { useTranslation } from 'react-i18next';
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaSave, FaTimes, FaEdit, FaTrash } from "react-icons/fa";
 import '@/i18n/config';
 import { useState, useEffect } from 'react';
 
@@ -142,8 +142,16 @@ export default function ProfilPage() {
           <input name="postanskiBroj" value={form.postanskiBroj} onChange={handleChange} placeholder={t('postal_code')} className="border p-2 rounded" />
           <input name="adresa" value={form.adresa} onChange={handleChange} placeholder={t('address')} className="border p-2 rounded" />
           <input name="slika" value={form.slika} onChange={handleChange} placeholder={t('profile_image')} className="border p-2 rounded" />
-          <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition" disabled={loading}>{t('sacuvaj_izmjene')}</button>
-          <button type="button" className="bg-gray-300 px-4 py-2 rounded mt-2" onClick={() => setEditMode(false)}>{t('odkazivanje')}</button>
+          <div className="flex gap-4 mt-6">
+            <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition flex items-center gap-2" disabled={loading}>
+              <FaSave />
+              {t('sacuvaj_izmjene')}
+            </button>
+            <button type="button" className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition flex items-center gap-2" onClick={() => setEditMode(false)}>
+              <FaTimes />
+              {t('odkazivanje')}
+            </button>
+          </div>
         </form>
       ) : (
           <div className="flex flex-col gap-2">
@@ -159,8 +167,16 @@ export default function ProfilPage() {
             {form.slika && (
               <Image src={form.slika} alt={t('profile_image') || "Profil"} width={100} height={100} className="rounded-full mt-2" />
             )}
-            <button className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition mt-4" onClick={() => setEditMode(true)}>{t('izmjeni_profil')}</button>
-            <button className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition mt-2" onClick={handleDelete}>{t('obrisi_korisnika')}</button>
+            <div className="flex gap-4 mt-6">
+              <button className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition flex items-center gap-2" onClick={() => setEditMode(true)}>
+                <FaEdit />
+                {t('izmjeni_profil')}
+              </button>
+              <button className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition flex items-center gap-2" onClick={handleDelete}>
+                <FaTrash />
+                {t('obrisi_korisnika')}
+              </button>
+            </div>
           </div>
       )}
     </div>
