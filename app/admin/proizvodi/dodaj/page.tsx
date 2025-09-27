@@ -70,6 +70,10 @@ function DodajProizvodPage() {
     router.push('/admin?page=proizvodi');
   };
 
+    function setEditMode(arg0: boolean): void {
+        throw new Error('Function not implemented.');
+    }
+
   return (
       <div className="max-w-xl mx-auto p-8">
           <h2 className="text-2xl font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
@@ -171,12 +175,29 @@ function DodajProizvodPage() {
                   onImageRemove={handleImageRemove}
                   productId={`new-${Date.now()}`}
               />
-              <button
+              <div className="mb-4">
+
+                <button
                   type="submit"
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                   {t('proizvodi:sacuvaj')}
               </button>
+               <button
+                      type="button"
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition" onClick={() => setEditMode(false)}
+                  >
+                      {t('proizvodi:otkazi')}
+                  </button>
+                  <button
+                      type="button"
+                      className="bg-amber-800 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition" onClick={() => router.push('/admin?page=proizvodi')}
+                  >
+                      {t('proizvodi:nazad')}
+                  </button>
+                  {error && <div className="text-red-600 mt-4">{error}</div>}
+              </div>
+
               {error && <div className="text-red-600 mt-4">{error}</div>}
       </form>
     </div>

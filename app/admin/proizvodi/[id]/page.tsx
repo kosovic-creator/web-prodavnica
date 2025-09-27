@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 
+
 function IzmeniProizvodPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -23,7 +24,8 @@ function IzmeniProizvodPage() {
 
   const [form, setForm] = useState<ProizvodForm | null>(null);
   const [error, setError] = useState<string | null>(null);
-    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -87,7 +89,7 @@ function IzmeniProizvodPage() {
   return (
       <div className="admin-container">
           <div className="max-w-xl mx-auto p-8">
-              <h2 className="text-2xl font-semibold mb-6">{t('proizvodi:izmjeni_artikal')}</h2>
+              <h2 className="text-2xl text-blue-600  font-semibold mb-6">{t('proizvodi:izmjeni_artikal')}</h2>
               <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="naziv">
@@ -186,13 +188,27 @@ function IzmeniProizvodPage() {
                       onImageRemove={handleImageRemove}
                       productId={id}
                   />
+                  <div className="mb-4">
                   <button
                       type="submit"
                       className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
                   >
                       {t('proizvodi:sacuvaj')}
                   </button>
+                   <button
+                      type="button"
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition" onClick={() => setEditMode(false)}
+                  >
+                      {t('proizvodi:otkazi')}
+                  </button>
+                  <button
+                      type="button"
+                      className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition" onClick={() => router.push('/admin?page=proizvodi')}
+                  >
+                      {t('proizvodi:nazad')}
+                  </button>
                   {error && <div className="text-red-600 mt-4">{error}</div>}
+                  </div>
               </form>
           </div>
     </div>

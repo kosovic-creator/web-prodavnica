@@ -7,13 +7,14 @@ import Image from 'next/image';
 import { Korisnik } from '@/types';
 import { Porudzbina } from '@/types';
 import { Proizvod } from '@/types';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 
 
 export default function AdminHome() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useTranslation(['korisnici', 'proizvodi', 'porudzbine']);
   const [tab, setTab] = useState<'korisnici' | 'proizvodi' | 'porudzbine'>('korisnici');
   const [porudzbine, setPorudzbine] = useState<Porudzbina[]>([]);
@@ -23,6 +24,15 @@ export default function AdminHome() {
 
   const [search] = useState('');
 
+  // Čitaj URL parametar 'page' i postavi odgovarajući tab
+  useEffect(() => {
+    if (searchParams) {
+      const pageParam = searchParams.get('page');
+      if (pageParam === 'proizvodi' || pageParam === 'porudzbine' || pageParam === 'korisnici') {
+        setTab(pageParam);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetch('/api/korisnici?page=1&pageSize=10')
@@ -70,12 +80,17 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
       .then(data => setKorisnici(data.korisnici || []));
   };
 
+  const handleTabChange = (newTab: 'korisnici' | 'proizvodi' | 'porudzbine') => {
+    setTab(newTab);
+    router.push(`/admin?page=${newTab}`);
+  };
+
   return (
     <div className="admin-container w-full max-w-screen-2xl mx-auto">
       <div className="px-2 bg-gray-50 min-h-screen w-full">
         <div className="flex gap-4 mb-8">
           <button
-            onClick={() => setTab('korisnici')}
+            onClick={() => handleTabChange('korisnici')}
             className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 shadow-sm ${tab === 'korisnici'
               ? 'bg-violet-600 text-white'
               : 'bg-white text-violet-700 border border-violet-200 hover:bg-violet-50'
@@ -84,7 +99,7 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
             {t('korisnici', { ns: 'korisnici' })}
           </button>
           <button
-            onClick={() => setTab('proizvodi')}
+            onClick={() => handleTabChange('proizvodi')}
             className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 shadow-sm ${tab === 'proizvodi'
               ? 'bg-violet-600 text-white'
               : 'bg-white text-violet-700 border border-violet-200 hover:bg-violet-50'
@@ -93,7 +108,7 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
             {t('proizvodi', { ns: 'proizvodi' })}
           </button>
           <button
-            onClick={() => setTab('porudzbine')}
+            onClick={() => handleTabChange('porudzbine')}
             className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 shadow-sm ${tab === 'porudzbine'
               ? 'bg-violet-600 text-white'
               : 'bg-white text-violet-700 border border-violet-200 hover:bg-violet-50'
