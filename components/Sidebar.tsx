@@ -58,10 +58,10 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                 }}
                 className="flex items-center gap-2 py-2 px-4 rounded hover:bg-violet-50 transition"
               >
-                <FaBoxOpen className="text-violet-600" /> Proizvodi
+                <FaBoxOpen className="text-violet-600" /> {t('artikli')}
               </button>
             </li>
-           
+
             {/* Porudzbine */}
             {session?.user && (
               <li>
