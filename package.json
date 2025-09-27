@@ -20,6 +20,7 @@
     "@types/nodemailer": "^7.0.1",
     "autoprefixer": "^10.4.21",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "express": "^5.1.0",
     "i18next": "^25.5.2",
     "multer": "^2.0.2",

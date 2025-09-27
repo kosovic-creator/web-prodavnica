@@ -89,7 +89,18 @@ export default function ImageUpload({
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    if (currentImage && currentImage.includes('cloudinary.com')) {
+      try {
+        await fetch('/api/proizvodi/slika', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slikaUrl: currentImage }),
+        });
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
+    }
     onImageRemove();
   };
 
@@ -109,6 +120,7 @@ export default function ImageUpload({
                 width={200}
                 height={200}
                 className="object-cover rounded-lg"
+                style={{ width: "auto", height: "auto", maxWidth: "200px", maxHeight: "200px" }}
                 onError={() => onImageRemove()}
               />
             </div>

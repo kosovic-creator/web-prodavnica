@@ -1,93 +1,119 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, unlink, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import cloudinary from '@/lib/cloudinary';
 
-// Demo: privremena memorija za slike
-const slike: { id: string; url: string }[] = [];
-
-export async function POST(req: NextRequest) {
-  const formData = await req.formData();
-  const file = formData.get('slika') as File;
-  const id = formData.get('id') as string;
-
-  if (!file || typeof file === 'string') {
-    return NextResponse.json({ error: 'Fajl nije poslat' }, { status: 400 });
-  }
-
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const fileName = Date.now() + '-' + file.name.replace(/\s/g, '');
-  const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-  const filePath = path.join(uploadsDir, fileName);
-
-  // Ensure uploads directory exists
-  if (!existsSync(uploadsDir)) {
-    await mkdir(uploadsDir, { recursive: true });
-  }
-
-  await writeFile(filePath, buffer);
-
-  const slikaUrl = `/uploads/${fileName}`;
-  slike.push({ id, url: slikaUrl });
-
-  return NextResponse.json({ success: true, slika: slikaUrl });
+interface CloudinaryUploadResult {
+  secure_url: string;
+  public_id: string;
+  [key: string]: unknown;
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get('id');
-  if (!id) {
-    return NextResponse.json({ error: 'ID nije prosleđen' }, { status: 400 });
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get('slika') as File;
+    const id = formData.get('id') as string;
+
+    if (!file || typeof file === 'string') {
+      return NextResponse.json({ error: 'Fajl nije poslat' }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Upload to Cloudinary
+    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'auto',
+          folder: 'web-trgovina',
+          public_id: `${id}_${Date.now()}`,
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result as CloudinaryUploadResult);
+        }
+      ).end(buffer);
+    });
+
+    return NextResponse.json({
+      success: true,
+      slika: result.secure_url
+    });
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: 'Greška pri uploadu slike' }, { status: 500 });
   }
-  const slika = slike.find(s => s.id === id);
-  if (!slika) {
-    return NextResponse.json({ error: 'Slika nije pronađena' }, { status: 404 });
-  }
-  return NextResponse.json({ slika: slika.url });
 }
 
 export async function DELETE(req: NextRequest) {
-  const body = await req.json();
-  const { id } = body;
-  const idx = slike.findIndex(s => s.id === id);
-  if (idx === -1) {
-    return NextResponse.json({ error: 'Slika nije pronađena' }, { status: 404 });
+  try {
+    const body = await req.json();
+    const { slikaUrl } = body;
+
+    if (!slikaUrl) {
+      return NextResponse.json({ error: 'URL slike nije prosleđen' }, { status: 400 });
+    }
+
+    // Extract public_id from Cloudinary URL
+    const publicId = slikaUrl.split('/').slice(-2).join('/').split('.')[0];
+
+    // Delete from Cloudinary
+    await cloudinary.uploader.destroy(publicId);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete error:', error);
+    return NextResponse.json({ error: 'Greška pri brisanju slike' }, { status: 500 });
   }
-  const filePath = path.join(process.cwd(), 'public', slike[idx].url);
-  await unlink(filePath).catch(() => {});
-  slike.splice(idx, 1);
-  return NextResponse.json({ success: true });
 }
 
 export async function PUT(req: NextRequest) {
-  const formData = await req.formData();
-  const file = formData.get('slika') as File;
-  const id = formData.get('id') as string;
-  if (!file || typeof file === 'string' || !id) {
-    return NextResponse.json({ error: 'Podaci nisu poslati' }, { status: 400 });
-  }
-  // Prvo obriši staru sliku
-  const idx = slike.findIndex(s => s.id === id);
-  if (idx !== -1) {
-    const oldPath = path.join(process.cwd(), 'public', slike[idx].url);
-    await unlink(oldPath).catch(() => {});
-    slike.splice(idx, 1);
-  }
-  // Sačuvaj novu sliku
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const fileName = Date.now() + '-' + file.name.replace(/\s/g, '');
-  const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-  const filePath = path.join(uploadsDir, fileName);
+  try {
+    const formData = await req.formData();
+    const file = formData.get('slika') as File;
+    const id = formData.get('id') as string;
+    const oldImageUrl = formData.get('oldImageUrl') as string;
 
-  // Ensure uploads directory exists
-  if (!existsSync(uploadsDir)) {
-    await mkdir(uploadsDir, { recursive: true });
-  }
+    if (!file || typeof file === 'string' || !id) {
+      return NextResponse.json({ error: 'Podaci nisu poslati' }, { status: 400 });
+    }
 
-  await writeFile(filePath, buffer);
-  const slikaUrl = `/uploads/${fileName}`;
-  slike.push({ id, url: slikaUrl });
-  return NextResponse.json({ success: true, slika: slikaUrl });
+    // Delete old image from Cloudinary if it exists
+    if (oldImageUrl && oldImageUrl.includes('cloudinary.com')) {
+      try {
+        const publicId = oldImageUrl.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.error('Error deleting old image:', error);
+      }
+    }
+
+    // Upload new image
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          resource_type: 'auto',
+          folder: 'web-trgovina',
+          public_id: `${id}_${Date.now()}`,
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result as CloudinaryUploadResult);
+        }
+      ).end(buffer);
+    });
+
+    return NextResponse.json({
+      success: true,
+      slika: result.secure_url
+    });
+
+  } catch (error) {
+    console.error('Update error:', error);
+    return NextResponse.json({ error: 'Greška pri ažuriranju slike' }, { status: 500 });
+  }
 }
