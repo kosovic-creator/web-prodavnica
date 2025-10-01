@@ -57,7 +57,6 @@
   "nema_proizvoda_prikaz": "No products to display",
   "detalji": "Details",
   "sve_kategorije": "All categories",
-  "dodaj_u_korpu": "Add to cart",
   "kolicina": "Quantity",
   "kolicina_korpa": "Quantity in cart",
   "ukupno": "Total",
@@ -71,5 +70,7 @@
   "artikal_uklonjen": "Article has been removed from the cart.",
   "kolicina_azurirana": "Article quantity has been updated.",
   "greska_korpa": "An error occurred while updating the cart.",
-  "nema_na_zalihama": "Out of stock."
+  "nema_na_zalihama": "Out of stock.",
+  "dodaj_u_korpu": "Add to cart"
+
 }

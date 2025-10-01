@@ -92,7 +92,7 @@ export default function ProizvodPage() {
               {proizvod.slika ? (
                 <Image
                   src={proizvod.slika}
-                  alt={proizvod.naziv}
+                  alt={proizvod.naziv || 'Slika proizvoda'}
                   width={500}
                   height={400}
                   className="w-full h-auto object-cover rounded-lg shadow-md"

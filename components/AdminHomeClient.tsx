@@ -19,9 +19,7 @@ export default function AdminHomeClient() {
   const [proizvodi, setProizvodi] = React.useState<Proizvod[]>([]);
   const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
 
-  const [search] = useState('');
-
-  // Čitaj URL parametar 'page' i postavi odgovarajući tab
+  const [search] = useState('');  // Čitaj URL parametar 'page' i postavi odgovarajući tab
   useEffect(() => {
     if (searchParams) {
       const pageParam = searchParams.get('page');
@@ -46,7 +44,8 @@ export default function AdminHomeClient() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/proizvodi?page=1&pageSize=10')
+    // Admin panel uvek koristi srpski jezik za proizvode
+    fetch(`/api/proizvodi?page=1&pageSize=10&lang=sr`)
       .then(res => res.json())
       .then(data => {
         setProizvodi(data.proizvodi || []);
@@ -58,8 +57,8 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     });
-    // Ponovo učitaj proizvode
-    fetch('/api/proizvodi?page=1&pageSize=10')
+  // Ponovo učitaj proizvode - admin uvek koristi srpski
+  fetch(`/api/proizvodi?page=1&pageSize=10&lang=sr`)
       .then((res: Response) => res.json())
       .then((data: { proizvodi: Proizvod[] }) => setProizvodi(data.proizvodi || []));
   };
@@ -85,6 +84,7 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
   return (
     <div className="admin-container w-full max-w-screen-2xl mx-auto">
       <div className="px-2 bg-gray-50 min-h-screen w-full">
+
         <div className="flex gap-4 mb-8">
           <button
             onClick={() => handleTabChange('korisnici')}

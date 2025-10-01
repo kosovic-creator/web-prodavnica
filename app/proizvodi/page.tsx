@@ -4,11 +4,12 @@ import { useSession } from 'next-auth/react';
 import { Proizvod } from '@/types';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
-import { FaBoxOpen, FaCartPlus } from "react-icons/fa";
+import { FaBoxOpen, FaCartPlus, FaEye } from "react-icons/fa";
 import '@/i18n/config';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSearch } from '@/components/SearchContext';
+import Link from 'next/link';
 
 function ProizvodiContent() {
   const { t } = useTranslation('proizvodi');
@@ -108,13 +109,23 @@ function ProizvodiContent() {
               {p.kolicina === 0 && (
                 <div className="text-red-600 text-sm font-bold mb-2">{t('nema_na_zalihama')}</div>
               )}
-              <button
-                className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition mt-2"
-                onClick={e => { e.stopPropagation(); handleDodajUKorpu(p); }}
-              >
-                <FaCartPlus />
-                {t('dodaj_u_korpu')}
-              </button>
+              <div className="flex gap-2 mt-2 w-full">
+                <Link
+                  href={`/proizvodi/${p.id}?lang=${lang}`}
+                  className="flex-1 bg-violet-600 text-white py-2 px-4 rounded-lg hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <FaEye />
+                  {t('detalji')}
+                </Link>
+
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition"
+                  onClick={e => { e.stopPropagation(); handleDodajUKorpu(p); }}
+                >
+                  <FaCartPlus />
+                  {t('dodaj_u_korpu')}
+                </button>
+              </div>
             </div>
           ))
         )}

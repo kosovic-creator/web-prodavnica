@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import AdminHomeClient from './AdminHomeClient';
+import AdminHomeClient from '@/components/AdminHomeClient';
 
 export default function AdminHome() {
   return (

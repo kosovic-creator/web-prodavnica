@@ -200,38 +200,40 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 </button>
               )}
 
-              {/* Language Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-                  className="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none touch-manipulation min-w-[44px] min-h-[44px]"
-                >
-                  <span className="text-lg sm:text-xl">{getLanguageFlag(currentLanguage)}</span>
-                  <span className="hidden md:inline text-xs sm:text-sm font-medium">{getLanguageName(currentLanguage)}</span>
-                  <FaChevronDown className={`text-gray-500 text-xs transition-transform ${languageDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
+              {/* Language Dropdown - Hide in admin section */}
+              {!pathname?.startsWith('/admin') && (
+                <div className="relative">
+                  <button
+                    onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                    className="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none touch-manipulation min-w-[44px] min-h-[44px]"
+                  >
+                    <span className="text-lg sm:text-xl">{getLanguageFlag(currentLanguage)}</span>
+                    <span className="hidden md:inline text-xs sm:text-sm font-medium">{getLanguageName(currentLanguage)}</span>
+                    <FaChevronDown className={`text-gray-500 text-xs transition-transform ${languageDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
 
-                {languageDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-36 sm:w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <button
-                      onClick={() => changeLanguage('sr')}
-                      className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'sr' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
-                        }`}
-                    >
-                      <span className="text-lg sm:text-xl">🇲🇪</span>
-                      <span className="text-xs sm:text-sm">Crnogorski</span>
-                    </button>
-                    <button
-                      onClick={() => changeLanguage('en')}
-                      className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'en' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
-                        }`}
-                    >
-                      <span className="text-lg sm:text-xl">🇬🇧</span>
-                      <span className="text-xs sm:text-sm">English</span>
-                    </button>
-                  </div>
-                )}
-              </div>
+                  {languageDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-36 sm:w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                      <button
+                        onClick={() => changeLanguage('sr')}
+                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'sr' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
+                          }`}
+                      >
+                        <span className="text-lg sm:text-xl">🇲🇪</span>
+                        <span className="text-xs sm:text-sm">Crnogorski</span>
+                      </button>
+                      <button
+                        onClick={() => changeLanguage('en')}
+                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'en' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
+                          }`}
+                      >
+                        <span className="text-lg sm:text-xl">🇬🇧</span>
+                        <span className="text-xs sm:text-sm">English</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}

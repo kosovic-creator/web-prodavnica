@@ -52,43 +52,92 @@ export async function GET(req: Request) {
 
 export async function POST(request: Request) {
   const data = await request.json();
-  const { naziv, opis, karakteristike, kategorija, jezik = 'sr', ...proizvodData } = data;
 
-  try {
-    // Create product and translation in a transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Create the product (metadata only)
-      const proizvod = await tx.proizvod.create({
-        data: proizvodData // cena, slika, kolicina
+  // Check if this is the new format with translations array
+  if (data.translations) {
+    const { translations, ...proizvodData } = data;
+
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        // Create the product (metadata only)
+        const proizvod = await tx.proizvod.create({
+          data: proizvodData // cena, slika, kolicina
+        });
+
+        // Create all translations
+        const prevodi = await Promise.all(
+          Object.entries(translations as Record<string, { naziv: string, opis?: string, karakteristike?: string, kategorija: string }>).map(([jezik, translationData]) =>
+            tx.proizvodTranslation.create({
+              data: {
+                proizvodId: proizvod.id,
+                jezik: jezik,
+                naziv: translationData.naziv,
+                opis: translationData.opis || null,
+                karakteristike: translationData.karakteristike || null,
+                kategorija: translationData.kategorija
+              }
+            })
+          )
+        );
+
+        return { proizvod, prevodi };
       });
 
-      // Create the translation
-      const prevod = await tx.proizvodTranslation.create({
-        data: {
-          proizvodId: proizvod.id,
-          jezik: jezik,
-          naziv: naziv,
-          opis: opis,
-          karakteristike: karakteristike,
-          kategorija: kategorija
+      // Return product with Serbian translation as default
+      const srpskiPrevod = result.prevodi.find(p => p.jezik === 'sr') || result.prevodi[0];
+      return NextResponse.json({
+        proizvod: {
+          ...result.proizvod,
+          naziv: srpskiPrevod.naziv,
+          opis: srpskiPrevod.opis,
+          karakteristike: srpskiPrevod.karakteristike,
+          kategorija: srpskiPrevod.kategorija
         }
       });
+    } catch (error) {
+      console.error('Error creating product with translations:', error);
+      return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    }
+  } else {
+  // Legacy format - single language
+    const { naziv, opis, karakteristike, kategorija, jezik = 'sr', ...proizvodData } = data;
 
-      return { proizvod, prevod };
-    });
+    try {
+      // Create product and translation in a transaction
+      const result = await prisma.$transaction(async (tx) => {
+        // Create the product (metadata only)
+        const proizvod = await tx.proizvod.create({
+          data: proizvodData // cena, slika, kolicina
+        });
 
-    return NextResponse.json({
-      proizvod: {
-        ...result.proizvod,
-        naziv: result.prevod.naziv,
-        opis: result.prevod.opis,
-        karakteristike: result.prevod.karakteristike,
-        kategorija: result.prevod.kategorija
-      }
-    });
-  } catch (error) {
-    console.error('Error creating product:', error);
-    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+        // Create the translation
+        const prevod = await tx.proizvodTranslation.create({
+          data: {
+            proizvodId: proizvod.id,
+            jezik: jezik,
+            naziv: naziv,
+            opis: opis,
+            karakteristike: karakteristike,
+            kategorija: kategorija
+          }
+        });
+
+        return { proizvod, prevod };
+      });
+
+      return NextResponse.json({
+        proizvod: {
+          ...result.proizvod,
+          naziv: result.prevod.naziv,
+          opis: result.prevod.opis,
+          karakteristike: result.prevod.karakteristike,
+          kategorija: result.prevod.kategorija
+        }
+      });
+    } catch (error) {
+      console.error('Error creating product:', error);
+      return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    }
   }
 }
 
