@@ -1,0 +1,23 @@
+{
+  "porudzbine": "Porudžbine",
+  "title": "Porudžbine",
+  "status": "Status",
+  "total": "Ukupno",
+  "date": "Datum",
+  "prethodna": "Prethodna",
+  "sljedeca": "Sljedeća",
+  "empty": "Nema pronađenih porudžbina.",
+  "must_login": "Morate biti prijavljeni da biste videli svoje porudžbine.",
+  "required": "Polje je obavezno.",
+  "invalid_email": "Email nije validan.",
+  "success_create": "Porudžbina uspešno kreirana.",
+  "success_update": "Porudžbina uspešno ažurirana.",
+  "success_delete": "Porudžbina uspešno obrisana.",
+  "cancel": "Otkaži",
+  "update": "Ažuriraj",
+  "order_list": "Lista porudžbina",
+  "order_details": "Detalji porudžbine",
+  "user": "Korisnik",
+  "created": "Kreiran",
+  "id": "ID"
+}

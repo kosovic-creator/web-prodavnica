@@ -1,0 +1,10 @@
+{
+  "title": "Prijava",
+  "email": "Email",
+  "password": "Lozinka",
+  "login": "Prijava",
+  "registerHere": "Registrujte se ovdje",
+  "noAccount": "Nemate nalog?",
+  "invalidCredentials": "Neispravna email adresa ili lozinka",
+  "logoutSuccess": "Uspešno ste se odjavili."
+}

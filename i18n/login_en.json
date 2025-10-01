@@ -1,0 +1,10 @@
+{
+  "title": "Login",
+  "email": "Email",
+  "password": "Password",
+  "login": "Login",
+  "registerHere": "Register here",
+  "noAccount": "Don't have an account?",
+  "invalidCredentials": "Invalid email or password",
+  "logoutSuccess": "You have been logged out successfully."
+}
