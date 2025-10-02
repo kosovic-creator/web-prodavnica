@@ -1,17 +1,17 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
-
-function IzmeniProizvodPage() {
+function IzmeniProizvodContent() {
   const params = useParams<{ id: string }>();
+    const searchParams = useSearchParams();
   const id = params?.id;
   const router = useRouter();
-  const { t } = useTranslation(['proizvodi']);
+    const { t, i18n } = useTranslation(['proizvodi']);
   type ProizvodForm = {
     naziv?: string;
     cena?: number | string;
@@ -25,15 +25,16 @@ function IzmeniProizvodPage() {
 
   const [form, setForm] = useState<ProizvodForm | null>(null);
   const [error, setError] = useState<string | null>(null);
-    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-
-  useEffect(() => {
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({}); useEffect(() => {
     if (id) {
-      fetch(`/api/proizvodi/${id}`)
+        // Uzmi jezik iz URL-a ili iz i18n ili default 'sr'
+        const langFromUrl = searchParams?.get('lang');
+        const currentLang = langFromUrl || i18n.language || 'sr';
+        fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
         .then(res => res.json())
         .then(data => setForm(data));
     }
-  }, [id]);
+    }, [id, i18n.language, searchParams]);
 
   if (!form) return <div>Učitavanje...</div>;
   if (form.error) return <div>{form.error}</div>;
@@ -69,6 +70,8 @@ function IzmeniProizvodPage() {
           setFieldErrors(newFieldErrors);
           return;
       }
+      const langFromUrl = searchParams?.get('lang');
+      const currentLang = langFromUrl || i18n.language || 'sr';
     const res = await fetch('/api/proizvodi', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -76,6 +79,7 @@ function IzmeniProizvodPage() {
         ...form,
         cena: Number(form.cena),
         kolicina: Number(form.kolicina),
+          jezik: currentLang, // Dodaj jezik za update
       }),
     });
     const result = await res.json();
@@ -215,6 +219,14 @@ function IzmeniProizvodPage() {
           </div>
     </div>
   );
+}
+
+function IzmeniProizvodPage() {
+    return (
+        <Suspense fallback={<div>Učitavanje...</div>}>
+            <IzmeniProizvodContent />
+        </Suspense>
+    );
 }
 
 export default IzmeniProizvodPage;

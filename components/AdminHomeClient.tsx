@@ -212,7 +212,7 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
                           <td className="px-8 py-3 text-left align-middle">{p.kolicina}</td>
                           <td className="px-8 py-3 text-left align-middle">{p.kreiran ? new Date(p.kreiran).toLocaleDateString() : '-'}</td>
                           <td className="px-8 py-3 text-left align-middle flex gap-2">
-                            <button className="text-blue-600 hover:underline" onClick={() => router.push(`/admin/proizvodi/${p.id}`)}>{t('uredi', { ns: 'proizvodi' })}</button>
+                            <button className="text-blue-600 hover:underline" onClick={() => router.push(`/admin/proizvodi/${p.id}?lang=sr`)}>{t('uredi', { ns: 'proizvodi' })}</button>
                             <button className="text-red-600 hover:underline" onClick={() => handleProizvodDelete(Number(p.id))}>{t('obrisi', { ns: 'proizvodi' })}</button>
                           </td>
                         </tr>
