@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import '@/i18n/config';
 import { useTranslation } from 'react-i18next';
 import { FaUserPlus, FaEnvelope, FaLock, FaUser, FaPhone, FaGlobe, FaCity, FaMapMarkerAlt, FaHashtag } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import '@/i18n/config';
+import toast, { Toaster } from 'react-hot-toast';
 export default function RegistracijaPage() {
   const { t } = useTranslation('register');
   const router = useRouter();
@@ -19,8 +19,7 @@ export default function RegistracijaPage() {
   const [grad, setGrad] = useState("");
   const [postanskiBroj, setPostanskiBroj] = useState("");
   const [adresa, setAdresa] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+
 
 
   // Zod šema sa lokalizovanim porukama
@@ -34,12 +33,11 @@ export default function RegistracijaPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     // Validacija na frontendu
     const result = schema.safeParse({ email, lozinka, ime, prezime, telefon });
     if (!result.success) {
       // Prikaz prve greške
-      setError(result.error.issues[0].message);
+      toast.error(result.error.issues[0].message);
       return;
     }
     // ...dalje slanje na backend
@@ -52,47 +50,19 @@ export default function RegistracijaPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || t('greska_registracija'));
+        toast.error(data.error || t('greska_registracija'));
       } else {
-        setSuccess(true);
+        toast.success(t('uspjesna_registracija'));
+        router.push('/auth/prijava');
       }
     } catch {
-      setError(t('error_occurred'));
+      toast.error(t('error_occurred'));
     }
-  }
-  useEffect(() => {
-    if (success) {
-      // Prikaži poruku 3 sekunde prije preusmjeravanja
-      const timer = setTimeout(() => {
-        router.push("/auth/prijava");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [success, router]);
-
-  if (success) {
-    return (
-      <div className="p-4 max-w-md mx-auto text-center">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-          <div className="mb-4">
-            <svg className="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-              <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 24l4 4 8-8" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold mb-4 text-green-600">{t('register_success')}</h2>
-          <p className="mb-4 text-gray-700">{t('check_email')}</p>
-          <p className="text-sm text-gray-500">
-            {t('redirecting') || 'Preusmjeravamo vas na stranicu prijave...'}
-          </p>
-        </div>
-      </div>
-    );
   }
 
   return (
     <div className="p-4 max-w-md mx-auto">
+      <Toaster position="top-right" />
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
         <FaUserPlus className="text-violet-600" />
         {t('title')}
@@ -195,7 +165,7 @@ export default function RegistracijaPage() {
           {t('register')}
         </button>
       </form>
-      {error && <p className="text-red-600 mt-2">{error}</p>}
+
     </div>
   );
 }

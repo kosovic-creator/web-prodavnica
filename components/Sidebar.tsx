@@ -174,37 +174,10 @@ function SidebarContent({ open, onClose }: SidebarProps) {
   );
 }
 
-// Loading fallback komponenta
-function SidebarSkeleton({ open }: { open: boolean }) {
-  const { t } = useTranslation('sidebar');
-  return (
-    <aside className={`
-      fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out
-      ${open ? 'translate-x-0' : '-translate-x-full'}
-      w-64 lg:w-64
-      lg:${open ? 'relative translate-x-0' : 'hidden'}
-    `}>
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🛒</span>
-          <h2 className="font-bold text-violet-700 text-lg">{t('menu')}</h2>
-        </div>
-      </div>
-      <div className="p-4">
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
 // Glavna Sidebar komponenta sa Suspense
 export default function Sidebar({ open, onClose }: SidebarProps) {
   return (
-    <Suspense fallback={<SidebarSkeleton open={open} />}>
+    <Suspense fallback={<div className="p-4 text-center">Loading sidebar...</div>}>
       <SidebarContent open={open} onClose={onClose} />
     </Suspense>
   );

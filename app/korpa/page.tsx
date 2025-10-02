@@ -13,23 +13,7 @@ import { FaShoppingCart, FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import toast, { Toaster } from 'react-hot-toast';
 
 
-// Custom hook za mobile optimizacije
-const useMobileOptimizations = () => {
-  useEffect(() => {
-    // Prevent zoom on iOS when focusing inputs
-    const viewport = document.querySelector("meta[name=viewport]");
-    if (viewport) {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-    }
 
-    // Cleanup on unmount
-    return () => {
-      if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-      }
-    };
-  }, []);
-};
 
 export default function KorpaPage() {
   const { t } = useTranslation('korpa');
@@ -41,7 +25,7 @@ export default function KorpaPage() {
   const { resetKorpa } = useKorpa();
 
   // Apply mobile optimizations
-  useMobileOptimizations();
+
 
   useEffect(() => {
     fetchKorpa();
@@ -65,10 +49,7 @@ export default function KorpaPage() {
 
   const handleKolicina = async (id: string, kolicina: number) => {
     try {
-      // Light haptic feedback for quantity changes
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
-      }
+
 
       await fetch('/api/korpa', {
         method: 'PUT',
@@ -92,10 +73,7 @@ export default function KorpaPage() {
     }
   }; const handleDelete = async (id: string) => {
     try {
-      // Haptic feedback for mobile devices
-      if (navigator.vibrate) {
-        navigator.vibrate(100);
-      }
+
 
       await fetch('/api/korpa', {
         method: 'DELETE',

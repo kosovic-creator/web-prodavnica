@@ -304,28 +304,10 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
   );
 }
 
-// Loading skeleton za Navbar
-function NavbarSkeleton() {
-  return (
-    <nav className="flex items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 border-b border-gray-200 bg-white shadow-sm">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="animate-pulse bg-gray-200 h-8 w-8 rounded"></div>
-        <div className="animate-pulse bg-gray-200 h-6 w-24 rounded"></div>
-      </div>
-      <div className="animate-pulse bg-gray-200 h-8 w-32 rounded"></div>
-      <div className="flex items-center gap-2">
-        <div className="animate-pulse bg-gray-200 h-8 w-8 rounded-full"></div>
-        <div className="animate-pulse bg-gray-200 h-8 w-8 rounded-full"></div>
-        <div className="animate-pulse bg-gray-200 h-8 w-16 rounded"></div>
-      </div>
-    </nav>
-  );
-}
-
 // Glavna Navbar komponenta sa Suspense
 export default function Navbar({ setSidebarOpen }: NavbarProps) {
   return (
-    <Suspense fallback={<NavbarSkeleton />}>
+    <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
       <NavbarContent setSidebarOpen={setSidebarOpen} />
     </Suspense>
   );

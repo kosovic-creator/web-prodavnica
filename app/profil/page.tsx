@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaUser, FaSave, FaTimes, FaEdit, FaTrash } from "react-icons/fa";
 import '@/i18n/config';
 import { useState, useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ProfilPage() {
   const { t } = useTranslation('profil');
@@ -22,8 +23,6 @@ export default function ProfilPage() {
     uloga: 'korisnik',
     slika: '',
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [userLoaded, setUserLoaded] = useState(false);
 
@@ -78,8 +77,6 @@ export default function ProfilPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
     try {
       const res = await fetch('/api/korisnici', {
         method: 'PUT',
@@ -88,13 +85,13 @@ export default function ProfilPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || t('greska_pri_cuvanju'));
+        toast.error(data.error || t('greska_pri_cuvanju'));
       } else {
-        setSuccess(t('korisnik_izmjenjen'));
+        toast.success(t('korisnik_izmjenjen'));
         setEditMode(false);
       }
     } catch {
-      setError(t('greska_pri_cuvanju'));
+      toast.error(t('greska_pri_cuvanju'));
     }
     setLoading(false);
   };
@@ -102,8 +99,6 @@ export default function ProfilPage() {
   const handleDelete = async () => {
     if (!window.confirm(t('potvrdi_obrisi'))) return;
     setLoading(true);
-    setError('');
-    setSuccess('');
     try {
       const res = await fetch('/api/korisnici', {
         method: 'DELETE',
@@ -112,25 +107,25 @@ export default function ProfilPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || t('greska_pri_cuvanju'));
+        toast.error(data.error || t('greska_pri_cuvanju'));
       } else {
-        setSuccess(t('korisnik_obrisan'));
+        toast.success(t('korisnik_obrisan'));
         window.location.href = '/';
       }
     } catch {
-      setError(t('greska_pri_cuvanju'));
+      toast.error(t('greska_pri_cuvanju'));
     }
     setLoading(false);
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
+    <div className="p-4">
+      <Toaster position="top-right" />
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
         <FaUser className="text-violet-600" />
         {t('title')}
       </h1>
-      {error && <div className="text-red-600 mb-2">{error}</div>}
-      {success && <div className="text-green-600 mb-2">{success}</div>}
+
       {editMode ? (
         <form onSubmit={handleUpdate} className="flex flex-col gap-2">
           <input name="ime" value={form.ime} onChange={handleChange} placeholder={t('name')} className="border p-2 rounded" />

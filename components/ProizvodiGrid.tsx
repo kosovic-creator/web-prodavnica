@@ -198,21 +198,10 @@ function ProizvodiContent() {
   );
 }
 
-// Loading fallback component
-function ProizvodiSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(6)].map((_, i) => (
-        <div key={i} className="bg-gray-200 animate-pulse rounded-lg p-6 h-96"></div>
-      ))}
-    </div>
-  );
-}
-
 // Main component with Suspense
 export default function ProizvodiHome() {
   return (
-    <Suspense fallback={<ProizvodiSkeleton />}>
+    <Suspense fallback={<div className="text-center p-4">Loading products...</div>}>
       <ProizvodiContent />
     </Suspense>
   );

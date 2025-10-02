@@ -19,7 +19,7 @@ export default function AdminHomeClient() {
   const [proizvodi, setProizvodi] = React.useState<Proizvod[]>([]);
   const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
 
-  const [search] = useState('');  // Čitaj URL parametar 'page' i postavi odgovarajući tab
+  // Čitaj URL parametar 'page' i postavi odgovarajući tab
   useEffect(() => {
     if (searchParams) {
       const pageParam = searchParams.get('page');
@@ -201,7 +201,7 @@ const handleProizvodDelete = async (id: number): Promise<void> => {
                     </tr>
                   </thead>
                   <tbody>
-                    {proizvodi.filter(p => p.naziv.toLowerCase().includes(search?.toLowerCase() || ""))
+                    {proizvodi
                       .map((p) => (
                         <tr key={p.id} className="hover:bg-violet-50 transition">
                           <td className="px-8 py-3 text-left align-middle">{p.slika ? <Image src={p.slika} alt={p.naziv} width={48} height={48} className="object-cover rounded-lg" /> : '-'}</td>

@@ -143,19 +143,10 @@ function ProizvodiBannerContent() {
   );
 }
 
-// Loading fallback component
-function ProizvodiBannerSkeleton() {
-  return (
-    <div className="w-full h-80 bg-gray-200 flex items-center justify-center mb-8 rounded-lg shadow-lg">
-      <div className="animate-pulse text-gray-500">Loading banner...</div>
-    </div>
-  );
-}
-
 // Main component with Suspense
 export default function ProizvodiBanner() {
   return (
-    <Suspense fallback={<ProizvodiBannerSkeleton />}>
+    <Suspense fallback={<div className="text-center p-4">Loading banner...</div>}>
       <ProizvodiBannerContent />
     </Suspense>
   );
