@@ -6,5 +6,8 @@
   "registerHere": "Registrujte se ovdje",
   "noAccount": "Nemate nalog?",
   "invalidCredentials": "Neispravna email adresa ili lozinka",
-  "logoutSuccess": "Uspešno ste se odjavili."
+  "logoutSuccess": "Uspešno ste se odjavili.",
+  "orContinueWith": "Ili se prijavite sa",
+  "loginWithGoogle": "Prijavite se sa Google",
+  "loginWithApple": "Prijavite se sa Apple"
 }

@@ -1,5 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import AppleProvider from "next-auth/providers/apple";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
@@ -38,6 +40,14 @@ interface CustomSessionUser {
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    AppleProvider({
+      clientId: process.env.APPLE_ID!,
+      clientSecret: process.env.APPLE_SECRET!,
+    }),
     CredentialsProvider({
       name: "Email i Lozinka",
       credentials: {
@@ -68,13 +78,70 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      // Za OAuth provider-e (Google, Apple)
+      if (account?.provider === "google" || account?.provider === "apple") {
+        try {
+          // Proveravamo da li korisnik već postoji u bazi
+          const postojeciKorisnik = await prisma.korisnik.findUnique({
+            where: { email: user.email! },
+          });
+
+          // Ako ne postoji, kreiramo novog korisnika sa minimalnim podacima
+          if (!postojeciKorisnik) {
+            await prisma.korisnik.create({
+              data: {
+                email: user.email!,
+                ime: user.name || "",
+                prezime: "", // default value
+                slika: user.image || "",
+                uloga: "korisnik",
+                lozinka: "", // OAuth users may not have a password
+                telefon: "", // default value
+                grad: "", // default value
+                adresa: "", // default value
+                emailVerifikovan: true, // OAuth korisnici su automatski verifikovani
+              },
+            });
+          } else {
+            // Ažuriramo postojećeg korisnika sa novim podacima
+            await prisma.korisnik.update({
+              where: { email: user.email! },
+              data: {
+                ime: user.name || postojeciKorisnik.ime,
+                slika: user.image || postojeciKorisnik.slika,
+                emailVerifikovan: true,
+              },
+            });
+          }
+        } catch (error) {
+          console.error("Greška pri čuvanju OAuth korisnika:", error);
+          return false;
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
-        const u = user as CustomUser;
-        (token as CustomToken).id = u.id;
-        (token as CustomToken).uloga = u.uloga;
-        (token as CustomToken).ime = u.ime;
-        (token as CustomToken).slika = u.slika;
+        // Za credentials provider
+        if (account?.provider === "credentials") {
+          const u = user as CustomUser;
+          (token as CustomToken).id = u.id;
+          (token as CustomToken).uloga = u.uloga;
+          (token as CustomToken).ime = u.ime;
+          (token as CustomToken).slika = u.slika;
+        } else {
+          // Za OAuth provider-e, dobijamo podatke iz baze
+          const korisnikIzBaze = await prisma.korisnik.findUnique({
+            where: { email: user.email! },
+          });
+          if (korisnikIzBaze) {
+            (token as CustomToken).id = korisnikIzBaze.id;
+            (token as CustomToken).uloga = korisnikIzBaze.uloga;
+            (token as CustomToken).ime = korisnikIzBaze.ime || undefined;
+            (token as CustomToken).slika = korisnikIzBaze.slika || undefined;
+          }
+        }
       }
       return token;
     },

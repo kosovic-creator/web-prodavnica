@@ -6,5 +6,8 @@
   "registerHere": "Register here",
   "noAccount": "Don't have an account?",
   "invalidCredentials": "Invalid email or password",
-  "logoutSuccess": "You have been logged out successfully."
+  "logoutSuccess": "You have been logged out successfully.",
+  "orContinueWith": "Or continue with",
+  "loginWithGoogle": "Sign in with Google",
+  "loginWithApple": "Sign in with Apple"
 }

@@ -3,7 +3,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
-import { FaSignInAlt, FaEnvelope, FaLock } from "react-icons/fa";
+import { FaSignInAlt, FaEnvelope, FaLock, FaGoogle, FaApple } from "react-icons/fa";
 import '@/i18n/config';
 
 export default function PrijavaPage() {
@@ -62,6 +62,29 @@ export default function PrijavaPage() {
         </button>
       </form>
       {error && <p className="text-red-600 mt-2">{error}</p>}
+
+      {/* OAuth Provider buttons */}
+      <div className="mt-6 space-y-3">
+        <div className="text-center text-gray-500 text-sm">
+          {t('orContinueWith') || 'Ili se prijavite sa'}
+        </div>
+
+        <button
+          onClick={() => signIn('google', { callbackUrl: '/' })}
+          className="w-full flex items-center justify-center gap-3 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition"
+        >
+          <FaGoogle />
+          {t('loginWithGoogle') || 'Prijavite se sa Google'}
+        </button>
+
+        <button
+          onClick={() => signIn('apple', { callbackUrl: '/' })}
+          className="w-full flex items-center justify-center gap-3 bg-black text-white px-4 py-2 rounded shadow hover:bg-gray-800 transition"
+        >
+          <FaApple />
+          {t('loginWithApple') || 'Prijavite se sa Apple'}
+        </button>
+      </div>
 
       {/* Registration link */}
       <div className="mt-6 text-center border-t pt-4">

@@ -18,15 +18,15 @@ datasource db {
 model Korisnik {
   id                        String      @id @default(uuid())
   email                     String      @unique
-  lozinka                   String
+  lozinka                   String?     // Opciono za OAuth korisnike
   uloga                     String      @default("korisnik")
   ime                       String?
-  prezime                   String
-  telefon                   String
+  prezime                   String?     // Opciono za OAuth korisnike
+  telefon                   String?     // Opciono za OAuth korisnike
   drzava                    String?
-  grad                      String
-  postanskiBroj             Int
-  adresa                    String
+  grad                      String?     // Opciono za OAuth korisnike
+  postanskiBroj             Int?        // Opciono za OAuth korisnike
+  adresa                    String?     // Opciono za OAuth korisnike
   slika                     String?
 
 
