@@ -7,6 +7,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useKorpa } from '@/components/KorpaContext';
+import '@/i18n/config';
 
 // Define the StavkaKorpe type
 type StavkaKorpe = {
@@ -22,13 +23,20 @@ type StavkaKorpe = {
 
 function KorpaContent() {
   const { data: session } = useSession();
-  const { t } = useTranslation('korpa');
+  const { t, i18n } = useTranslation('korpa');
   const router = useRouter();
   const searchParams = useSearchParams();
   const lang = searchParams?.get('lang') || 'sr';
   const [stavke, setStavke] = useState<StavkaKorpe[]>([]);
   const [loading, setLoading] = useState(true);
   useKorpa();
+
+  // Set language based on URL parameter
+  useEffect(() => {
+    if (lang && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
 
   // Funkcija za ažuriranje broja stavki u localStorage
   const updateCartCount = async () => {
@@ -123,24 +131,24 @@ function KorpaContent() {
   };
 
   if (loading) {
-    return <div className="p-4 text-center">Učitavanje korpe...</div>;
+    return <div className="p-4 text-center">{t('ucitavanje') || 'Učitavanje korpe...'}</div>;
   }
 
   if (!session?.user) {
-    return <div className="p-4 text-center">Morate biti ulogovani da biste videli korpu.</div>;
+    return <div className="p-4 text-center">{t('morate_biti_prijavljeni')}</div>;
   }
 
   if (!stavke || stavke.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <div className="text-6xl mb-4">🛒</div>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-2">Vaša korpa je prazna</h2>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-2">{t('prazna')}</h2>
         <p className="text-gray-500 mb-6">Dodajte proizvode u korpu da biste ih videli ovde.</p>
         <button
           onClick={() => router.push(`/proizvodi?lang=${lang}`)}
           className="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition"
         >
-          Idite na proizvode
+          {t('nastavi_kupovinu')}
         </button>
       </div>
     );
@@ -150,7 +158,7 @@ function KorpaContent() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">{t('title') || 'Korpa'}</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('naslov')}</h1>
 
       <div className="space-y-4">
         {stavke.map((stavka) => (
@@ -194,7 +202,7 @@ function KorpaContent() {
                 onClick={() => handleUkloni(stavka.id)}
                 className="text-red-600 hover:text-red-800 text-sm mt-1"
               >
-                Ukloni
+                {t('ukloni')}
               </button>
             </div>
           </div>
@@ -203,12 +211,12 @@ function KorpaContent() {
 
       <div className="mt-8 p-4 bg-gray-50 rounded-lg">
         <div className="flex justify-between items-center text-xl font-bold">
-          <span>Ukupno:</span>
+          <span>{t('ukupno')}:</span>
           <span>{ukupno.toFixed(2)}€</span>
         </div>
 
         <button className="w-full mt-4 bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 transition">
-          Nastavi sa kupovinom
+          {t('zavrsi_kupovinu')}
         </button>
       </div>
     </div>
