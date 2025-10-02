@@ -28,16 +28,24 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
   const [localSearch, setLocalSearch] = useState('');
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const { setSearchTerm } = useSearch();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Handle client-side mounting to prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Safely get current language
   useEffect(() => {
-    try {
-      const langFromUrl = searchParams?.get('lang') || i18n.language || 'sr';
-      setCurrentLanguage(langFromUrl);
-    } catch (error) {
-      setCurrentLanguage('sr');
+    if (isMounted) {
+      try {
+        const langFromUrl = searchParams?.get('lang') || i18n.language || 'sr';
+        setCurrentLanguage(langFromUrl);
+      } catch (error) {
+        setCurrentLanguage('sr');
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, isMounted]);
 
   useEffect(() => {
     const broj = Number(localStorage.getItem('brojUKorpi') || 0);
@@ -118,7 +126,9 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               >
                 <span className="text-xl sm:text-2xl">🛒</span>
                 <span className="font-bold text-violet-700 text-sm sm:text-base truncate">
-                  <span className="hidden xs:inline">{t('title')}</span>
+                  <span className="hidden xs:inline">
+                    {isMounted ? t('title') : (currentLanguage === 'en' ? 'WebShop' : 'WebTrgovina')}
+                  </span>
                   <span className="xs:hidden">Trgovina</span>
                 </span>
               </button>
@@ -132,7 +142,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     type="text"
                     value={localSearch}
                     onChange={(e) => setLocalSearch(e.target.value)}
-                    placeholder={t('search') + '...'}
+                    placeholder={isMounted ? t('search') + '...' : (currentLanguage === 'en' ? 'Search...' : 'Pretraga...')}
                     className="border border-violet-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-violet-400 w-full text-base"
                   />
                   <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-violet-400" />
@@ -246,7 +256,9 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
             >
               <FaSignOutAlt className="text-violet-600" />
-              <span className="hidden sm:inline">{t('logout')}</span>
+              <span className="hidden sm:inline">
+                {isMounted ? t('logout') : (currentLanguage === 'en' ? 'Logout' : 'Odjava')}
+              </span>
             </button>
           </div>
         )}

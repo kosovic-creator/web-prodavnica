@@ -4,16 +4,17 @@
   "kolicina": "Količina",
   "cena": "Cena",
   "akcije": "Akcije",
-  "prazna": "Vaša korpa je prazna.",
-  "morate_biti_prijavljeni": "Morate biti prijavljeni da biste pristupili korpi.",
+  "prazna": "Vaša korpa je prazna",
+  "morate_biti_prijavljeni": "Morate biti ulogovani da biste videli korpu.",
   "ukupno": "Ukupno",
   "placanje": "Plaćanje",
   "prijava": "Prijava",
   "artikal_dod": "Artikal dodat u korpu",
   "artikal_izb": "Artikal uklonjen iz korpe",
   "kolicina_azur": "Količina ažurirana",
-  "ukloni": "Ukloni iz korpe",
+  "ukloni": "Ukloni",
   "nastavi_kupovinu": "Nastavi kupovinu",
   "dostava": "Dostava",
-  "zavrsi_kupovinu": "Završi kupovinu"
+  "zavrsi_kupovinu": "Završi kupovinu",
+  "ucitavanje": "Učitavanje korpe..."
 }

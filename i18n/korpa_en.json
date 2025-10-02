@@ -4,16 +4,17 @@
   "kolicina": "Quantity",
   "cena": "Price",
   "akcije": "Actions",
-  "prazna": "Your cart is empty.",
-  "morate_biti_prijavljeni": "You must be logged in to access the cart.",
+  "prazna": "Your cart is empty",
+  "morate_biti_prijavljeni": "You must be logged in to view the cart.",
   "ukupno": "Total",
   "placanje": "Checkout",
   "prijava": "Login",
   "artikal_dod": "Item added to cart",
   "artikal_izb": "Item removed from cart",
   "kolicina_azur": "Quantity updated",
-  "ukloni": "Remove from cart",
+  "ukloni": "Remove",
   "nastavi_kupovinu": "Continue shopping",
   "dostava": "Delivery",
-  "zavrsi_kupovinu": "Finish shopping"
+  "zavrsi_kupovinu": "Finish shopping",
+  "ucitavanje": "Loading cart..."
 }
