@@ -2,19 +2,54 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import '@/i18n/config';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaShoppingCart, FaEye } from 'react-icons/fa';
 import { Proizvod } from '@/types';
+import toast, { Toaster } from 'react-hot-toast';
 
 // Inner component that uses useSearchParams
 function ProizvodiContent() {
   const { t, i18n } = useTranslation('proizvodi');
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDodajUKorpu = async (proizvod: Proizvod) => {
+    const korisnikId = session?.user?.id;
+    if (!korisnikId) {
+      toast.error(
+        <span>
+          Morate biti prijavljeni za dodavanje u korpu!{' '}
+          <a href="/auth/prijava" className="underline text-blue-600 ml-2">Prijavi se</a>
+        </span>
+      );
+      return;
+    }
+
+    try {
+      await fetch('/api/korpa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
+      });
+
+      // Ažuriraj broj stavki u korpi
+      const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
+      const data = await res.json();
+      const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
+      localStorage.setItem('brojUKorpi', broj.toString());
+      window.dispatchEvent(new Event('korpaChanged'));
+
+      toast.success('Proizvod je dodat u korpu!');
+    } catch {
+      toast.error('Greška pri dodavanju u korpu.');
+    }
+  };
 
   useEffect(() => {
     const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
@@ -60,8 +95,10 @@ function ProizvodiContent() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {proizvodi.map((proizvod) => (
+    <div>
+      <Toaster position="top-right" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {proizvodi.map((proizvod) => (
         <div
           key={proizvod.id}
           className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-300"
@@ -142,13 +179,21 @@ function ProizvodiContent() {
               {t('detalji')}
             </Link>
 
-            <button className="bg-violet-600 text-white py-2 px-4 rounded-lg hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center gap-2">
+              <button
+                className={`py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${proizvod.kolicina === 0
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-violet-600 text-white hover:bg-violet-700'
+                  }`}
+                onClick={() => handleDodajUKorpu(proizvod)}
+                disabled={proizvod.kolicina === 0}
+              >
               <FaShoppingCart />
-              {t('dodaj_u_korpu')}
+                {proizvod.kolicina === 0 ? t('nema_na_zalihama') || 'Nema na zalihama' : t('dodaj_u_korpu')}
             </button>
           </div>
         </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

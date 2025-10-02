@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+// Slanje emaila korisniku - non-blocking
 import prisma from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 

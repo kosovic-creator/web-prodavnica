@@ -34,43 +34,76 @@ export default function KorpaPage() {
   }, [session]);
 
   const handleKolicina = async (id: string, kolicina: number) => {
-    await fetch('/api/korpa', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, kolicina })
-    });
-    const korisnikId = session?.user?.id;
-    if (!korisnikId) return;
-    const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
-    const data = await res.json();
-    setStavke(data.stavke);
+    try {
+      await fetch('/api/korpa', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, kolicina })
+      });
+
+      const korisnikId = session?.user?.id;
+      if (!korisnikId) return;
+
+      const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
+      const data = await res.json();
+      setStavke(data.stavke);
+
+      // Ažuriraj broj u navbar-u
+      const broj = data.stavke.reduce((acc: number, s: StavkaKorpe) => acc + s.kolicina, 0);
+      localStorage.setItem('brojUKorpi', broj.toString());
+      window.dispatchEvent(new Event('korpaChanged'));
+    } catch (error) {
+      console.error('Greška pri promeni količine:', error);
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await fetch('/api/korpa', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    const korisnikId = session?.user?.id;
-    if (!korisnikId) return;
-    const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
-    const data = await res.json();
-    setStavke(data.stavke);
+    try {
+      await fetch('/api/korpa', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+
+      const korisnikId = session?.user?.id;
+      if (!korisnikId) return;
+
+      const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
+      const data = await res.json();
+      setStavke(data.stavke);
+
+      // Ažuriraj broj u navbar-u
+      const broj = data.stavke.reduce((acc: number, s: StavkaKorpe) => acc + s.kolicina, 0);
+      localStorage.setItem('brojUKorpi', broj.toString());
+      window.dispatchEvent(new Event('korpaChanged'));
+    } catch (error) {
+      console.error('Greška pri brisanju stavke:', error);
+    }
   };
 
   const isprazniKorpu = async () => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) return;
-    await fetch('/api/korpa/delete-all', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ korisnikId }),
-    });
-    setStavke([]);
-    localStorage.setItem('brojUKorpi', '0');
-    window.dispatchEvent(new Event('korpaChanged'));
-    resetKorpa();
+
+    try {
+      const response = await fetch('/api/korpa/delete-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ korisnikId }),
+      });
+
+      if (response.ok) {
+        setStavke([]);
+        resetKorpa();
+        localStorage.setItem('brojUKorpi', '0');
+        window.dispatchEvent(new Event('korpaChanged'));
+        console.log('Korpa je uspešno obrisana');
+      } else {
+        console.error('Greška pri brisanju korpe');
+      }
+    } catch (error) {
+      console.error('Greška pri brisanju korpe:', error);
+    }
   };
 
   const potvrdiPorudzbinu = async () => {
