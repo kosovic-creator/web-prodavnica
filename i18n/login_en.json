@@ -8,6 +8,5 @@
   "invalidCredentials": "Invalid email or password",
   "logoutSuccess": "You have been logged out successfully.",
   "orContinueWith": "Or continue with",
-  "loginWithGoogle": "Sign in with Google",
-  "loginWithApple": "Sign in with Apple"
+  "loginWithGoogle": "Sign in with Google"
 }

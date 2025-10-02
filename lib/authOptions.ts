@@ -1,8 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import AppleProvider from "next-auth/providers/apple";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -38,15 +36,10 @@ interface CustomSessionUser {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    AppleProvider({
-      clientId: process.env.APPLE_ID!,
-      clientSecret: process.env.APPLE_SECRET!,
     }),
     CredentialsProvider({
       name: "Email i Lozinka",
@@ -79,8 +72,8 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      // Za OAuth provider-e (Google, Apple)
-      if (account?.provider === "google" || account?.provider === "apple") {
+      // Za OAuth provider-e (Google)
+      if (account?.provider === "google") {
         try {
           // Proveravamo da li korisnik već postoji u bazi
           const postojeciKorisnik = await prisma.korisnik.findUnique({

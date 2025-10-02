@@ -3,7 +3,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
-import { FaSignInAlt, FaEnvelope, FaLock, FaGoogle, FaApple } from "react-icons/fa";
+import { FaSignInAlt, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import '@/i18n/config';
 
 export default function PrijavaPage() {
@@ -75,14 +75,6 @@ export default function PrijavaPage() {
         >
           <FaGoogle />
           {t('loginWithGoogle') || 'Prijavite se sa Google'}
-        </button>
-
-        <button
-          onClick={() => signIn('apple', { callbackUrl: '/' })}
-          className="w-full flex items-center justify-center gap-3 bg-black text-white px-4 py-2 rounded shadow hover:bg-gray-800 transition"
-        >
-          <FaApple />
-          {t('loginWithApple') || 'Prijavite se sa Apple'}
         </button>
       </div>
 
