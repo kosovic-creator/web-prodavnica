@@ -40,7 +40,7 @@ APPLE_SECRET=your-apple-secret
 2. Kliknite **Create Credentials** → **OAuth 2.0 Client IDs**
 3. Konfiguriši **Authorized redirect URIs**:
    - Development: `http://localhost:3000/api/auth/callback/google`
-   - Production: `https://yourdomain.com/api/auth/callback/google`
+   - Production: `https://web-prodavnica.vercel.app/api/auth/callback/google`
 
 ### 3. Dobijanje Client ID i Secret
 
@@ -99,3 +99,30 @@ Svi korisnici (bez obzira na način prijave) imaju istu strukturu session-a sa:
 ### Opšte greške
 - Proverite environment variables
 - Restartujte development server nakon izmene `.env.local`
+
+## Production Deployment (Vercel)
+
+### 1. Environment Variables u Vercelu
+
+U Vercel Dashboard → Project Settings → Environment Variables, dodajte:
+
+```bash
+NEXTAUTH_SECRET=your-production-secret-here
+NEXTAUTH_URL=https://web-prodavnica.vercel.app
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+DATABASE_URL=your-production-database-url
+```
+
+### 2. Google Console Redirect URIs
+
+Uverite se da u Google Cloud Console imate oba redirect URI-ja:
+- Development: `http://localhost:3000/api/auth/callback/google`
+- Production: `https://web-prodavnica.vercel.app/api/auth/callback/google`
+
+### 3. Database Migration
+
+Ako koristite novu production bazu, pokrenite migracije:
+```bash
+npx prisma migrate deploy
+```
