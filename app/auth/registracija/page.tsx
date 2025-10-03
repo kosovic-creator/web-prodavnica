@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from "react";
-import { z } from "zod";
 import '@/i18n/config';
 import { useTranslation } from 'react-i18next';
 import { FaUserPlus, FaEnvelope, FaLock, FaUser, FaPhone, FaGlobe, FaCity, FaMapMarkerAlt, FaHashtag } from "react-icons/fa";

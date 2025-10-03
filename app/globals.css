@@ -255,3 +255,34 @@ html {
 body {
   -webkit-overflow-scrolling: touch;
 }
+
+/* Stilovi za nedostupne proizvode */
+.proizvod-kartica .kolicina-nula {
+    color: red;
+    font-weight: bold;
+}
+
+.proizvod-kartica .nema-zaliha {
+    color: red;
+    font-weight: bold;
+    background-color: #ffe6e6;
+    padding: 5px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+.proizvod-kartica button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.proizvod-info .upozorenje-zalihe {
+    color: red;
+    font-weight: bold;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 4px solid red;
+    margin: 15px 0;
+}

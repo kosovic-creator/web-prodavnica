@@ -69,6 +69,8 @@ export default function ProizvodPage() {
     router.push(`/proizvodi?lang=${lang}`);
   };
 
+ 
+
   if (loading) return <div className="p-4 text-center">Učitavanje proizvoda...</div>;
   if (!proizvod) return <div className="p-4 text-red-600 text-center">Proizvod nije pronađen.</div>;
 

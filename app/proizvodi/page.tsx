@@ -73,6 +73,7 @@ function ProizvodiContent() {
     router.push(`/proizvodi/${proizvodId}?lang=${lang}`);
   };
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -121,11 +122,11 @@ function ProizvodiContent() {
                     {t('kolicina')}: {p.kolicina}
                   </div>
                 </div>
-                {p.kolicina === 0 && (
+                {/* {p.kolicina === 0 && (
                   <div className="text-red-600 text-sm font-medium text-center bg-red-50 py-1 rounded">
                     {t('nema_na_zalihama')}
                   </div>
-                )}
+                )} */}
               </div>
               <div className="flex flex-col sm:flex-row gap-2 mt-4">
                 <Link
@@ -142,7 +143,7 @@ function ProizvodiContent() {
                   disabled={p.kolicina === 0}
                 >
                   <FaCartPlus />
-                  {t('dodaj_u_korpu')}
+                  {p.kolicina === 0 ? (t('nema_na_zalihama') || 'Nema na zalihama') : (t('dodaj_u_korpu') || 'Dodaj u korpu')}
                 </button>
               </div>
             </div>
