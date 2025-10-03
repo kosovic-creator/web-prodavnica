@@ -2,11 +2,13 @@
 import React, { useEffect } from 'react';
 import { useKorpa } from '@/components/KorpaContext';
 import { useSession } from 'next-auth/react';
-
+import { useRouter } from 'next/navigation';
 export default function UspjesnoPlacanjePage() {
   const { resetKorpa } = useKorpa();
   const { data: session } = useSession();
   const [cartCleared, setCartCleared] = React.useState(false);
+  const router = useRouter();
+
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -71,16 +73,20 @@ export default function UspjesnoPlacanjePage() {
       clearCart();
       setCartCleared(true);
     }
-  }, [session, resetKorpa, cartCleared]);
+  }, [session, cartCleared, resetKorpa]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/');
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="p-8 text-center">
       <h1>Uspješno plaćanje!</h1>
       <p>Potvrda je poslana na vaš email.</p>
-      <div>
-        <h2>Plaćanje uspješno!</h2>
-        <p>Vaša korpa je sada prazna.</p>
-      </div>
+      <p>Hvala na kupovini!</p>
     </div>
   );
 }

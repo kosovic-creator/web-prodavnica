@@ -10,7 +10,6 @@ import { FaEye, FaCartPlus } from 'react-icons/fa';
 import { Proizvod } from '@/types';
 import toast, { Toaster } from 'react-hot-toast';
 
-// Inner component that uses useSearchParams
 function ProizvodiGrid() {
   const { t, i18n } = useTranslation('proizvodi');
   const searchParams = useSearchParams();
