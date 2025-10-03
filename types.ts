@@ -59,6 +59,7 @@ export type StavkaPorudzbine = {
   proizvodId: string;
   kolicina: number;
   cena: number;
+  slika?: string | null;
   opis?: string | null;
   kreiran: Date;
   azuriran: Date;

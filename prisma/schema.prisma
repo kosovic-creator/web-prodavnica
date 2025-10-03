@@ -100,6 +100,7 @@ model StavkaPorudzbine {
   proizvodId    String
   kolicina      Int
   cena          Float       // Cena u vreme kupovine
+  slika         String?     // Slika proizvoda u vreme kupovine
   opis          String?
   kreiran       DateTime    @default(now())
   azuriran      DateTime    @updatedAt
