@@ -12,6 +12,61 @@ interface PorudzbinaWithStavke extends Porudzbina {
   stavkePorudzbine?: StavkaPorudzbine[];
 }
 
+// Skeleton komponenta za porudžbine
+function OrdersSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 py-4 px-2 sm:px-4 lg:px-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header skeleton */}
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6 animate-pulse">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-6 h-6 bg-gray-200 rounded"></div>
+            <div className="w-40 h-8 bg-gray-200 rounded"></div>
+          </div>
+          <div className="w-80 h-5 bg-gray-200 rounded"></div>
+        </div>
+
+        {/* Orders skeleton */}
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 sm:mb-2">
+                      <div className="w-32 h-6 bg-gray-200 rounded"></div>
+                      <div className="w-20 h-6 bg-gray-200 rounded-full"></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                        <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                        <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                        <div className="w-20 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end">
+                    <div className="w-28 h-8 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MojePorudzbinePage() {
   const { t } = useTranslation('porudzbine');
   const { data: session } = useSession();
@@ -92,14 +147,7 @@ export default function MojePorudzbinePage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Učitavam porudžbine...</p>
-        </div>
-      </div>
-    );
+    return <OrdersSkeleton />;
   }
 
   return (

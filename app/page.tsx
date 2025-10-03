@@ -9,18 +9,91 @@ import Link from 'next/link';
 import ProizvodiBanner from '@/components/ProizvodiBanner';
 import ProizvodiHome from '@/components/ProizvodiGrid';
 
+// Skeleton komponenta za Home stranicu
+function HomeSkeleton() {
+  return (
+    <div className="flex flex-col animate-pulse">
+      {/* Banner skeleton */}
+      <div className="w-full h-64 sm:h-80 bg-gray-200 rounded-lg mx-4 my-6"></div>
+
+      {/* Products section skeleton */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Title skeleton */}
+        <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-6"></div>
+
+        {/* Products grid skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col shadow-sm">
+              {/* Image skeleton */}
+              <div className="mb-3 flex justify-center">
+                <div className="w-[100px] h-[100px] bg-gray-200 rounded-md"></div>
+              </div>
+
+              <div className="flex-1 space-y-2">
+                {/* Title skeleton */}
+                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+
+                {/* Description skeleton */}
+                <div className="space-y-1">
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+
+                {/* Category skeleton */}
+                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+
+                {/* Price skeleton */}
+                <div className="flex items-center justify-between">
+                  <div className="h-6 bg-gray-200 rounded w-20"></div>
+                  <div className="h-5 bg-gray-200 rounded w-16"></div>
+                </div>
+              </div>
+
+              {/* Buttons skeleton */}
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <div className="flex-1 h-10 bg-gray-200 rounded-lg"></div>
+                <div className="flex-1 h-10 bg-gray-200 rounded-lg"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Admin skeleton
+function AdminSkeleton() {
+  return (
+    <div className="p-8 animate-pulse">
+      {/* Header skeleton */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-8 h-8 bg-gray-200 rounded"></div>
+        <div className="w-32 h-8 bg-gray-200 rounded"></div>
+      </div>
+
+      {/* Admin content skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="w-12 h-12 bg-gray-200 rounded-lg mb-4"></div>
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HomeContent() {
   const { t, ready } = useTranslation('home');
   const { data: session, status } = useSession();
 
   // Show loading while translations or session are loading
   if (!ready || status === 'loading') {
-    return (
-      <div className="p-8 max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[400px]">
-        <FaSpinner className="animate-spin text-4xl text-violet-600 mb-4" />
-        <p className="text-gray-600">Učitavanje...</p>
-      </div>
-    );
+    return session?.user?.uloga === 'admin' ? <AdminSkeleton /> : <HomeSkeleton />;
   }
 
   const adminPanelText = t('admin_panel') || 'Admin Panel';
@@ -55,12 +128,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={
-      <div className="p-8 max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[400px]">
-        <FaSpinner className="animate-spin text-4xl text-violet-600 mb-4" />
-        <p className="text-gray-600">Učitavanje stranice...</p>
-      </div>
-    }>
+    <Suspense fallback={<HomeSkeleton />}>
       <HomeContent />
     </Suspense>
   );

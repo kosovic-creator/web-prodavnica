@@ -20,6 +20,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams(); // Sada je u Suspense boundary-u
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentLanguage, setCurrentLanguage] = useState('sr');
 
   const isAdmin = session?.user?.uloga === 'admin';
@@ -99,7 +100,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🛒</span>
             <h2 className="font-bold text-violet-700 text-lg">
-              {isAdmin ? t('admin_panel') : t('menu')} ({currentLanguage})
+              {isAdmin ? t('admin_panel') : t('menu')}
             </h2>
           </div>
           <button

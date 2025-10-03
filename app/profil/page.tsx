@@ -1,11 +1,63 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import Image from "next/image";
+// import Image from "next/image";
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaSave, FaTimes, FaEdit, FaTrash } from "react-icons/fa";
 import '@/i18n/config';
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+
+// Skeleton komponenta za profil
+function ProfileSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-2xl mx-auto px-4">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-center gap-2 mb-6 animate-pulse">
+          <div className="w-8 h-8 bg-gray-200 rounded"></div>
+          <div className="w-24 h-8 bg-gray-200 rounded"></div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
+          {/* Profile image skeleton */}
+          <div className="flex justify-center mb-6">
+            <div className="w-[120px] h-[120px] bg-gray-200 rounded-full"></div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                {/* Left column fields */}
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+                    <div className="h-5 bg-gray-200 rounded w-full"></div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {/* Right column fields */}
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+                    <div className="h-5 bg-gray-200 rounded w-full"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Buttons skeleton */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
+              <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
+              <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function ProfilPage() {
   const { t } = useTranslation('profil');
@@ -50,12 +102,7 @@ export default function ProfilPage() {
   }, [session?.user?.id]);
 
   if (status === "loading" || !userLoaded) {
-    return (
-      <div className="flex flex-col items-center gap-2 text-gray-500 mt-8">
-        <FaUser className="animate-pulse" />
-        <span>{t('loading')}</span>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!session?.user) {
@@ -127,7 +174,7 @@ export default function ProfilPage() {
           {t('title')}
         </h1>
 
-      {editMode ? (
+        {editMode ? (
           <div className="bg-white rounded-lg shadow-md p-6">
             <form onSubmit={handleUpdate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -219,14 +266,14 @@ export default function ProfilPage() {
               </div>
             </form>
           </div>
-      ) : (
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="space-y-4">
-            {form.slika && (
-                  <div className="flex justify-center mb-6">
-                    <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-violet-200" />
-                  </div>
-            )}
+        ) : (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="space-y-4">
+              {/* {form.slika && (
+                <div className="flex justify-center mb-6">
+                  <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-violet-200" />
+                </div>
+              )} */}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -272,19 +319,19 @@ export default function ProfilPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
-                  <button className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>
-                <FaEdit />
-                {t('izmjeni_profil')}
-              </button>
-                  <button className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={handleDelete}>
-                <FaTrash />
-                {t('obrisi_korisnika')}
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
+                <button className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>
+                  <FaEdit />
+                  {t('izmjeni_profil')}
+                </button>
+                <button className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={handleDelete}>
+                  <FaTrash />
+                  {t('obrisi_korisnika')}
+                </button>
+              </div>
             </div>
           </div>
-            </div>
-      )}
+        )}
       </div>
     </div>
   );
