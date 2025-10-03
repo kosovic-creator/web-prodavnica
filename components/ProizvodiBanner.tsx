@@ -122,9 +122,9 @@ function ProizvodiBannerContent() {
             <h3 className="text-2xl font-bold drop-shadow-lg mb-1">
               {currentProizvod.naziv}
             </h3>
-            <p className="text-lg font-semibold text-yellow-300 drop-shadow-md">
+            {/* <p className="text-lg font-semibold text-yellow-300 drop-shadow-md">
               {currentProizvod.cena} €
-            </p>
+            </p> */}
           </div>
 
           {/* Indikatori */}

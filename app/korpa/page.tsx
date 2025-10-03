@@ -139,15 +139,16 @@ export default function KorpaPage() {
         }),
       });
       if (response.ok) {
+        toast.success(t('artikal_dod'), { duration: 3000 });
         await isprazniKorpu();
-        toast.success(t('artikal_dod'),{ duration: 3000 });
+
         return true;
       } else {
-        toast.error(t('error'),{ duration: 3000 });
+        toast.error(t('error'), { duration: 3000 });
         return false;
       }
     } catch {
-      toast.error(t('error'),{ duration: 3000 });
+      toast.error(t('error'), { duration: 3000 });
       return false;
     }
   };
