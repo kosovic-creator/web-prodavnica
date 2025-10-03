@@ -7,8 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { FaUserPlus, FaEnvelope, FaLock, FaUser, FaPhone, FaGlobe, FaCity, FaMapMarkerAlt, FaHashtag } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
+import { registracijaSchema } from "@/zod";
+
+
 export default function RegistracijaPage() {
-  const { t } = useTranslation('register');
+  const { t } = useTranslation('auth');
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [lozinka, setLozinka] = useState("");
@@ -20,21 +23,10 @@ export default function RegistracijaPage() {
   const [postanskiBroj, setPostanskiBroj] = useState("");
   const [adresa, setAdresa] = useState("");
 
-
-
-  // Zod šema sa lokalizovanim porukama
-  const schema = z.object({
-    email: z.string().email({ message: t('email_invalid') }),
-    lozinka: z.string().min(6, { message: t('lozinka_min') }),
-    ime: z.string().min(3, { message: t('ime_min') }),
-    prezime: z.string().min(3, { message: t('prezime_min') }),
-    telefon: z.string().min(6, { message: t('telefon_min') }),
-  });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Validacija na frontendu
-    const result = schema.safeParse({ email, lozinka, ime, prezime, telefon });
+    const result = registracijaSchema(t).safeParse({ email, lozinka, ime, prezime, telefon });
     if (!result.success) {
       // Prikaz prve greške
       toast.error(result.error.issues[0].message);
@@ -50,13 +42,13 @@ export default function RegistracijaPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || t('greska_registracija'));
+        toast.error(data.error || t('register.error_occurred'));
       } else {
-        toast.success(t('uspjesna_registracija'));
+        toast.success(t('register.register_success'));
         router.push('/auth/prijava');
       }
     } catch {
-      toast.error(t('error_occurred'));
+      toast.error(t('register.error_occurred'));
     }
   }
 
@@ -66,72 +58,80 @@ export default function RegistracijaPage() {
         <Toaster position="top-right" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
           <FaUserPlus className="text-violet-600" />
-          {t('title')}
+          {t('register.title')}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
             <FaEnvelope className="text-violet-600 text-lg flex-shrink-0" />
           <input
-            type="email"
-            placeholder={t('email')}
-              className="flex-1 outline-none bg-transparent text-base"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder={t('register.email')}
+            />
         </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaUser className="text-violet-600 text-lg flex-shrink-0" />
               <input
+                id="name"
+                name="name"
                 type="text"
-                placeholder={t('name') || "Ime"}
-                className="flex-1 outline-none bg-transparent text-base"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
                 value={ime}
                 onChange={e => setIme(e.target.value)}
+                placeholder={t('register.name')}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaUser className="text-violet-600 text-lg flex-shrink-0" />
               <input
+                id="surname"
+                name="surname"
                 type="text"
-                placeholder={t('surname') || "Prezime"}
-                className="flex-1 outline-none bg-transparent text-base"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
                 value={prezime}
                 onChange={e => setPrezime(e.target.value)}
+                placeholder={t('register.surname')}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
             <FaPhone className="text-violet-600 text-lg flex-shrink-0" />
           <input
             type="text"
-            placeholder={t('phone') || "Telefon"}
-              className="flex-1 outline-none bg-transparent text-base"
+              placeholder={t('register.phone')}
+              className="flex-1 outline-none bg-transparent text-base focus:ring-0"
             value={telefon}
             onChange={e => setTelefon(e.target.value)}
           />
         </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaGlobe className="text-violet-600 text-lg flex-shrink-0" />
               <input
                 type="text"
-                placeholder={t('country') || "Država"}
-                className="flex-1 outline-none bg-transparent text-base"
+                placeholder={t('register.country')}
+                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
                 value={drzava}
                 onChange={e => setDrzava(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaCity className="text-violet-600 text-lg flex-shrink-0" />
               <input
                 type="text"
-                placeholder={t('city') || "Grad"}
-                className="flex-1 outline-none bg-transparent text-base"
+                placeholder={t('register.city')}
+                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
                 value={grad}
                 onChange={e => setGrad(e.target.value)}
               />
@@ -139,45 +139,60 @@ export default function RegistracijaPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaHashtag className="text-violet-600 text-lg flex-shrink-0" />
               <input
                 type="number"
-                placeholder={t('postal_code') || "Poštanski broj"}
-                className="flex-1 outline-none bg-transparent text-base"
+                placeholder={t('register.postal_code')}
+                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
                 value={postanskiBroj}
                 onChange={e => setPostanskiBroj(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
               <FaMapMarkerAlt className="text-violet-600 text-lg flex-shrink-0" />
               <input
                 type="text"
-                placeholder={t('address') || "Adresa"}
-                className="flex-1 outline-none bg-transparent text-base"
+                placeholder={t('register.address')}
+                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
                 value={adresa}
                 onChange={e => setAdresa(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
             <FaLock className="text-violet-600 text-lg flex-shrink-0" />
           <input
-            type="password"
-            placeholder={t('password')}
-              className="flex-1 outline-none bg-transparent text-base"
-            value={lozinka}
-            onChange={e => setLozinka(e.target.value)}
-            required
-          />
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+              value={lozinka}
+              onChange={e => setLozinka(e.target.value)}
+              placeholder={t('register.password')}
+            />
         </div>
 
           <button type="submit" className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors text-base font-medium">
           <FaUserPlus />
-          {t('register')}
+            {t('register.register')}
         </button>
       </form>
+
+        {/* Login link */}
+        <div className="mt-6 text-center border-t pt-4">
+          <p className="text-gray-600 text-sm">
+            {t('register.have_account')}{' '}
+            <button
+              onClick={() => router.push('/auth/prijava')}
+              className="text-violet-600 hover:text-violet-800 font-medium underline transition-colors"
+            >
+              {t('login.login')}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
