@@ -5,6 +5,17 @@ import { useSearchParams } from 'next/navigation';
 import '@/i18n/config';
 import { Proizvod } from '@/types';
 
+const ProizvodiBannerSkeleton: React.FC = () => {
+  return (
+    <div className="animate-pulse">
+      <div className="h-32 bg-gray-200 rounded-lg mb-4"></div>
+      <div className="h-6 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+    </div>
+  );
+};
+
 // Inner component that uses useSearchParams
 function ProizvodiBannerContent() {
   const { t, i18n } = useTranslation('proizvodi');
@@ -61,9 +72,7 @@ function ProizvodiBannerContent() {
 
   if (loading) {
     return (
-      <div className="w-full h-80 bg-gray-200 flex items-center justify-center mb-8">
-        <div className="text-gray-500">{t('ucitavanje_banera')}</div>
-      </div>
+     <ProizvodiBannerSkeleton />
     );
   }
 
@@ -146,7 +155,7 @@ function ProizvodiBannerContent() {
 // Main component with Suspense
 export default function ProizvodiBanner() {
   return (
-    <Suspense fallback={<div className="text-center p-4">Loading banner...</div>}>
+    <Suspense fallback={<ProizvodiBannerSkeleton />}>
       <ProizvodiBannerContent />
     </Suspense>
   );

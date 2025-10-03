@@ -122,7 +122,7 @@ function ProizvodiContent() {
         <Toaster position="top-center" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
           <FaBoxOpen className="text-violet-600" />
-          {t('proizvodi')}
+          {t('artikli')}
         </h1>
 
         {/* Prikaži search info samo ako nije loading */}
