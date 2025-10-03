@@ -19,5 +19,9 @@
   "order_details": "Detalji porudžbine",
   "user": "Korisnik",
   "created": "Kreiran",
-  "id": "ID"
+  "id": "ID",
+  "userId": "Korisnik ID",
+  "name": "Ime",
+  "surname": "Prezime",
+  "dodaj": "Dodaj"
 }

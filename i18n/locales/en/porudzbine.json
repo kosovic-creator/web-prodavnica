@@ -17,5 +17,9 @@
   "update": "Update",
   "created": "Created",
   "id": "ID",
-  "user": "User"
+  "user": "User",
+  "userId": "User ID",
+  "name": "Name",
+  "surname": "Surname",
+  "dodaj": "Add"
 }

@@ -28,8 +28,6 @@ model Korisnik {
   postanskiBroj             Int?        // Opciono za OAuth korisnike
   adresa                    String?     // Opciono za OAuth korisnike
   slika                     String?
-
-
   emailVerifikovan          Boolean     @default(false)
   emailVerifikacijaToken    String?     @unique
   emailVerifikacijaIstice   DateTime?

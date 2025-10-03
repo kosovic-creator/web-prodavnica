@@ -44,6 +44,8 @@ export type StavkaKorpe = {
 export type Porudzbina = {
   id: string;
   korisnikId: string;
+  ime: string;
+  prezime: string;
   ukupno: number;
   status: string;
   email?: string | null;

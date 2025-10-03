@@ -155,7 +155,7 @@ export default function KorpaPage() {
   const handleZavrsiKupovinu = async () => {
     const success = await potvrdiPorudzbinu();
     if (success) {
-      router.push('/porudzbine');
+      router.push('/proizvodi');
     }
   };
 

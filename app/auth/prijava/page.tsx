@@ -7,7 +7,7 @@ import { FaSignInAlt, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import '@/i18n/config';
 
 export default function PrijavaPage() {
-  const { t } = useTranslation('login');
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState("");
   const [lozinka, setLozinka] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ export default function PrijavaPage() {
     if (!res?.error) {
       router.push("/");
     } else {
-      setError("Pogrešan email ili lozinka");
+      setError(t('login.invalidCredentials'));
     }
   };
 
@@ -31,14 +31,14 @@ export default function PrijavaPage() {
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
         <FaSignInAlt className="text-violet-600" />
-        {t('title')}
+        {t('login.title')}
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div className="flex items-center gap-2 border p-2 rounded">
           <FaEnvelope className="text-violet-600" />
           <input
             type="email"
-            placeholder={t('email')}
+            placeholder={t('login.email')}
             className="flex-1 outline-none bg-transparent"
             value={email}
             onChange={e => setEmail(e.target.value)}
@@ -49,7 +49,7 @@ export default function PrijavaPage() {
           <FaLock className="text-violet-600" />
           <input
             type="password"
-            placeholder={t('password')}
+            placeholder={t('login.password')}
             className="flex-1 outline-none bg-transparent"
             value={lozinka}
             onChange={e => setLozinka(e.target.value)}
@@ -58,7 +58,7 @@ export default function PrijavaPage() {
         </div>
         <button type="submit" className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition">
           <FaSignInAlt />
-          {t('login')}
+          {t('login.login')}
         </button>
       </form>
       {error && <p className="text-red-600 mt-2">{error}</p>}
@@ -66,7 +66,7 @@ export default function PrijavaPage() {
       {/* OAuth Provider buttons */}
       <div className="mt-6 space-y-3">
         <div className="text-center text-gray-500 text-sm">
-          {t('orContinueWith') || 'Ili se prijavite sa'}
+          {t('login.orContinueWith')}
         </div>
 
         <button
@@ -74,19 +74,19 @@ export default function PrijavaPage() {
           className="w-full flex items-center justify-center gap-3 bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition"
         >
           <FaGoogle />
-          {t('loginWithGoogle') || 'Prijavite se sa Google'}
+          {t('login.loginWithGoogle')}
         </button>
       </div>
 
       {/* Registration link */}
       <div className="mt-6 text-center border-t pt-4">
         <p className="text-gray-600">
-          {t('noAccount')} {' '}
+          {t('login.noAccount')} {' '}
           <button
             onClick={() => router.push('/auth/registracija')}
             className="text-violet-600 hover:text-violet-800 font-medium underline transition-colors"
           >
-            {t('registerHere')}
+            {t('login.registerHere')}
           </button>
         </p>
       </div>
