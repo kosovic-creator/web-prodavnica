@@ -119,61 +119,173 @@ export default function ProfilPage() {
   };
 
   return (
-    <div className="p-4">
-      <Toaster position="top-right" />
-      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        <FaUser className="text-violet-600" />
-        {t('title')}
-      </h1>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-2xl mx-auto px-4">
+        <Toaster position="top-right" />
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2 text-center justify-center">
+          <FaUser className="text-violet-600" />
+          {t('title')}
+        </h1>
 
       {editMode ? (
-        <form onSubmit={handleUpdate} className="flex flex-col gap-2">
-          <input name="ime" value={form.ime} onChange={handleChange} placeholder={t('name')} className="border p-2 rounded" />
-          <input name="prezime" value={form.prezime} onChange={handleChange} placeholder={t('surname')} className="border p-2 rounded" />
-          <input name="email" value={form.email} onChange={handleChange} placeholder={t('email')} className="border p-2 rounded" />
-          <input name="telefon" value={form.telefon} onChange={handleChange} placeholder={t('phone')} className="border p-2 rounded" />
-          <input name="drzava" value={form.drzava} onChange={handleChange} placeholder={t('country')} className="border p-2 rounded" />
-          <input name="grad" value={form.grad} onChange={handleChange} placeholder={t('city')} className="border p-2 rounded" />
-          <input name="postanskiBroj" value={form.postanskiBroj} onChange={handleChange} placeholder={t('postal_code')} className="border p-2 rounded" />
-          <input name="adresa" value={form.adresa} onChange={handleChange} placeholder={t('address')} className="border p-2 rounded" />
-          <input name="slika" value={form.slika} onChange={handleChange} placeholder={t('profile_image')} className="border p-2 rounded" />
-          <div className="flex gap-4 mt-6">
-            <button type="submit" className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition flex items-center gap-2" disabled={loading}>
-              <FaSave />
-              {t('sacuvaj_izmjene')}
-            </button>
-            <button type="button" className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition flex items-center gap-2" onClick={() => setEditMode(false)}>
-              <FaTimes />
-              {t('odkazivanje')}
-            </button>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="ime"
+                  value={form.ime}
+                  onChange={handleChange}
+                  placeholder={t('name')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+                <input
+                  name="prezime"
+                  value={form.prezime}
+                  onChange={handleChange}
+                  placeholder={t('surname')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+              </div>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder={t('email')}
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+              />
+              <input
+                name="telefon"
+                value={form.telefon}
+                onChange={handleChange}
+                placeholder={t('phone')}
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="drzava"
+                  value={form.drzava}
+                  onChange={handleChange}
+                  placeholder={t('country')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+                <input
+                  name="grad"
+                  value={form.grad}
+                  onChange={handleChange}
+                  placeholder={t('city')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  name="postanskiBroj"
+                  value={form.postanskiBroj}
+                  onChange={handleChange}
+                  placeholder={t('postal_code')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+                <input
+                  name="adresa"
+                  value={form.adresa}
+                  onChange={handleChange}
+                  placeholder={t('address')}
+                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                />
+              </div>
+              <input
+                name="slika"
+                value={form.slika}
+                onChange={handleChange}
+                placeholder={t('profile_image')}
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+              />
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <button
+                  type="submit"
+                  className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium"
+                  disabled={loading}
+                >
+                  <FaSave />
+                  {t('sacuvaj_izmjene')}
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 bg-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-400 transition-colors flex items-center justify-center gap-2 text-base font-medium"
+                  onClick={() => setEditMode(false)}
+                >
+                  <FaTimes />
+                  {t('odkazivanje')}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
       ) : (
-          <div className="flex flex-col gap-2">
-            <p><span className="font-semibold">{t('email')}:</span> {form.email}</p>
-            <p><span className="font-semibold">{t('name')}:</span> {form.ime}</p>
-            <p><span className="font-semibold">{t('surname')}:</span> {form.prezime}</p>
-            <p><span className="font-semibold">{t('phone')}:</span> {form.telefon}</p>
-            <p><span className="font-semibold">{t('country')}:</span> {form.drzava}</p>
-            <p><span className="font-semibold">{t('city')}:</span> {form.grad}</p>
-            <p><span className="font-semibold">{t('postal_code')}:</span> {form.postanskiBroj}</p>
-            <p><span className="font-semibold">{t('address')}:</span> {form.adresa}</p>
-            <p><span className="font-semibold">{t('role')}:</span> {form.uloga}</p>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="space-y-4">
             {form.slika && (
-              <Image src={form.slika} alt={t('profile_image') || "Profil"} width={100} height={100} className="rounded-full mt-2" />
+                  <div className="flex justify-center mb-6">
+                    <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-violet-200" />
+                  </div>
             )}
-            <div className="flex gap-4 mt-6">
-              <button className="bg-violet-600 text-white px-4 py-2 rounded shadow hover:bg-violet-700 transition flex items-center gap-2" onClick={() => setEditMode(true)}>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('email')}</span>
+                      <p className="text-base text-gray-800">{form.email}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('name')}</span>
+                      <p className="text-base text-gray-800">{form.ime}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('surname')}</span>
+                      <p className="text-base text-gray-800">{form.prezime}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('phone')}</span>
+                      <p className="text-base text-gray-800">{form.telefon}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('role')}</span>
+                      <p className="text-base text-gray-800">{form.uloga}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('country')}</span>
+                      <p className="text-base text-gray-800">{form.drzava}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('city')}</span>
+                      <p className="text-base text-gray-800">{form.grad}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('postal_code')}</span>
+                      <p className="text-base text-gray-800">{form.postanskiBroj}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-gray-600">{t('address')}</span>
+                      <p className="text-base text-gray-800">{form.adresa}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
+                  <button className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>
                 <FaEdit />
                 {t('izmjeni_profil')}
               </button>
-              <button className="bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition flex items-center gap-2" onClick={handleDelete}>
+                  <button className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={handleDelete}>
                 <FaTrash />
                 {t('obrisi_korisnika')}
               </button>
             </div>
           </div>
+            </div>
       )}
+      </div>
     </div>
   );
 }
