@@ -9,6 +9,7 @@ import { Proizvod } from '@/types';
 import { FaCartPlus, FaArrowLeft } from "react-icons/fa";
 import toast, { Toaster } from 'react-hot-toast';
 import '@/i18n/config';
+import OmiljeniButton from '@/components/OmiljeniButton';
 
 export default function ProizvodPage() {
   const params = useParams();
@@ -69,7 +70,7 @@ export default function ProizvodPage() {
     router.push(`/proizvodi?lang=${lang}`);
   };
 
- 
+
 
   if (loading) return <div className="p-4 text-center">Učitavanje proizvoda...</div>;
   if (!proizvod) return <div className="p-4 text-red-600 text-center">Proizvod nije pronađen.</div>;
@@ -87,7 +88,11 @@ export default function ProizvodPage() {
           {t('nazad') || 'Nazad na proizvode'}
         </button>
 
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden relative">
+          {/* Omiljeni dugme u gornjem desnom uglu */}
+          <div className="absolute top-3 right-3 z-10">
+            <OmiljeniButton proizvodId={proizvod.id} />
+          </div>
           <div className="md:flex">
             {/* Slika proizvoda */}
             <div className="md:w-1/2 p-8">
@@ -139,8 +144,8 @@ export default function ProizvodPage() {
               {/* Dugme za dodavanje u korpu */}
               <button
                 className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${proizvod.kolicina === 0
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-violet-600 text-white hover:bg-violet-700 shadow-md hover:shadow-lg'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-violet-600 text-white hover:bg-violet-700 shadow-md hover:shadow-lg'
                   }`}
                 onClick={() => handleDodajUKorpu(proizvod)}
                 disabled={proizvod.kolicina === 0}

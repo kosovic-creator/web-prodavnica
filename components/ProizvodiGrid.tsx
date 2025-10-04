@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { FaEye, FaCartPlus } from 'react-icons/fa';
 import { Proizvod } from '@/types';
 import toast, { Toaster } from 'react-hot-toast';
+import OmiljeniButton from './OmiljeniButton';
 
 function ProizvodiGrid() {
   const { t, i18n } = useTranslation('proizvodi');
@@ -95,13 +96,18 @@ function ProizvodiGrid() {
 
   return (
     <div>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {proizvodi.map((proizvod) => (
           <div
             key={proizvod.id}
-            className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-300"
+            className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 relative"
           >
+            {/* Omiljeni dugme u gornjem desnom uglu */}
+            <div className="absolute top-3 right-3 z-10">
+              <OmiljeniButton proizvodId={proizvod.id} />
+            </div>
+
             {/* Ikona ili slika proizvoda */}
             <div className="flex justify-center mb-4">
               {proizvod.slika ? (

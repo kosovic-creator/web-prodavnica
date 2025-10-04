@@ -67,3 +67,38 @@ export type StavkaPorudzbine = {
   azuriran: Date;
   proizvod?: Proizvod;
 };
+
+export type Omiljeni = {
+  id: string;
+  korisnikId: string;
+  proizvodId: string;
+  kreiran: Date;
+  proizvod: {
+    id: string;
+    cena: number;
+    slika?: string | null;
+    kolicina: number;
+    kreiran: Date;
+    azuriran: Date;
+    prevodi: Array<{
+      id: string;
+      proizvodId: string;
+      jezik: string;
+      naziv: string;
+      opis?: string | null;
+      karakteristike?: string | null;
+      kategorija: string;
+    }>;
+  };
+};
+
+export type ProizvodTranslation = {
+  id: string;
+  proizvodId: string;
+  jezik: string;
+  naziv: string;
+  opis?: string | null;
+  karakteristike?: string | null;
+  kategorija: string;
+};
+

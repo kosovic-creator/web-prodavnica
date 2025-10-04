@@ -10,6 +10,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSearch } from '@/components/SearchContext';
 import Link from 'next/link';
+import OmiljeniButton from '@/components/OmiljeniButton';
 
 // Skeleton komponenta
 function ProductSkeleton() {
@@ -147,27 +148,32 @@ function ProizvodiContent() {
               <p className="text-lg">
                 {searchTerm ? `Nema proizvoda za pretragu "${searchTerm}"` : t('empty')}
               </p>
-              </div>
-            ) : (
-              filteredProizvodi.map(p => (
-                <div key={p.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleProizvodClick(p.id)}>
-                  {p.slika && (
-                    <div className="mb-3 flex justify-center">
-                      <Image src={p.slika} alt={p.naziv} width={100} height={100} className="object-cover rounded-md" />
+                          </div>
+                      ) : (
+                          filteredProizvodi.map(p => (
+                <div key={p.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer relative" onClick={() => handleProizvodClick(p.id)}>
+                    {/* Omiljeni dugme u gornjem desnom uglu */}
+                    <div className="absolute top-3 right-3 z-10">
+                        <OmiljeniButton proizvodId={p.id} />
                     </div>
-                  )}
-                  <div className="flex-1 space-y-2">
-                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{p.naziv}</h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">{p.opis}</p>
-                    <p className="text-gray-500 text-xs line-clamp-1">{p.karakteristike}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">{t('kategorija')}: {p.kategorija}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-xl font-bold text-violet-700">{p.cena} €</div>
-                      <div className={`text-xs font-medium px-2 py-1 rounded ${p.kolicina === 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
-                        {t('kolicina')}: {p.kolicina}
-                      </div>
+
+                    {p.slika && (
+                        <div className="mb-3 flex justify-center">
+                            <Image src={p.slika} alt={p.naziv} width={100} height={100} className="object-cover rounded-md" />
+                        </div>
+                    )}
+                    <div className="flex-1 space-y-2">
+                        <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{p.naziv}</h3>
+                        <p className="text-gray-600 text-sm line-clamp-2">{p.opis}</p>
+                        <p className="text-gray-500 text-xs line-clamp-1">{p.karakteristike}</p>
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-500">{t('kategorija')}: {p.kategorija}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="text-xl font-bold text-violet-700">{p.cena} €</div>
+                            <div className={`text-xs font-medium px-2 py-1 rounded ${p.kolicina === 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
+                                {t('kolicina')}: {p.kolicina}
+                            </div>
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 mt-4">

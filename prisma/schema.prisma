@@ -35,6 +35,7 @@ model Korisnik {
   azuriran                  DateTime    @updatedAt
   stavkeKorpe               StavkaKorpe[]
   porudzbine                Porudzbina[]
+  omiljeni                  Omiljeni[]
 }
 
 model Proizvod {
@@ -47,6 +48,7 @@ model Proizvod {
   stavkeKorpe         StavkaKorpe[]
   stavkePorudzbine    StavkaPorudzbine[]
   prevodi             ProizvodTranslation[]
+  omiljeni            Omiljeni[]
 }
 model ProizvodTranslation {
   id          String   @id @default(uuid())
@@ -108,3 +110,21 @@ model StavkaPorudzbine {
 
   @@index([porudzbinaId])
 }
+
+model Omiljeni {
+  id          String   @id @default(uuid())
+  korisnikId  String
+  proizvodId  String
+  kreiran     DateTime @default(now())
+
+  korisnik    Korisnik @relation(fields: [korisnikId], references: [id], onDelete: Cascade)
+  proizvod    Proizvod @relation(fields: [proizvodId], references: [id], onDelete: Cascade)
+
+  @@unique([korisnikId, proizvodId])
+  @@index([korisnikId])
+  @@map("omiljeni")
+}
+
+
+
+
