@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 import { useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionProvider>
           <SearchProvider>
             <KorpaProvider>
+              <Navbar />
               <div className="flex min-h-screen">
                 {/* Sidebar - prikazan samo kada je otvoren */}
                 {sidebarOpen && (

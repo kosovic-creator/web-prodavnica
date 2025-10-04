@@ -125,12 +125,14 @@ export default function PrijavaForm() {
           <button
             onClick={() => signIn('google', { callbackUrl: '/' })}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-red-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium"
+            className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium"
           >
             <FaGoogle />
             {t('login.loginWithGoogle')}
           </button>
+
         </div>
+
 
         {/* Registration link */}
         <div className="mt-6 text-center border-t pt-4">
