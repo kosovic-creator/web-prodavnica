@@ -75,18 +75,20 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Overlay za mobilne uređaje */}
+      {/* Uklanjamo overlay za mobilne uređaje - komentarišemo ili brišemo */}
+      {/*
       {open && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={onClose}
         />
       )}
+      */}
 
-      {/* Sidebar - za push layout */}
+      {/* Sidebar - modifikujemo za mobilnu verziju */}
       <div className={`
-        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-lg transition-transform duration-300 ease-in-out
-        ${open ? 'translate-x-0 z-50' : '-translate-x-full z-30'}
+        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out
+        ${open ? 'translate-x-0' : '-translate-x-full'}
         w-64
         md:relative md:top-0 md:h-screen md:translate-x-0 md:z-auto
         ${open ? 'md:block' : 'md:hidden'}
@@ -187,6 +189,14 @@ function SidebarContent({ open, onClose }: SidebarProps) {
           </div>
         </div>
       </div>
+
+      {/* Opciono: Dodajemo invisible overlay samo za zatvaranje klikom van sidebar-a */}
+      {open && (
+        <div
+          className="fixed top-16 left-64 right-0 bottom-0 z-30 md:hidden"
+          onClick={onClose}
+        />
+      )}
     </>
   );
 }
