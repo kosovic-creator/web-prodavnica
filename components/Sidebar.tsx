@@ -75,16 +75,6 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Uklanjamo overlay za mobilne uređaje - komentarišemo ili brišemo */}
-      {/*
-      {open && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={onClose}
-        />
-      )}
-      */}
-
       {/* Sidebar - modifikujemo za mobilnu verziju */}
       <div className={`
         fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out

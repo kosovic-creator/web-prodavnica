@@ -71,6 +71,10 @@
   "kolicina_azurirana": "Article quantity has been updated.",
   "greska_korpa": "An error occurred while updating the cart.",
   "nema_na_zalihama": "Out of stock.",
-  "dodaj_u_korpu": "Add to cart"
+  "dodaj_u_korpu": "Add to cart",
+  "omiljeni": "Favorites",
+  "dodaj_u_omiljene": "Add to favorites",
+  "ukloni_iz_omiljenih": "Remove from favorites",
+  "omiljeni_proizvodi": "Favorites"
 
 }
