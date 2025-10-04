@@ -1,6 +1,7 @@
 'use client';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import * as React from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle, FaHeart, FaHistory, FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
@@ -58,16 +59,16 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
   // User menu items
   const userMenuItems = React.useMemo(() => [
-    { path: '/', icon: FaHome, label: t('pocetna'), emoji: '🏠' },
-    { path: '/proizvodi', icon: FaShoppingBag, label: t('proizvodi'), emoji: '🛍️' },
+    { path: '/', icon: FaHome, label: t('pocetna') },
+    { path: '/proizvodi', icon: FaShoppingBag, label: t('proizvodi') },
     ...(session?.user ? [
-      { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine'), emoji: '📋' },
-      { path: '/korpa', icon: FaShoppingCart, label: t('korpa'), emoji: '🛒' },
-      { path: '/omiljeni', icon: FaHeart, label: t('omiljeni'), emoji: '❤️' },
+      { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine') },
+      { path: '/korpa', icon: FaShoppingCart, label: t('korpa') },
+      { path: '/omiljeni', icon: FaHeart, label: t('omiljeni') },
     ] : []),
-    { path: '/profil', icon: FaUser, label: t('profile'), emoji: '👤' },
-    { path: '/o-nama', icon: FaInfoCircle, label: t('o_nama'), emoji: 'ℹ️' },
-    { path: '/kontakt', icon: FaPhone, label: t('kontakt'), emoji: '📞' },
+    { path: '/profil', icon: FaUser, label: t('profile') },
+    { path: '/o-nama', icon: FaInfoCircle, label: t('o_nama') },
+    { path: '/kontakt', icon: FaPhone, label: t('kontakt') },
   ], [t, session?.user]);
 
   const menuItems = isAdmin ? adminMenuItems : userMenuItems;
@@ -82,10 +83,10 @@ function SidebarContent({ open, onClose }: SidebarProps) {
         />
       )}
 
-      {/* Sidebar - puna visina do dna stranice */}
+      {/* Sidebar - za push layout */}
       <div className={`
-        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out
-        ${open ? 'translate-x-0' : '-translate-x-full'}
+        fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white shadow-lg transition-transform duration-300 ease-in-out
+        ${open ? 'translate-x-0 z-50' : '-translate-x-full z-30'}
         w-64
         md:relative md:top-0 md:h-screen md:translate-x-0 md:z-auto
         ${open ? 'md:block' : 'md:hidden'}
@@ -151,7 +152,6 @@ function SidebarContent({ open, onClose }: SidebarProps) {
                       }
                     `}
                   >
-                    <span className="text-lg">{item.emoji}</span>
                     <Icon className={`w-4 h-4 ${active ? 'text-violet-600' : 'text-gray-500'}`} />
                     <span className="font-medium text-sm truncate">{item.label}</span>
                   </button>

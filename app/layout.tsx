@@ -45,16 +45,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* Navbar */}
                 <Navbar setSidebarOpen={setSidebarOpen} />
 
-                {/* Main content area sa sidebar-om */}
-                <div className="flex flex-1">
+                {/* Main content area sa sidebar-om - modifikujemo */}
+                <div className="flex flex-1 relative">
                   {/* Sidebar */}
                   <Sidebar
                     open={sidebarOpen}
                     onClose={handleSidebarClose}
                   />
 
-                  {/* Page content */}
-                  <main className="flex-1">
+                  {/* Page content - dodajemo transition i margin */}
+                  <main className={`
+                    flex-1 transition-all duration-300 ease-in-out
+                    ${sidebarOpen ? 'md:ml-0 ml-64' : 'ml-0'}
+                  `}>
                     {children}
                   </main>
                 </div>
