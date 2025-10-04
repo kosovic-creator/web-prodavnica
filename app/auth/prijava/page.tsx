@@ -127,7 +127,7 @@ export default function PrijavaForm() {
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium"
           >
-            <FaGoogle />
+            <FaGoogle className="google-icon text-red-400" />
             {t('login.loginWithGoogle')}
           </button>
 
