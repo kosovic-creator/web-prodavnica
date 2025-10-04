@@ -314,4 +314,3 @@ export default function Navbar({ setSidebarOpen }: NavbarProps) {
 }
 
 
-
