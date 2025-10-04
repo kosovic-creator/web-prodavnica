@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // components/OmiljeniButton.tsx
 'use client';
 
@@ -5,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { Omiljeni } from '@/types';
+import { toast } from 'react-hot-toast';
+
 
 interface OmiljeniButtonProps {
   proizvodId: string;
@@ -29,6 +32,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
         if (response.ok) {
           const data = await response.json();
           setOmiljeni(data);
+          // toast.success('Omiljeni proizvodi učitani');
         }
       } catch (error) {
         console.error('Error loading omiljeni:', error);
