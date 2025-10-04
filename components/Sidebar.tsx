@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
@@ -13,40 +14,26 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-// Izvuci logiku koja koristi useSearchParams u zasebnu komponentu
 function SidebarContent({ open, onClose }: SidebarProps) {
   const { t } = useTranslation('sidebar');
   const pathname = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams(); // Sada je u Suspense boundary-u
+  const searchParams = useSearchParams();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentLanguage, setCurrentLanguage] = useState('sr');
 
   const isAdmin = session?.user?.uloga === 'admin';
 
-  useEffect(() => {
-    if (open) {
-      const timer = setTimeout(onClose, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [open, onClose]);
-
   // Initialize language based on URL params
   useEffect(() => {
     const currentLang = searchParams?.get('lang') || 'sr';
-    console.log('Sidebar - Current language from URL:', currentLang);
-    console.log('Sidebar - i18n.language:', i18n.language);
-    console.log('Sidebar - test translation "menu":', t('menu'));
-
     setCurrentLanguage(currentLang);
 
     if (i18n.language !== currentLang) {
       i18n.changeLanguage(currentLang);
     }
   }, [searchParams, t]);
-
-
 
   // Funkcija za navigaciju koja zadržava trenutni jezik
   const navigateWithLang = (path: string) => {
@@ -59,7 +46,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
     return pathname === path;
   };
 
-  // Admin menu items - recreated when language changes
+  // Admin menu items
   const adminMenuItems = React.useMemo(() => [
     { path: '/admin', icon: FaChartBar, label: t('dashboard'), emoji: '📊' },
     { path: '/admin/proizvodi', icon: FaBoxOpen, label: t('proizvodi'), emoji: '📦' },
@@ -68,7 +55,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
     { path: '/admin/postavke', icon: FaCog, label: t('postavke'), emoji: '⚙️' },
   ], [t]);
 
-  // User menu items - recreated when language changes
+  // User menu items
   const userMenuItems = React.useMemo(() => [
     { path: '/', icon: FaHome, label: t('pocetna'), emoji: '🏠' },
     { path: '/proizvodi', icon: FaShoppingBag, label: t('proizvodi'), emoji: '🛍️' },
@@ -84,16 +71,22 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
   const menuItems = isAdmin ? adminMenuItems : userMenuItems;
 
-  if (!open) return null;
-
   return (
     <>
+      {/* Overlay za mobilne uređaje */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`
+      <div className={`
         fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out
         ${open ? 'translate-x-0' : '-translate-x-full'}
-        w-64 lg:w-64
-        lg:${open ? 'relative translate-x-0' : 'hidden'}
+        w-64
+        md:relative md:translate-x-0 md:z-auto
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -105,7 +98,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors touch-manipulation lg:hidden"
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors touch-manipulation"
             aria-label={t('close_sidebar')}
           >
             <FaTimes className="w-5 h-5 text-gray-600" />
@@ -171,7 +164,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
             <p className="text-xs text-gray-400">v1.0.0</p>
           </div>
         </div>
-      </aside>
+      </div>
     </>
   );
 }

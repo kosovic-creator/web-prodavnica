@@ -81,7 +81,12 @@ export default function ProfilPage() {
   useEffect(() => {
     if (session?.user?.id) {
       fetch(`/api/korisnici/${session.user.id}`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          return res.json();
+        })
         .then(data => {
           setForm({
             ime: data.ime || '',
@@ -95,11 +100,31 @@ export default function ProfilPage() {
             uloga: data.uloga || 'korisnik',
             slika: data.slika || '',
           });
-          setUserLoaded(true);
         })
-        .catch(() => setUserLoaded(true));
+        .catch(error => {
+          console.error('Error fetching user data:', error);
+          // Postaviti osnovne podatke iz session-a ako API poziv ne uspe
+          setForm({
+            ime: session.user.ime || '',
+            prezime: session.user.prezime || '',
+            email: session.user.email || '',
+            telefon: '',
+            drzava: '',
+            grad: '',
+            postanskiBroj: '',
+            adresa: '',
+            uloga: 'korisnik',
+            slika: session.user.slika || '',
+          });
+        })
+        .finally(() => {
+          setUserLoaded(true);
+        });
+    } else if (status !== "loading") {
+      // Ako nema session-a i nije loading, postavi userLoaded na true
+      setUserLoaded(true);
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, session?.user, status]);
 
   if (status === "loading" || !userLoaded) {
     return <ProfileSkeleton />;

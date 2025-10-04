@@ -1,20 +1,19 @@
 "use client";
 
 import "./globals.css";
-
-import Navbar from '../components/Navbar'; // Direktno koristimo Navbar
 import Sidebar from '../components/Sidebar';
 import { useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
 import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
+import { FaBars } from 'react-icons/fa';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <html lang="en">
+    <html lang="sr">
       <head>
         <title>Web Trgovina 🛒</title>
         <meta name="description" content="Online trgovina - Kupite kvalitetne proizvode" />
@@ -49,28 +48,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionProvider>
           <SearchProvider>
             <KorpaProvider>
-              <div className="flex min-h-screen w-full relative">
-                {/* Sidebar - sa unutrašnjim Suspense */}
-                <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-                {/* Mobile Overlay */}
+              <div className="flex min-h-screen">
+                {/* Sidebar - prikazan samo kada je otvoren */}
                 {sidebarOpen && (
-                  <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-                    onClick={() => setSidebarOpen(false)}
+                  <Sidebar
+                    open={sidebarOpen}
+                    onClose={() => setSidebarOpen(false)}
                   />
                 )}
 
-                {/* Main Content */}
-                <div className={`flex-1 transition-all duration-300 bg-gray-50 min-w-0 ${sidebarOpen ? 'lg:ml-64' : 'ml-0'
-                  }`}>
-                  <div className="sticky top-0 z-30">
-                    <Navbar setSidebarOpen={setSidebarOpen} />
-                  </div>
-                  <main className="w-full max-w-screen-2xl mx-auto px-2 sm:px-4 lg:px-6 py-4">
+                {/* Glavni sadržaj */}
+                <main className="flex-1 bg-white">
+                  {/* Header sa hamburger dugmetom */}
+                  <header className="bg-white shadow-sm p-4 border-b">
+                    <button
+                      onClick={() => setSidebarOpen(!sidebarOpen)}
+                      className="p-2 rounded-lg hover:bg-gray-100"
+                    >
+                      <FaBars className="w-5 h-5" />
+                    </button>
+                  </header>
+
+                  {/* Sadržaj stranice */}
+                  <div className="p-4">
                     {children}
-                  </main>
-                </div>
+                  </div>
+                </main>
               </div>
 
               {/* Mobile-optimized Toaster */}
