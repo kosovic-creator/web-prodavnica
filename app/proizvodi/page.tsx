@@ -151,9 +151,9 @@ function ProizvodiContent() {
                           </div>
                       ) : (
                           filteredProizvodi.map(p => (
-                <div key={p.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer relative" onClick={() => handleProizvodClick(p.id)}>
+                <div key={p.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer relative " onClick={() => handleProizvodClick(p.id)}>
                     {/* Omiljeni dugme u gornjem desnom uglu */}
-                    <div className="absolute top-3 right-3 z-10">
+                    <div className="absolute top-3 right-3 z-10 ">
                         <OmiljeniButton proizvodId={p.id} />
                     </div>
 

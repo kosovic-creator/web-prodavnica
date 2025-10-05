@@ -74,13 +74,24 @@ function OmiljeniContent() {
       );
       return;
     }
-    await fetch('/api/omiljeni', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ korisnikId, proizvodId: omiljeni.proizvodId })
-    });
-    setOmiljeni(prevOmiljeni => prevOmiljeni.filter(o => o.id !== omiljeni.id));
-    toast.success('Artikal je uklonjen iz omiljenih.');
+
+    try {
+      const response = await fetch(`/api/omiljeni/${omiljeni.proizvodId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.ok) {
+        setOmiljeni(prevOmiljeni => prevOmiljeni.filter(o => o.id !== omiljeni.id));
+        toast.success('Artikal je uklonjen iz omiljenih.');
+      } else {
+        const errorData = await response.json();
+        toast.error(`Greška: ${errorData.error || 'Neuspešno uklanjanje'}`);
+      }
+    } catch (error) {
+      console.error('Error removing from omiljeni:', error);
+      // toast.error('Greška prilikom uklanjanja iz omiljenih.');
+    }
   };
 
   return (
@@ -92,7 +103,13 @@ function OmiljeniContent() {
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 ml-4">
           {omiljeni.map(o => (
-            <div key={o.id} className="bg-white border border-gray-200 rounded-lg o-4 flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer relative p-3 pl-4" onClick={() => handleProizvodClick(o.proizvodId)} >            <div className="absolute top-3 right-3 z-10">
+            <div
+              key={o.id}
+              className="bg-white border border-gray-200 rounded-lg flex flex-col shadow-sm hover:shadow-md transition-shadow cursor-pointer relative p-3 pl-4"
+              onClick={() => handleProizvodClick(o.proizvodId)}
+            >
+              {/* Dugme je pozicionirano apsolutno u odnosu na parent div koji ima 'relative' */}
+              <div className="absolute top-3 right-3 z-10">
               <button
                 onClick={e => { e.stopPropagation(); handleUkloniOmiljeni(o); }}
                 className="w-8 h-8 rounded-full bg-red-100 text-black hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center"

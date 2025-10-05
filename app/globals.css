@@ -286,3 +286,15 @@ body {
     border-left: 4px solid red;
     margin: 15px 0;
 }
+
+/* Parent element (kartica proizvoda) */
+.relative {
+  position: relative; /* Postaje referentna tačka */
+}
+
+/* Child element (dugme za uklanjanje) */
+.absolute {
+  position: absolute; /* Pozicionira se u odnosu na najbliži relative parent */
+  top: 12px;    /* 3 * 0.25rem = 12px od vrha kartice */
+  right: 12px;  /* 3 * 0.25rem = 12px od desne strane kartice */
+}

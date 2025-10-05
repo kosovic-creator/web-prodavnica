@@ -95,8 +95,8 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
       disabled={loading}
       className={
         isProizvodOmiljeni
-          ? "p-2 rounded-full bg-red-100 text-red-500 hover:bg-red-200 transition-colors disabled:opacity-50"
-          : "p-2 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-red-400 transition-colors disabled:opacity-50"
+          ? "p-2 rounded-full bg-red-100 text-red-500 hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center"
+          : "p-2 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-red-400 transition-colors disabled:opacity-50 flex items-center justify-center"
       }
       title={isProizvodOmiljeni ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'}
     >
