@@ -53,6 +53,12 @@ export type Porudzbina = {
   azuriran: Date;
   idPlacanja?: string | null;
   stavkePorudzbine?: StavkaPorudzbine[];
+   korisnik: {
+    id: string;
+    ime: string | null;
+    prezime: string | null;
+    email: string;
+  };
 };
 
 export type StavkaPorudzbine = {
