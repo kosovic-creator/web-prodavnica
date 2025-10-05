@@ -84,13 +84,8 @@ function ProizvodiContent() {
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
-      toast.error(
-        <span>
-          {t('morate_biti_prijavljeni_za_korpu')}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
-        </span>
-      );
-      return;
+      toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
+      router.push("/auth/prijava");
     }
     await fetch('/api/korpa', {
       method: 'POST',

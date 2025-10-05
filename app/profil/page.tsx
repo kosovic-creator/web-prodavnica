@@ -6,6 +6,7 @@ import { FaUser, FaSave, FaTimes, FaEdit, FaTrash } from "react-icons/fa";
 import '@/i18n/config';
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 // Skeleton komponenta za profil
 function ProfileSkeleton() {
@@ -58,11 +59,12 @@ function ProfileSkeleton() {
     </div>
   );
 }
-
 export default function ProfilPage() {
   const { t } = useTranslation('profil');
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     ime: '',
     prezime: '',
@@ -84,6 +86,7 @@ export default function ProfilPage() {
         .then(res => {
           if (!res.ok) {
             throw new Error('Failed to fetch user data');
+            setError('Greška pri učitavanju Profila');
           }
           return res.json();
         })
@@ -126,20 +129,19 @@ export default function ProfilPage() {
     }
   }, [session?.user?.id, session?.user, status]);
 
+  useEffect(() => {
+    if (!session?.user && status !== "loading" && userLoaded) {
+      toast.error('Morate biti prijavljeni', { duration: 4000 });
+      router.push("/auth/prijava");
+    }
+  }, [session?.user, status, userLoaded, router]);
+
   if (status === "loading" || !userLoaded) {
     return <ProfileSkeleton />;
   }
 
   if (!session?.user) {
-    return (
-      <div className="flex flex-col items-center gap-2 text-red-600 mt-8">
-        <div className="flex items-center gap-2">
-          <FaUser />
-          <span>{t('must_login')}</span>
-        </div>
-        <a href="/auth/prijava" className="text-blue-600 underline mt-2">Prijavi se</a>
-      </div>
-    );
+    return null;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,6 +162,10 @@ export default function ProfilPage() {
         toast.error(data.error || t('greska_pri_cuvanju'));
       } else {
         toast.success(t('korisnik_izmjenjen'));
+        // setInterval(() => {
+        //   setError('korisnik je izmjenjen');
+        // }, 3000);
+
         setEditMode(false);
       }
     } catch {
@@ -193,6 +199,8 @@ export default function ProfilPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+
         <Toaster position="top-right" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2 text-center justify-center">
           <FaUser className="text-violet-600" />
@@ -300,49 +308,49 @@ export default function ProfilPage() {
                 </div>
               )} */}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('email')}</span>
-                      <p className="text-base text-gray-800">{form.email}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('name')}</span>
-                      <p className="text-base text-gray-800">{form.ime}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('surname')}</span>
-                      <p className="text-base text-gray-800">{form.prezime}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('phone')}</span>
-                      <p className="text-base text-gray-800">{form.telefon}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('role')}</span>
-                      <p className="text-base text-gray-800">{form.uloga}</p>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('email')}</span>
+                    <p className="text-base text-gray-800">{form.email}</p>
                   </div>
-
-                  <div className="space-y-3">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('country')}</span>
-                      <p className="text-base text-gray-800">{form.drzava}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('city')}</span>
-                      <p className="text-base text-gray-800">{form.grad}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('postal_code')}</span>
-                      <p className="text-base text-gray-800">{form.postanskiBroj}</p>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-gray-600">{t('address')}</span>
-                      <p className="text-base text-gray-800">{form.adresa}</p>
-                    </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('name')}</span>
+                    <p className="text-base text-gray-800">{form.ime}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('surname')}</span>
+                    <p className="text-base text-gray-800">{form.prezime}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('phone')}</span>
+                    <p className="text-base text-gray-800">{form.telefon}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('role')}</span>
+                    <p className="text-base text-gray-800">{form.uloga}</p>
                   </div>
                 </div>
+
+                <div className="space-y-3">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('country')}</span>
+                    <p className="text-base text-gray-800">{form.drzava}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('city')}</span>
+                    <p className="text-base text-gray-800">{form.grad}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('postal_code')}</span>
+                    <p className="text-base text-gray-800">{form.postanskiBroj}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <span className="text-sm font-medium text-gray-600">{t('address')}</span>
+                    <p className="text-base text-gray-800">{form.adresa}</p>
+                  </div>
+                </div>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
                 <button className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>

@@ -3,9 +3,8 @@
 import { useTranslation } from 'react-i18next';
 import { useSession } from "next-auth/react";
 import AdminHome from './admin/page';
-import { FaHome, FaUserShield, FaSpinner } from "react-icons/fa";
+import { FaUserShield, FaSpinner } from "react-icons/fa";
 import { Suspense } from 'react';
-import Link from 'next/link';
 import ProizvodiBanner from '@/components/ProizvodiBanner';
 import ProizvodiHome from '@/components/ProizvodiGrid';
 

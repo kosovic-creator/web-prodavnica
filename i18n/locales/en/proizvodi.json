@@ -78,6 +78,9 @@
   "omiljeni_proizvodi": "Favorites",
   "morate_biti_prijavljeni_za_omiljene": "You must be logged in to add to favorites.",
   "morate_biti_prijavljeni_za_korpu": "You must be logged in to add to cart.",
-  "prijavi_se": "Log in"
+  "prijavi_se": "Log in",
+  "proizvod_dodat_u_korpu": "Product has been added to the cart.",
+  "proizvod_uklonjen_iz_korpe": "Product has been removed from the cart.",
+  "kolicina_proizvoda_azurirana": "Product quantity has been updated."
 
 }

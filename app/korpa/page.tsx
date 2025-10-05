@@ -31,6 +31,13 @@ export default function KorpaPage() {
     fetchKorpa();
   }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Redirect to products page if cart is empty
+  useEffect(() => {
+    if (!loading && stavke.length === 0 && session?.user) {
+      router.push('/proizvodi');
+    }
+  }, [loading, stavke.length, session?.user, router]);
+
   const fetchKorpa = async () => {
     setLoading(true);
     const korisnikId = session?.user?.id;
@@ -94,6 +101,7 @@ export default function KorpaPage() {
       window.dispatchEvent(new Event('korpaChanged'));
     } catch (error) {
       console.error('Greška pri brisanju stavke:', error);
+      toast.error(t('error'), { duration: 3000 });
     }
   };
 
@@ -114,11 +122,13 @@ export default function KorpaPage() {
         localStorage.setItem('brojUKorpi', '0');
         window.dispatchEvent(new Event('korpaChanged'));
         console.log('Korpa je uspešno obrisana');
+        toast.success(t('cart_emptied'), { duration: 3000 });
       } else {
         console.error('Greška pri brisanju korpe');
       }
     } catch (error) {
       console.error('Greška pri brisanju korpe:', error);
+      toast.error(t('error'), { duration: 3000 });
     }
   };
 
@@ -172,12 +182,9 @@ export default function KorpaPage() {
       </div>
     );
   }
-  if (!stavke.length) return (
-    <div className="p-4 flex flex-col items-center text-gray-500">
-      <FaShoppingCart className="text-4xl mb-2 text-violet-600" />
-      {t('empty')}
-    </div>
-  );
+  if (!stavke.length) {
+    return <div className="p-4">{t('loading') || "Učitavanje..."}</div>;
+  }
 
   return (
     <>

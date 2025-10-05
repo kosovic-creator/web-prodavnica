@@ -65,8 +65,9 @@ function SidebarContent({ open, onClose }: SidebarProps) {
       { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine') },
       { path: '/korpa', icon: FaShoppingCart, label: t('korpa') },
       { path: '/omiljeni', icon: FaHeart, label: t('omiljeni') },
+       { path: '/profil', icon: FaUser, label: t('profile') },
     ] : []),
-    { path: '/profil', icon: FaUser, label: t('profile') },
+
     { path: '/o-nama', icon: FaInfoCircle, label: t('o_nama') },
     { path: '/kontakt', icon: FaPhone, label: t('kontakt') },
   ], [t, session?.user]);
