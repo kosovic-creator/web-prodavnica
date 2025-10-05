@@ -4,48 +4,142 @@ import { Korisnik } from '@/types';
 
 
 const KorisniciPage = () => {
- const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
-    useEffect(() => {
-       fetch('/api/korisnici')
-         .then(response => response.json())
-         .then(data => {
-           console.log('Korisnici data:', data);
-           setKorisnici(data.korisnici || []);
-         })
-         .catch(error => {
-           console.error('Error fetching korisnici data:', error);
-         });
-    }, []);
+    const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        fetch('/api/korisnici')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Korisnici data:', data);
+                setKorisnici(data.korisnici || []);
+            })
+            .catch(error => {
+                console.error('Error fetching korisnici data:', error);
+      })
+          .finally(() => setLoading(false));
+  }, []);
+
+    const formatDate = (date: string) => {
+        return new Date(date).toLocaleDateString('sr-RS');
+    };
+
+    if (loading) {
+    return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+            </div>
+        );
+    }
 
     return (
-        <>
-           <div className="overflow-x-auto w-full">
-                <div className="table-responsive">
-                  <table className="min-w-[600px] w-full border border-violet-200 rounded-lg  text-xs sm:text-sm">
-                    <thead>
-                      <tr className="bg-violet-100 text-violet-700">
-                        <th className="p-2 text-left">ID</th>
-                        <th className="p-2 text-left">Ime</th>
-                        <th className="p-2 text-left">Email</th>
-                        <th className="p-2 text-left">Uloga</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {korisnici.map(korisnik => (
-                        <tr key={korisnik.id} className="border-b">
-                          <td className="p-2">{korisnik.id}</td>
-                          <td className="p-2">{korisnik.ime}</td>
-                          <td className="p-2">{korisnik.email}</td>
-                          <td className="p-2">{korisnik.uloga}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Upravljanje korisnicima</h1>
+                            <p className="text-gray-600 mt-1">Pregled i upravljanje registrovanim korisnicima</p>
+                        </div>
+                        <div className="mt-4 sm:mt-0">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-800">
+                                Ukupno: {korisnici.length}
+                            </span>
+                        </div>
+                    </div>
                 </div>
+
+                {/* Table */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Korisnik
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Uloga
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Lokacija
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Registrovan
+                                    </th>
+                                </tr>
+                            </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                              {korisnici.map((korisnik) => (
+                                  <tr key={korisnik.id} className="hover:bg-gray-50 transition-colors duration-200">
+                                      <td className="px-6 py-4 whitespace-nowrap">
+                                          <div className="flex items-center">
+                                              <div className="flex-shrink-0 h-10 w-10">
+                                                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-violet-400 to-purple-600 flex items-center justify-center">
+                                                      <span className="text-sm font-medium text-white">
+                                                          {korisnik.ime ? korisnik.ime.charAt(0).toUpperCase() : 'N'}
+                                                      </span>
+                                                  </div>
+                                              </div>
+                                              <div className="ml-4">
+                                                  <div className="text-sm font-medium text-gray-900">
+                                                      {korisnik.ime || 'N/A'} {korisnik.prezime}
+                                                  </div>
+                                                  <div className="text-sm text-gray-500 truncate max-w-[150px]">
+                                                      ID: {korisnik.id.slice(0, 8)}...
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap">
+                                          <div className="text-sm text-gray-900">{korisnik.email}</div>
+                                          <div className="text-sm text-gray-500">{korisnik.telefon}</div>
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap">
+                                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${korisnik.uloga === 'admin'
+                                                  ? 'bg-red-100 text-red-800'
+                                                  : 'bg-blue-100 text-blue-800'
+                                              }`}>
+                                              {korisnik.uloga}
+                                          </span>
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                          <div>{korisnik.grad}</div>
+                                          <div className="text-gray-500">{korisnik.drzava}</div>
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap">
+                                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${korisnik.emailVerifikovan
+                                                  ? 'bg-green-100 text-green-800'
+                                                  : 'bg-yellow-100 text-yellow-800'
+                                              }`}>
+                                              {korisnik.emailVerifikovan ? 'Verifikovan' : 'Nije verifikovan'}
+                                          </span>
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                          {formatDate(korisnik.kreiran.toString())}
+                                      </td>
+                                  </tr>
+                              ))}
+                          </tbody>
+                      </table>
+                  </div>
+
+                  {korisnici.length === 0 && (
+                      <div className="text-center py-12">
+                          <div className="text-gray-500 text-lg">Nema registrovanih korisnika</div>
+                      </div>
+                  )}
               </div>
-        </>
-    )
+          </div>
+      </div>
+  )
 }
 
 export default KorisniciPage
