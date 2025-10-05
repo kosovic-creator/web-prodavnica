@@ -125,8 +125,8 @@ function ProizvodiContent() {
         {!loading && searchTerm && (
           <div className="mb-6 p-4 bg-violet-100 border-l-4 border-violet-500 rounded-lg">
             <p className="text-violet-700 text-sm md:text-base">
-              Rezultati pretrage za: <strong>&quot;{searchTerm}&quot;</strong>
-              <span className="ml-2 text-xs md:text-sm">({filteredProizvodi.length} proizvoda)</span>
+              {t("rezultati_pretrage_za")}: <strong>&quot;{searchTerm}&quot;</strong>
+              <span className="ml-2 text-xs md:text-sm">({filteredProizvodi.length} {t("artikli")})</span>
             </p>
           </div>
         )}
