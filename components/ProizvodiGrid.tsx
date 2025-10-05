@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import '@/i18n/config';
 import Image from 'next/image';
@@ -15,6 +15,7 @@ function ProizvodiGrid() {
   const { t, i18n } = useTranslation('proizvodi');
   const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const router = useRouter();
   const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,12 +23,14 @@ function ProizvodiGrid() {
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
-     toast.error(
-        <span>
-          {t('morate_biti_prijavljeni_za_korpu')}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
-        </span>
-      );
+      //  toast.error(
+      //     <span>
+      //       {t('morate_biti_prijavljeni_za_korpu')}
+      //       <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
+      //     </span>
+      //   );
+      toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
+      router.push('/auth/prijava');
       return;
     }
 
