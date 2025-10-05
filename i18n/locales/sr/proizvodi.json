@@ -73,5 +73,8 @@
   "dodaj_u_korpu": "Dodaj u korpu",
   "dodaj_u_omiljene": "Dodaj u omiljene",
   "ukloni_iz_omiljenih": "Ukloni iz omiljenih",
-  "omiljeni_proizvodi": "Omiljeni"
+  "omiljeni_proizvodi": "Omiljeni",
+  "morate_biti_prijavljeni_za_omiljene": "Morate biti prijavljeni za dodavanje u omiljene.",
+  "morate_biti_prijavljeni_za_korpu": "Morate biti prijavljeni za dodavanje u korpu.",
+  "prijavi_se": "Prijavi se"
 }

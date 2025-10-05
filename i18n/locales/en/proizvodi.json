@@ -75,6 +75,9 @@
   "omiljeni": "Favorites",
   "dodaj_u_omiljene": "Add to favorites",
   "ukloni_iz_omiljenih": "Remove from favorites",
-  "omiljeni_proizvodi": "Favorites"
+  "omiljeni_proizvodi": "Favorites",
+  "morate_biti_prijavljeni_za_omiljene": "You must be logged in to add to favorites.",
+  "morate_biti_prijavljeni_za_korpu": "You must be logged in to add to cart.",
+  "prijavi_se": "Log in"
 
 }

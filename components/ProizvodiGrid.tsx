@@ -22,10 +22,10 @@ function ProizvodiGrid() {
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
-      toast.error(
+     toast.error(
         <span>
-          Morate biti prijavljeni za dodavanje u korpu!{' '}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">Prijavi se</a>
+          {t('morate_biti_prijavljeni_za_korpu')}
+          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
         </span>
       );
       return;
@@ -45,9 +45,9 @@ function ProizvodiGrid() {
       localStorage.setItem('brojUKorpi', broj.toString());
       window.dispatchEvent(new Event('korpaChanged'));
 
-      toast.success('Proizvod je dodat u korpu!');
+      toast.success(t('proizvod_dodat_u_korpu'));
     } catch {
-      toast.error('Greška pri dodavanju u korpu.');
+      toast.error(t('greska_dodavanje_u_korpu'));
     }
   };
 
@@ -64,12 +64,12 @@ function ProizvodiGrid() {
         if (Array.isArray(data)) {
           setProizvodi(data.slice(0, 12)); // Prikaži prvih 12 proizvoda
         } else {
-          setError(t('nema_dostupnih_proizvoda'));
+          setError(t('t.nema_na_zalihama'));
         }
       })
       .catch(error => {
         console.error('Error fetching proizvodi:', error);
-        setError(t('greska_ucitavanje_proizvoda'));
+        setError(t('t.greska_ucitavanje_proizvoda'));
       })
       .finally(() => {
         setLoading(false);

@@ -86,8 +86,8 @@ function ProizvodiContent() {
     if (!korisnikId) {
       toast.error(
         <span>
-          Morate biti prijavljeni za dodavanje u korpu!{' '}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">Prijavi se</a>
+          {t('morate_biti_prijavljeni_za_korpu')}
+          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
         </span>
       );
       return;

@@ -7,6 +7,7 @@ import { Heart } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { Omiljeni } from '@/types';
 import { toast } from 'react-hot-toast';
+import { t } from 'i18next';
 
 
 interface OmiljeniButtonProps {
@@ -51,7 +52,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
     e.stopPropagation();
 
     if (!session?.user) {
-      alert('Morate biti ulogirani za dodavanje u omiljene');
+      alert(t('morate_biti_prijavljeni_za_omiljene'));
       return;
     }
 
@@ -98,7 +99,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
           ? "p-2 rounded-full bg-red-100 text-red-500 hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center"
           : "p-2 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-red-400 transition-colors disabled:opacity-50 flex items-center justify-center"
       }
-      title={isProizvodOmiljeni ? 'Ukloni iz omiljenih' : 'Dodaj u omiljene'}
+      title={isProizvodOmiljeni ? t('omiljeni_ukloniti') : t('omiljeni_dodati')}
     >
       <Heart
         size={20}
