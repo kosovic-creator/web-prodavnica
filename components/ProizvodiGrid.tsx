@@ -53,7 +53,7 @@ function ProizvodiGrid() {
 
   useEffect(() => {
     const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
-    fetch(`/api/proizvodi?page=1&pageSize=12&lang=${currentLang}`)
+    fetch(`/api/proizvod?lang=${currentLang}`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
@@ -61,8 +61,8 @@ function ProizvodiGrid() {
         return res.json();
       })
       .then(data => {
-        if (data.proizvodi && Array.isArray(data.proizvodi)) {
-          setProizvodi(data.proizvodi);
+        if (Array.isArray(data)) {
+          setProizvodi(data.slice(0, 12)); // Prikaži prvih 12 proizvoda
         } else {
           setError(t('nema_dostupnih_proizvoda'));
         }

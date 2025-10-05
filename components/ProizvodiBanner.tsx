@@ -28,7 +28,7 @@ function ProizvodiBannerContent() {
   useEffect(() => {
     setLoading(true);
     const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
-    fetch(`/api/proizvodi?page=1&pageSize=10&lang=${currentLang}`)
+    fetch(`/api/proizvod?lang=${currentLang}`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
@@ -36,8 +36,8 @@ function ProizvodiBannerContent() {
         return res.json();
       })
       .then(data => {
-        if (data.proizvodi && Array.isArray(data.proizvodi)) {
-          const proizvodiSaSlikama = data.proizvodi.filter((p: Proizvod) =>
+        if (Array.isArray(data)) {
+          const proizvodiSaSlikama = data.filter((p: Proizvod) =>
             p.slika &&
             p.slika.trim() !== '' &&
             (p.slika.startsWith('http') || p.slika.startsWith('/'))
@@ -46,7 +46,7 @@ function ProizvodiBannerContent() {
           if (proizvodiSaSlikama.length > 0) {
             setProizvodi(proizvodiSaSlikama);
           } else {
-            setProizvodi(data.proizvodi);
+            setProizvodi(data);
           }
         } else {
           setError(t('nema_dostupnih_proizvoda'));
@@ -114,11 +114,11 @@ function ProizvodiBannerContent() {
             }}
           />
 
-          {/* Gradient overlay samo na dnu */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent"></div>
+          {/* Gradient overlay na vrhu */}
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/70 to-transparent"></div>
 
           {/* Informacije o proizvodu */}
-          <div className="absolute bottom-4 left-6 text-white">
+          <div className="absolute top-4 left-6 text-white">
             <h3 className="text-2xl font-bold drop-shadow-lg mb-1">
               {currentProizvod.naziv}
             </h3>
@@ -127,13 +127,13 @@ function ProizvodiBannerContent() {
             </p> */}
           </div>
 
-          {/* Indikatori */}
+          {/* Indikatori - ostaju na dnu */}
           {proizvodi.length > 1 && (
             <div className="absolute bottom-4 right-6 flex space-x-2">
               {proizvodi.map((_, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === current ? 'bg-white' : 'bg-white/50'
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === current ? 'bg-white shadow-lg' : 'bg-white/50'
                     }`}
                 />
               ))}

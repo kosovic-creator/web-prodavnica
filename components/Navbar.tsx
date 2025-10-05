@@ -105,7 +105,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
   return (
     <>
       {/* Main Navbar */}
-      <nav className="flex items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 border-b border-gray-200 bg-white shadow-sm">
+      <nav className="sticky top-0 z-50 flex items-center justify-between gap-2 sm:gap-4 p-3 sm:p-4 border-b border-gray-200 bg-white shadow-sm">
         {!isAdmin && (
           <>
             {/* Left Section - Hamburger + Logo */}
