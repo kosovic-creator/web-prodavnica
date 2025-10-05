@@ -2,12 +2,13 @@
 'use client';
 import { useSession, signOut } from "next-auth/react";
 import React, { useEffect, useState, Suspense } from "react";
-import { FaShoppingCart, FaHome, FaUser, FaSignInAlt, FaSignOutAlt, FaUserShield, FaChevronDown, FaSearch, FaTimes, FaBars } from "react-icons/fa";
+import { FaShoppingCart, FaHome, FaUser, FaSignInAlt, FaSignOutAlt, FaUserShield, FaChevronDown, FaSearch, FaTimes, FaBars, FaUsers, FaBox } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n/config';
 import { useKorpa } from "@/components/KorpaContext";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSearch } from '@/components/SearchContext';
+import Link from "next/link";
 
 interface NavbarProps {
   setSidebarOpen?: (open: boolean) => void;
@@ -251,6 +252,29 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
         {/* Admin Section */}
         {isAdmin && (
           <div className="flex items-center gap-2 ml-auto">
+            <Link
+              href="/admin/korisnici"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+            >
+              <FaUsers className="text-violet-600" />
+              <span className="hidden sm:inline">
+               Korisnici
+              </span>
+            </Link>
+            <Link
+              href="/admin/proizvodi"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+            >
+              <FaBox className="text-violet-600" />
+              Artikli
+            </Link>
+            <Link
+              href="/admin/porudzbine"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+            >
+              <FaShoppingCart className="text-violet-600" />
+             Porudžbine
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
