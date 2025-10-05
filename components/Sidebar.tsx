@@ -4,8 +4,8 @@ import * as React from 'react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle, FaHeart, FaHistory, FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
-import { signOut, useSession } from 'next-auth/react';
+import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle, FaHeart, FaHistory, FaShoppingCart } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
 import i18n from '@/i18n/config';
 import '@/i18n/config';
 
@@ -154,7 +154,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
           </ul>
 
           {/* Dodaj dugme za odjavu ako je korisnik ulogovan */}
-          {session?.user && (
+          {/* {session?.user && (
             <div className="px-3 mt-6">
               <hr className="border-gray-200 mb-4" />
               <button
@@ -168,8 +168,8 @@ function SidebarContent({ open, onClose }: SidebarProps) {
                 <FaSignOutAlt className="w-4 h-4" />
                 <span className="font-medium text-sm">{t('logout') || 'Odjavi se'}</span>
               </button>
-            </div>
-          )}
+            </div> */}
+          {/* )} */}
         </nav>
 
         {/* Footer - flex-shrink-0 da ostane na dnu */}
