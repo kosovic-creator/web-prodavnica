@@ -72,6 +72,8 @@
   "nema_na_zalihama": "Nema na zalihama.",
   "dodaj_u_korpu": "Dodaj u korpu",
   "dodaj_u_omiljene": "Dodaj u omiljene",
+  "uklonjen_iz_omiljenih": "Uklonjen iz omiljenih.",
+  "dodat_u_omiljene": "Artikal dodat u omiljene.",
   "ukloni_iz_omiljenih": "Ukloni iz omiljenih",
   "omiljeni_proizvodi": "Omiljeni",
   "morate_biti_prijavljeni_za_omiljene": "Morate biti prijavljeni za dodavanje u omiljene.",
@@ -82,4 +84,5 @@
   "rezultati_pretrage_za": " Rezultati pretraživanja za: ",
   "Artikal je uklonjen iz omiljenih.": "Artikal je uklonjen iz omiljenih.",
   "Artikal je dodat u omiljene.": "Artikal je dodat u omiljene."
+
 }

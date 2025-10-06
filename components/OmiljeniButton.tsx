@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import { Omiljeni } from '@/types';
 import { toast } from 'react-hot-toast';
 import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 
 interface OmiljeniButtonProps {
@@ -18,6 +19,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
   const { data: session } = useSession();
   const [omiljeni, setOmiljeni] = useState<Omiljeni[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('proizvodi');
 
   // Load omiljeni when user session changes
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
         if (response.ok) {
           const data = await response.json();
           setOmiljeni(data);
-          // toast.success('Omiljeni proizvodi učitani');
+
         }
       } catch (error) {
         console.error('Error loading omiljeni:', error);
@@ -43,7 +45,7 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
     };
 
     loadOmiljeni();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, t]);
 
   const isProizvodOmiljeni = omiljeni.some(om => om.proizvodId === proizvodId);
 
@@ -52,7 +54,8 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
     e.stopPropagation();
 
     if (!session?.user) {
-      alert(t('morate_biti_prijavljeni_za_omiljene'));
+      // alert(t('morate_biti_prijavljeni_za_omiljene'));
+      toast.error(t('morate_biti_prijavljeni_za_omiljene'), { duration: 4000 });
       return;
     }
 
@@ -66,6 +69,9 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
         });
         if (response.ok) {
           setOmiljeni(prev => prev.filter(om => om.proizvodId !== proizvodId));
+          toast.success(t('uklonjen_iz_omiljenih') || 'Uklonjen iz omiljenih', { duration: 3000 });
+        } else {
+          toast.error('Greška pri uklanjanju iz omiljenih', { duration: 3000 });
         }
       } else {
         // Add to favorites
@@ -80,11 +86,15 @@ export default function OmiljeniButton({ proizvodId }: OmiljeniButtonProps) {
           if (reloadResponse.ok) {
             const data = await reloadResponse.json();
             setOmiljeni(data);
+            toast.success(t('dodat_u_omiljene') || 'Dodato u omiljene', { duration: 3000 });
           }
+        } else {
+          toast.error('Greška pri dodavanju u omiljene', { duration: 3000 });
         }
       }
     } catch (error) {
       console.error('Error toggling omiljeni:', error);
+      toast.error('Došlo je do greške', { duration: 3000 });
     }
   };
 
