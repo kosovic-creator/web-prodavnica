@@ -1,16 +1,16 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useKorpa } from '@/components/KorpaContext';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function UspjesnoPlacanjePage() {
+function UspjesnoPageContent() {
   const { stavke, resetKorpa } = useKorpa();
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isProcessed, setIsProcessed] = useState(false);
-  const [paymentProvider, setPaymentProvider] = useState<'stripe' | 'wspay' | 'unknown'>('unknown');
+  const [paymentProvider, setPaymentProvider] = useState<'monripay' | 'unknown'>('unknown');
 
   useEffect(() => {
     if (isProcessed) return;
@@ -19,15 +19,10 @@ export default function UspjesnoPlacanjePage() {
     const detectPaymentProvider = () => {
       const urlParams = new URLSearchParams(window.location.search);
 
-      // WSPay parametri
-      if (urlParams.get('ShoppingCartID') || urlParams.get('Success')) {
-        setPaymentProvider('wspay');
-        console.log('WSPay payment detected');
-      }
-      // Stripe parametri
-      else if (urlParams.get('session_id') || window.location.href.includes('stripe')) {
-        setPaymentProvider('stripe');
-        console.log('Stripe payment detected');
+      // MonriPay parametri
+      if (urlParams.get('provider') === 'monripay' || urlParams.get('ShoppingCartID') || urlParams.get('Success')) {
+        setPaymentProvider('monripay');
+        console.log('MonriPay payment detected');
       } else {
         setPaymentProvider('unknown');
         console.log('Unknown payment provider');
@@ -154,20 +149,12 @@ export default function UspjesnoPlacanjePage() {
         {paymentProvider !== 'unknown' && (
           <div className="mb-4 p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-center space-x-2">
-              {paymentProvider === 'wspay' && (
+              {paymentProvider === 'monripay' && (
                 <>
                   <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
-                    <span className="text-xs text-white font-bold">W</span>
+                    <span className="text-xs text-white font-bold">M</span>
                   </div>
-                  <span className="text-sm text-gray-700">Plaćeno putem WSPay-a</span>
-                </>
-              )}
-              {paymentProvider === 'stripe' && (
-                <>
-                  <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-                    <span className="text-xs text-white font-bold">S</span>
-                  </div>
-                  <span className="text-sm text-gray-700">Plaćeno putem Stripe-a</span>
+                  <span className="text-sm text-gray-700">Plaćeno putem MonriPay-a</span>
                 </>
               )}
             </div>
@@ -200,5 +187,18 @@ export default function UspjesnoPlacanjePage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function UspjesnoPlacanjePage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <p className="text-gray-600">Učitavam...</p>
+      </div>
+    </div>}>
+      <UspjesnoPageContent />
+    </Suspense>
   );
 }
