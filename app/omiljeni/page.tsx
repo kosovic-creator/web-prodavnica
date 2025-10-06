@@ -20,7 +20,17 @@ function OmiljeniContent() {
   const lang = searchParams?.get('lang') || 'sr';
   const router = useRouter();
 
-
+  function OmiljeniSkeleton() {
+    return (
+      <div className="animate-pulse flex space-x-4">
+        <div className="flex-1 space-y-6 py-1">
+          <div className="h-4 bg-gray-300 rounded w-3/4" />
+          <div className="h-4 bg-gray-300 rounded w-5/6" />
+          <div className="h-4 bg-gray-300 rounded w-2/3" />
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -90,12 +100,16 @@ function OmiljeniContent() {
       }
     } catch (error) {
       console.error('Error removing from omiljeni:', error);
-      // toast.error('Greška prilikom uklanjanja iz omiljenih.');
+      toast.error('Greška prilikom uklanjanja iz omiljenih.');
     }
   };
 
   return (
-    (
+    loading ? (
+      <div className="space-y-4">
+        <OmiljeniSkeleton />
+      </div>
+    ) : (
       <> <Toaster position="top-center" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
           <FaHeart className="text-red-600" />

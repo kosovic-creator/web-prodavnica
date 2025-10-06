@@ -22,6 +22,7 @@ function ProizvodiContent() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [loading, setLoading] = useState(true); // Dodaj loading state
+  const [addingToCart, setAddingToCart] = useState<string | null>(null); // Loading state za dodavanje u korpu
   const { searchTerm } = useSearch();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -45,19 +46,47 @@ function ProizvodiContent() {
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
-    toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
+      toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
       router.push('/auth/prijava');
+      return;
     }
-    await fetch('/api/korpa', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
-    });
-    const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
-    const data = await res.json();
-    const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
-    localStorage.setItem('brojUKorpi', broj.toString());
-    window.dispatchEvent(new Event('korpaChanged'));
+
+    // Sprečava duplo klikanje
+    if (addingToCart === proizvod.id) return;
+
+    setAddingToCart(proizvod.id);
+
+    try {
+      // Dodaj u korpu
+      const addResponse = await fetch('/api/korpa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
+      });
+
+      if (!addResponse.ok) {
+        throw new Error('Greška pri dodavanju u korpu');
+      }
+
+      // Ažuriraj broj stavki u korpi
+      const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
+      if (!res.ok) {
+        throw new Error('Greška pri učitavanju korpe');
+      }
+
+      const data = await res.json();
+      const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
+      localStorage.setItem('brojUKorpi', broj.toString());
+      window.dispatchEvent(new Event('korpaChanged'));
+
+      // Prikaži success toast samo jednom
+      toast.success(t('proizvod_dodat_u_korpu'), { duration: 4000 });
+    } catch (error) {
+      console.error('Greška:', error);
+      toast.error('Došlo je do greške pri dodavanju u korpu', { duration: 4000 });
+    } finally {
+      setAddingToCart(null);
+    }
   };
 
   const filteredProizvodi = Array.isArray(proizvodi)
@@ -144,10 +173,19 @@ function ProizvodiContent() {
                   <button
                     className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={e => { e.stopPropagation(); handleDodajUKorpu(p); }}
-                    disabled={p.kolicina === 0}
+                                  disabled={p.kolicina === 0 || addingToCart === p.id}
                   >
-                    <FaCartPlus />
-                    {p.kolicina === 0 ? (t('nema_na_zalihama') || 'Nema na zalihama') : (t('dodaj_u_korpu') || 'Dodai u korpu')}
+                                  {addingToCart === p.id ? (
+                                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                                  ) : (
+                                      <FaCartPlus />
+                                  )}
+                                  {addingToCart === p.id
+                                    ? 'Dodaje se...'
+                                    : p.kolicina === 0
+                                      ? (t('nema_na_zalihama') || 'Nema na zalihama')
+                                      : (t('dodaj_u_korpu') || 'Dodaj u korpu')
+                                  }
                   </button>
                 </div>
               </div>

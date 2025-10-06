@@ -19,38 +19,50 @@ function ProizvodiGrid() {
   const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
   const handleDodajUKorpu = async (proizvod: Proizvod) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
-      //  toast.error(
-      //     <span>
-      //       {t('morate_biti_prijavljeni_za_korpu')}
-      //       <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
-      //     </span>
-      //   );
       toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
       router.push('/auth/prijava');
       return;
     }
 
+    // Sprečava duplo klikanje
+    if (addingToCart === proizvod.id) return;
+
+    setAddingToCart(proizvod.id);
+
     try {
-      await fetch('/api/korpa', {
+      // Dodaj u korpu
+      const addResponse = await fetch('/api/korpa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
       });
 
+      if (!addResponse.ok) {
+        throw new Error('Greška pri dodavanju u korpu');
+      }
+
       // Ažuriraj broj stavki u korpi
       const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
+      if (!res.ok) {
+        throw new Error('Greška pri učitavanju korpe');
+      }
+
       const data = await res.json();
       const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
       localStorage.setItem('brojUKorpi', broj.toString());
       window.dispatchEvent(new Event('korpaChanged'));
 
-      toast.success(t('proizvod_dodat_u_korpu'));
-    } catch {
-      toast.error(t('greska_dodavanje_u_korpu'));
+      toast.success(t('proizvod_dodat_u_korpu'), { duration: 4000 });
+    } catch (error) {
+      console.error('Greška:', error);
+      toast.error('Došlo je do greške pri dodavanju u korpu', { duration: 4000 });
+    } finally {
+      setAddingToCart(null);
     }
   };
 
@@ -197,10 +209,19 @@ function ProizvodiGrid() {
               <button
                 className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={e => { e.stopPropagation(); handleDodajUKorpu(proizvod); }}
-                disabled={proizvod.kolicina === 0}
+                disabled={proizvod.kolicina === 0 || addingToCart === proizvod.id}
               >
-                <FaCartPlus />
-                {proizvod.kolicina === 0 ? (t('nema_na_zalihama') || 'Nema na zalihama') : (t('dodaj_u_korpu') || 'Dodaj u korpu')}
+                {addingToCart === proizvod.id ? (
+                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                ) : (
+                    <FaCartPlus />
+                )}
+                {addingToCart === proizvod.id
+                  ? 'Dodaje se...'
+                  : proizvod.kolicina === 0
+                    ? (t('nema_na_zalihama') || 'Nema na zalihama')
+                    : (t('dodaj_u_korpu') || 'Dodaj u korpu')
+                }
               </button>
             </div>
           </div>

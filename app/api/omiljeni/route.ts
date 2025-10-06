@@ -7,13 +7,9 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    console.log('Session:', session); // Debug 1
-
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    console.log('Looking for omiljeni for user ID:', session.user.id); // Debug 2
 
     const omiljeni = await prisma.omiljeni.findMany({
       where: { korisnikId: session.user.id },
@@ -27,8 +23,7 @@ export async function GET() {
       orderBy: { kreiran: 'desc' }
     });
 
-    console.log('Found omiljeni:', omiljeni.length); // Debug 3
-    console.log('Omiljeni data:', omiljeni); // Debug 4
+
 
     return NextResponse.json(omiljeni);
   } catch (error) {
