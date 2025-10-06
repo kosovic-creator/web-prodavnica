@@ -116,7 +116,7 @@ const ProizvodPage = () => {
               <p className="text-gray-600 mt-1">Pregled i upravljanje inventarom proizvoda</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 cursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
                 <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -307,10 +307,10 @@ const ProizvodPage = () => {
                         {formatDate(proizvod.kreiran.toString())}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-violet-600 hover:text-violet-900 mr-3 " onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
+                        <button className="text-violet-600 hover:text-violet-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni
                         </button>
-                        <button className="text-red-600 hover:text-red-900" onClick={() => handleProizvodDelete(proizvod.id)}>
+                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleProizvodDelete(proizvod.id)}>
                           Obriši
                         </button>
                       </td>

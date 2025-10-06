@@ -192,7 +192,7 @@ function IzmeniProizvodContent() {
                   <div className="flex gap-4 mt-6">
                       <button
                           type="submit"
-                          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer"
                       >
                           <FaSave />
                           {t('proizvodi:sacuvaj')}
@@ -200,7 +200,7 @@ function IzmeniProizvodContent() {
                       <button
                           type="button"
                           onClick={handleCancel}
-                          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
+                          className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer"
                       >
                           <FaTimes />
                           {t('proizvodi:otkazi')}

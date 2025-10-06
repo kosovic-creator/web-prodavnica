@@ -8,11 +8,62 @@ import { proizvodSchema } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
 
+
 interface TranslationData {
     naziv: string;
     opis: string;
     karakteristike: string;
     kategorija: string;
+}
+function DodajProizvodSkeleton() {
+    return (
+        <div className="max-w-2xl mx-auto p-8 animate-pulse">
+            <div className="h-10 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <form className="flex flex-col gap-4">
+                <div className="mb-6">
+                    <div className="flex border-b border-gray-200">
+                        <div className="h-8 bg-gray-200 rounded w-20 mr-4"></div>
+                        <div className="h-8 bg-gray-200 rounded w-20"></div>
+                    </div>
+                    <div className="text-sm text-gray-600 mt-2 h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="mb-4">
+                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="w-full h-10 bg-gray-200 rounded"></div>
+                    </div>
+
+                    <div className="mb-4">
+                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="w-full h-10 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="mb-4">
+                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="w-full h-24 bg-gray-200 rounded"></div>
+                    </div>
+
+                    <div className="mb-4">
+                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="w-full h-24 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+
+                <div className="mb-4">
+                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="w-full h-10 bg-gray-200 rounded"></div>
+                </div>
+
+                <div className="mb-4">
+                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="w-full h-24 bg-gray-200 rounded"></div>
+                </div>
+            </form>
+        </div>
+    );
 }
 
 function DodajProizvodPage() {
@@ -125,6 +176,7 @@ function DodajProizvodPage() {
             }
             setValidationErrors(errors);
             setError('Molimo ispravite greške u srpskom prevodu.');
+
             return;
         }
 
@@ -206,11 +258,12 @@ function DodajProizvodPage() {
             toast.error('Greška pri kreiranju proizvoda!');
         }
     };
-
     return (
-        <div className="max-w-2xl mx-auto p-8">
-            <h2 className="text-2xl text-blue-600 font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <>
+           
+            <div className="max-w-2xl mx-auto p-8">
+                <h2 className="text-2xl text-blue-600 font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
                 {/* Language Tabs */}
                 <div className="mb-6">
@@ -408,7 +461,7 @@ function DodajProizvodPage() {
                 <div className="flex gap-4 mt-6">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer"
                     >
                         <FaPlus />
                         {t('proizvodi:sacuvaj')}
@@ -416,7 +469,7 @@ function DodajProizvodPage() {
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
+                        className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer"
                     >
                         <FaTimes />
                         {t('proizvodi:otkazi')}
@@ -424,9 +477,10 @@ function DodajProizvodPage() {
                 </div>
 
                 {error && <div className="text-red-600 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">{error}</div>}
+
             </form>
         </div>
+        </>
     );
 }
-
 export default DodajProizvodPage;

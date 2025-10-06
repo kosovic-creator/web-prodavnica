@@ -4,6 +4,13 @@ import { Korisnik } from '@/types';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
+function KorisniciSkeleton() {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+        </div>
+    );
+}
 
 const KorisniciPage = () => {
     const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
@@ -61,12 +68,9 @@ const KorisniciPage = () => {
 
     if (loading) {
     return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
-            </div>
-        );
-    }
-
+        <KorisniciSkeleton />
+    );
+}
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -163,7 +167,7 @@ const KorisniciPage = () => {
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                           {formatDate(korisnik.kreiran.toString())}
                                       </td>
-                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium cursor-pointer">
                                           <button
                                               onClick={() => handleDeleteKorisnik(korisnik.id)}
                                               className="text-red-600 hover:text-red-900"
