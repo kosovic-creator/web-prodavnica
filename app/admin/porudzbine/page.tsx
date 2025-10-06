@@ -155,9 +155,9 @@ const PorudzbinePage = () => {
                                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                       Datum kreiranja
                                   </th>
-                                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                       Akcije
-                                  </th>
+                                  </th> */}
                               </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
@@ -173,13 +173,16 @@ const PorudzbinePage = () => {
                                               <div className="flex-shrink-0 h-8 w-8">
                                                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-600 flex items-center justify-center">
                                                       <span className="text-xs font-medium text-white">
-                                                          {porudzbina.ime ? porudzbina.ime.charAt(0).toUpperCase() : 'N'}
+                                                          {porudzbina.korisnik?.ime ? porudzbina.korisnik.ime.charAt(0).toUpperCase() : 'N'}
                                                       </span>
                                                   </div>
                                               </div>
-                                              <div className="ml-3">
+                                              <div className="ml-4">
                                                   <div className="text-sm font-medium text-gray-900">
-                                                      {porudzbina.ime} {porudzbina.prezime}
+                                                      {porudzbina.korisnik?.ime || 'N/A'} {porudzbina.korisnik?.prezime || ''}
+                                                  </div>
+                                                  <div className="text-sm text-gray-500">
+                                                      {porudzbina.korisnik?.email || 'N/A'}
                                                   </div>
                                               </div>
                                           </div>
@@ -195,14 +198,14 @@ const PorudzbinePage = () => {
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                           {formatDate(porudzbina.kreiran?.toString() || '')}
                                       </td>
-                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                           <button className="text-violet-600 hover:text-violet-900 mr-3">
                                               Detalji
                                           </button>
                                           <button className="text-indigo-600 hover:text-indigo-900">
                                               Izmeni
                                           </button>
-                                      </td>
+                                      </td> */}
                                   </tr>
                               ))}
                           </tbody>
