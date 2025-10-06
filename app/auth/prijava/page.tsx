@@ -98,7 +98,7 @@ export default function PrijavaForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium"
+            className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
           >
             {loading ? <FaSpinner className="animate-spin" /> : <FaSignInAlt />}
             {loading ? t('login.loggingIn') : t('login.login')}
@@ -125,7 +125,7 @@ export default function PrijavaForm() {
           <button
             onClick={() => signIn('google', { callbackUrl: '/' })}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium"
+            className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
           >
             <FaGoogle className="google-icon text-red-400" />
             {t('login.loginWithGoogle')}

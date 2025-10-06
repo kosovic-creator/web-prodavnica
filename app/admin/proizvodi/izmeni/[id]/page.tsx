@@ -2,8 +2,8 @@
 'use client';
 import React, { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
-import { proizvodSchema } from '@/zod';
+// Removed i18n - using Serbian text directly
+import { proizvodSchemaStatic } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import {Proizvod} from '@/types';
@@ -13,7 +13,7 @@ function IzmeniProizvodContent() {
     const searchParams = useSearchParams();
   const id = params?.id;
   const router = useRouter();
-    const { t, i18n } = useTranslation(['proizvodi']);
+    // Removed useTranslation - using direct Serbian text
 
   const [form, setForm] = useState<Proizvod | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,12 +22,12 @@ function IzmeniProizvodContent() {
     if (id) {
         // Uzmi jezik iz URL-a ili iz i18n ili default 'sr'
         const langFromUrl = searchParams?.get('lang');
-        const currentLang = langFromUrl || i18n.language || 'sr';
+        const currentLang = langFromUrl || 'sr';
         fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
         .then(res => res.json())
         .then(data => setForm(data));
     }
-    }, [id, i18n.language, searchParams]);
+  }, [id, searchParams]);
 
   if (!form) return <div>Učitavanje...</div>;
 
@@ -49,7 +49,7 @@ function IzmeniProizvodContent() {
     e.preventDefault();
     setError(null);
       setFieldErrors({});
-      const parse = proizvodSchema(t).safeParse({
+      const parse = proizvodSchemaStatic.safeParse({
           ...form,
           cena: Number(form.cena),
           kolicina: Number(form.kolicina),
@@ -63,7 +63,7 @@ function IzmeniProizvodContent() {
           return;
       }
       const langFromUrl = searchParams?.get('lang');
-      const currentLang = langFromUrl || i18n.language || 'sr';
+      const currentLang = langFromUrl || 'sr';
     const res = await fetch('/api/proizvodi', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -90,11 +90,11 @@ function IzmeniProizvodContent() {
   return (
       <div className="admin-container">
           <div className="max-w-xl mx-auto p-8">
-              <h2 className="text-2xl text-blue-600  font-semibold mb-6">{t('proizvodi:izmjeni_artikal')}</h2>
+              <h2 className="text-2xl text-blue-600  font-semibold mb-6">Izmeni proizvod</h2>
               <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="naziv">
-                          {t('proizvodi:naziv')}
+                          Naziv
                       </label>
                       <input
                           id="naziv"
@@ -102,14 +102,14 @@ function IzmeniProizvodContent() {
                           value={form.naziv || ""}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:naziv_placeholder')}
+                          placeholder={"Unesite naziv proizvoda"}
                           required
                       />
                       {fieldErrors.naziv && <p className="text-red-500 text-sm mt-1">{fieldErrors.naziv}</p>}
                   </div>
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="cena">
-                          {t('proizvodi:cena')}
+                          Cena
                       </label>
                       <input
                           id="cena"
@@ -118,14 +118,14 @@ function IzmeniProizvodContent() {
                           value={form.cena || ""}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:cena_placeholder')}
+                          placeholder="Unesite cenu"
                           required
                       />
                       {fieldErrors.cena && <p className="text-red-500 text-sm mt-1">{fieldErrors.cena}</p>}
                   </div>
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="opis">
-                          {t('proizvodi:opis')}
+                          Opis
                       </label>
                       <textarea
                           id="opis"
@@ -133,13 +133,13 @@ function IzmeniProizvodContent() {
                           value={form.opis || ""}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:opis_placeholder')}
+                          placeholder="Unesite opis"
                       />
                       {fieldErrors.opis && <p className="text-red-500 text-sm mt-1">{fieldErrors.opis}</p>}
                   </div>
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="karakteristike">
-                          {t('proizvodi:karakteristike')}
+                          Karakteristike
                       </label>
                       <input
                           id="karakteristike"
@@ -148,13 +148,13 @@ function IzmeniProizvodContent() {
                           onChange={handleChange}
                           type="text"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:karakteristike_placeholder')}
+                          placeholder="Unesite karakteristike"
                       />
                       {fieldErrors.karakteristike && <p className="text-red-500 text-sm mt-1">{fieldErrors.karakteristike}</p>}
                   </div>
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="kategorija">
-                          {t('proizvodi:kategorija')}
+                          Kategorija
                       </label>
                       <input
                           id="kategorija"
@@ -163,13 +163,13 @@ function IzmeniProizvodContent() {
                           onChange={handleChange}
                           type="text"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:kategorija_placeholder')}
+                          placeholder="Unesite kategoriju"
                       />
                       {fieldErrors.kategorija && <p className="text-red-500 text-sm mt-1">{fieldErrors.kategorija}</p>}
                   </div>
                   <div className="mb-4">
                       <label className="block text-gray-700 font-medium mb-2" htmlFor="kolicina">
-                          {t('proizvodi:kolicina')}
+                          Količina
                       </label>
                       <input
                           id="kolicina"
@@ -178,7 +178,7 @@ function IzmeniProizvodContent() {
                           onChange={handleChange}
                           type="number"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('proizvodi:kolicina_placeholder')}
+                          placeholder="Unesite količinu"
                           required
                       />
                       {fieldErrors.kolicina && <p className="text-red-500 text-sm mt-1">{fieldErrors.kolicina}</p>}
@@ -195,7 +195,7 @@ function IzmeniProizvodContent() {
                           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer"
                       >
                           <FaSave />
-                          {t('proizvodi:sacuvaj')}
+                          Sačuvaj
                       </button>
                       <button
                           type="button"
@@ -203,7 +203,7 @@ function IzmeniProizvodContent() {
                           className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer"
                       >
                           <FaTimes />
-                          {t('proizvodi:otkazi')}
+                          Otkaži
                       </button>
                   </div>
                   {error && <div className="text-red-600 mt-4">{error}</div>}

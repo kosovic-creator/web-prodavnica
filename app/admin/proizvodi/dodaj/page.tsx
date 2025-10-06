@@ -1,12 +1,13 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
+// Removed i18n - using Serbian text directly
 import ImageUpload from '@/components/ImageUpload';
 import { FaPlus, FaTimes } from 'react-icons/fa';
-import { proizvodSchema } from '@/zod';
+import { proizvodSchemaStatic } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
+import DodajProizvodSkeleton from '@/components/Skeletoni';
 
 
 interface TranslationData {
@@ -15,60 +16,11 @@ interface TranslationData {
     karakteristike: string;
     kategorija: string;
 }
-function DodajProizvodSkeleton() {
-    return (
-        <div className="max-w-2xl mx-auto p-8 animate-pulse">
-            <div className="h-10 bg-gray-200 rounded w-1/3 mb-6"></div>
-            <form className="flex flex-col gap-4">
-                <div className="mb-6">
-                    <div className="flex border-b border-gray-200">
-                        <div className="h-8 bg-gray-200 rounded w-20 mr-4"></div>
-                        <div className="h-8 bg-gray-200 rounded w-20"></div>
-                    </div>
-                    <div className="text-sm text-gray-600 mt-2 h-4 bg-gray-200 rounded w-1/2"></div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="mb-4">
-                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div className="w-full h-10 bg-gray-200 rounded"></div>
-                    </div>
-
-                    <div className="mb-4">
-                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div className="w-full h-10 bg-gray-200 rounded"></div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="mb-4">
-                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div className="w-full h-24 bg-gray-200 rounded"></div>
-                    </div>
-
-                    <div className="mb-4">
-                        <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div className="w-full h-24 bg-gray-200 rounded"></div>
-                    </div>
-                </div>
-
-                <div className="mb-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                    <div className="w-full h-10 bg-gray-200 rounded"></div>
-                </div>
-
-                <div className="mb-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-2"></div>
-                    <div className="w-full h-24 bg-gray-200 rounded"></div>
-                </div>
-            </form>
-        </div>
-    );
-}
 
 function DodajProizvodPage() {
     const router = useRouter();
-    const { t } = useTranslation(['proizvodi']);
+    // Removed useTranslation - using direct Serbian text
     const [form, setForm] = useState({
         cena: '',
         kolicina: '',
@@ -156,7 +108,7 @@ function DodajProizvodPage() {
 
         // Validate Serbian translation using Zod schema
         try {
-            const schema = proizvodSchema(t);
+            const schema = proizvodSchemaStatic;
             schema.parse({
                 naziv: serbianTranslation.naziv,
                 cena: Number(form.cena) || 0,
@@ -182,18 +134,7 @@ function DodajProizvodPage() {
 
         // Validate English translation using Zod schema
         try {
-            const schema = proizvodSchema((key: string) => {
-                // English error messages
-                const englishMessages: Record<string, string> = {
-                    'naziv_error': 'Name must be at least 2 characters',
-                    'cena_error': 'Price must be greater than 0',
-                    'opis_error': 'Description must be at least 10 characters',
-                    'karakteristike_error': 'Features must be at least 10 characters',
-                    'kategorija_error': 'Category must be at least 2 characters',
-                    'kolicina_error': 'Quantity must be at least 1',
-                };
-                return englishMessages[key] || key;
-            });
+            const schema = proizvodSchemaStatic;
 
             schema.parse({
                 naziv: englishTranslation.naziv,
@@ -260,9 +201,9 @@ function DodajProizvodPage() {
     };
     return (
         <>
-           
+            <DodajProizvodSkeleton />
             <div className="max-w-2xl mx-auto p-8">
-                <h2 className="text-2xl text-blue-600 font-semibold mb-6">{t('proizvodi:dodaj_artikal')}</h2>
+                <h2 className="text-2xl text-blue-600 font-semibold mb-6">Dodaj novi proizvod</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
                 {/* Language Tabs */}
@@ -304,7 +245,7 @@ function DodajProizvodPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                         <label className="block font-medium mb-2" htmlFor="naziv">
-                            {t('proizvodi:naziv')} ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
+                                Naziv ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
                         </label>
                         <input
                             id="naziv"
@@ -325,7 +266,7 @@ function DodajProizvodPage() {
 
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="kategorija">
-                            {t('proizvodi:kategorija')} ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
+                                Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
                         </label>
                         <input
                             id="kategorija"
@@ -349,7 +290,7 @@ function DodajProizvodPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="opis">
-                            {t('proizvodi:opis')} ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
+                                Opis ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
                         </label>
                         <textarea
                             id="opis"
@@ -370,7 +311,7 @@ function DodajProizvodPage() {
 
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="karakteristike">
-                            {t('proizvodi:karakteristike')} ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
+                                Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
                         </label>
                         <textarea
                             id="karakteristike"
@@ -396,7 +337,7 @@ function DodajProizvodPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium mb-2" htmlFor="cena">
-                                {t('proizvodi:cena')} *
+                                    Cena *
                             </label>
                             <input
                                 id="cena"
@@ -421,7 +362,7 @@ function DodajProizvodPage() {
 
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium mb-2" htmlFor="kolicina">
-                                {t('proizvodi:kolicina')} *
+                                    Količina *
                             </label>
                             <input
                                 id="kolicina"
@@ -464,7 +405,7 @@ function DodajProizvodPage() {
                         className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer"
                     >
                         <FaPlus />
-                        {t('proizvodi:sacuvaj')}
+                            Sačuvaj
                     </button>
                     <button
                         type="button"
@@ -472,7 +413,7 @@ function DodajProizvodPage() {
                         className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer"
                     >
                         <FaTimes />
-                        {t('proizvodi:otkazi')}
+                            Otkaži
                     </button>
                 </div>
 
