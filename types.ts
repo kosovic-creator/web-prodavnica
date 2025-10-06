@@ -108,3 +108,10 @@ export type ProizvodTranslation = {
   kategorija: string;
 };
 
+export type TranslationData = {
+    naziv: string;
+    opis: string;
+    karakteristike: string;
+    kategorija: string;
+};
+

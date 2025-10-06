@@ -8,14 +8,7 @@ import { proizvodSchemaStatic } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
 import DodajProizvodSkeleton from '@/components/Skeletoni';
-
-
-interface TranslationData {
-    naziv: string;
-    opis: string;
-    karakteristike: string;
-    kategorija: string;
-}
+import { TranslationData } from '@/types';
 
 
 function DodajProizvodPage() {
