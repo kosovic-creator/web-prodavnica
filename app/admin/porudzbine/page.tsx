@@ -30,9 +30,9 @@ const PorudzbinePage = () => {
     };
 
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('sr-RS', {
+        return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'RSD',
+            currency: 'EUR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(amount);

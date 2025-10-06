@@ -60,3 +60,45 @@ export async function GET(req: Request) {
     kategorija: prevod.kategorija,
   });
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const id = url.pathname.split('/').pop();
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
+    }
+
+    // First check if product exists
+    const existingProizvod = await prisma.proizvod.findUnique({
+      where: { id }
+    });
+
+    if (!existingProizvod) {
+      return NextResponse.json({ error: 'Proizvod nije pronađen' }, { status: 404 });
+    }
+
+    // Delete translations first (due to foreign key constraints)
+    await prisma.proizvodTranslation.deleteMany({
+      where: { proizvodId: id }
+    });
+
+    // Then delete the product
+    await prisma.proizvod.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Proizvod je uspešno obrisan',
+      id
+    });
+  } catch (error) {
+    console.error('Error deleting proizvod:', error);
+    return NextResponse.json({
+      error: 'Greška pri brisanju proizvoda',
+      details: error instanceof Error ? error.message : 'Nepoznata greška'
+    }, { status: 500 });
+  }
+}

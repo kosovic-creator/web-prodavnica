@@ -2,12 +2,17 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Proizvod } from '@/types';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
 const ProizvodPage = () => {
+  const router = useRouter();
   const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
+
+
 
   useEffect(() => {
     fetch('/api/proizvodi')
@@ -22,17 +27,49 @@ const ProizvodPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleProizvodDelete = async (id: string) => {
+    if (!confirm('Da li ste sigurni da želite da obrišete ovaj proizvod?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/proizvodi/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Product deleted:", data);
+        // Remove product from local state
+        setProizvodi(prevProizvodi => prevProizvodi.filter(p => p.id !== id));
+        toast.success('Proizvod je uspešno obrisan!');
+      } else {
+        const errorData = await response.json();
+        toast.error(`Greška pri brisanju: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast.error('Došlo je do greške pri brisanju proizvoda.');
+    }
+  };
+
+
+
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('sr-RS', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'RSD',
+      currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('sr-RS');
+    return new Date(date).toLocaleDateString('sr-RS', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
   const getStockStatus = (quantity: number) => {
@@ -55,7 +92,6 @@ const ProizvodPage = () => {
 
   // Get unique categories
   const categories = Array.from(new Set(proizvodi.map(p => p.kategorija)));
-
   const totalValue = proizvodi.reduce((sum, proizvod) => sum + (proizvod.cena * proizvod.kolicina), 0);
   const lowStockCount = proizvodi.filter(p => p.kolicina < 5 && p.kolicina > 0).length;
   const outOfStockCount = proizvodi.filter(p => p.kolicina === 0).length;
@@ -79,7 +115,7 @@ const ProizvodPage = () => {
               <p className="text-gray-600 mt-1">Pregled i upravljanje inventarom proizvoda</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
                 <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -270,10 +306,10 @@ const ProizvodPage = () => {
                         {formatDate(proizvod.kreiran.toString())}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-violet-600 hover:text-violet-900 mr-3">
+                        <button className="text-violet-600 hover:text-violet-900 mr-3 " onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
+                        <button className="text-red-600 hover:text-red-900" onClick={() => handleProizvodDelete(proizvod.id)}>
                           Obriši
                         </button>
                       </td>
