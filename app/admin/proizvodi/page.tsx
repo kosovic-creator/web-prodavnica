@@ -43,6 +43,7 @@ const ProizvodPage = () => {
         // Remove product from local state
         setProizvodi(prevProizvodi => prevProizvodi.filter(p => p.id !== id));
         toast.success('Proizvod je uspešno obrisan!');
+        router.push('/admin/proizvodi'); // Redirect to products list after deletion
       } else {
         const errorData = await response.json();
         toast.error(`Greška pri brisanju: ${errorData.error}`);

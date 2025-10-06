@@ -1,11 +1,14 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Korisnik } from '@/types';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 
 const KorisniciPage = () => {
     const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         fetch('/api/korisnici')
@@ -19,6 +22,38 @@ const KorisniciPage = () => {
       })
           .finally(() => setLoading(false));
   }, []);
+
+    const handleDeleteKorisnik = async (id: string) => {
+        if (!confirm('Da li ste sigurni da želite da obrišete ovog korisnika?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/korisnici/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Korisnik obrisan:', data);
+                // Update local state to remove the deleted user
+                setKorisnici(prevKorisnici => prevKorisnici.filter(korisnik => korisnik.id !== id));
+                toast.success('Korisnik je uspešno obrisan!');
+                router.push('/admin/korisnici'); // Redirect to users list after deletion
+            } else {
+                const errorData = await response.json();
+                if (response.status === 409) {
+                    // Conflict - user has orders
+                    toast.error(`${errorData.error} (Porudžbina: ${errorData.ordersCount})`);
+                } else {
+                    toast.error(`Greška pri brisanju: ${errorData.error}`);
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting korisnik:', error);
+            toast.error('Došlo je do greške prilikom brisanja korisnika');
+        }
+    };
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('sr-RS');
@@ -74,6 +109,9 @@ const KorisniciPage = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Registrovan
                                     </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Akcije
+                                    </th>
                                 </tr>
                             </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
@@ -124,6 +162,14 @@ const KorisniciPage = () => {
                                       </td>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                           {formatDate(korisnik.kreiran.toString())}
+                                      </td>
+                                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                          <button
+                                              onClick={() => handleDeleteKorisnik(korisnik.id)}
+                                              className="text-red-600 hover:text-red-900"
+                                          >
+                                              Obriši
+                                          </button>
                                       </td>
                                   </tr>
                               ))}

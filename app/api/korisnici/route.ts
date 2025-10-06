@@ -31,8 +31,17 @@ export async function PUT(request: Request) {
   return NextResponse.json({ korisnik });
 }
 
-export async function DELETE(request: Request) {
-  const { id } = await request.json();
-  const korisnik = await prisma.korisnik.delete({ where: { id } });
-  return NextResponse.json({ korisnik });
-}
+// export async function DELETE(req: Request) {
+//   const body = await req.json();
+//   const { id } = body;
+//   if (!id) {
+//     return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
+//   }
+//   const postoji = await prisma.korisnik.findUnique({ where: { id } });
+//   if (!postoji) {
+//     return NextResponse.json({ error: 'Korisnik nije pronađen.' }, { status: 404 });
+//   }
+//   await prisma.korisnik.delete({ where: { id } });
+//   return NextResponse.json({ uspjesno_brisanje: true });
+// }
+

@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -5,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { proizvodSchema } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 import { FaSave, FaTimes } from 'react-icons/fa';
+import {Proizvod} from '@/types';
 
 function IzmeniProizvodContent() {
   const params = useParams<{ id: string }>();
@@ -12,20 +14,11 @@ function IzmeniProizvodContent() {
   const id = params?.id;
   const router = useRouter();
     const { t, i18n } = useTranslation(['proizvodi']);
-  type ProizvodForm = {
-    naziv?: string;
-    cena?: number | string;
-    opis?: string;
-    karakteristike?: string;
-    kategorija?: string;
-    kolicina?: number | string;
-    slika?: string;
-    error?: string;
-  };
 
-  const [form, setForm] = useState<ProizvodForm | null>(null);
+  const [form, setForm] = useState<Proizvod | null>(null);
   const [error, setError] = useState<string | null>(null);
-    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({}); useEffect(() => {
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  useEffect(() => {
     if (id) {
         // Uzmi jezik iz URL-a ili iz i18n ili default 'sr'
         const langFromUrl = searchParams?.get('lang');
@@ -37,7 +30,6 @@ function IzmeniProizvodContent() {
     }, [id, i18n.language, searchParams]);
 
   if (!form) return <div>Učitavanje...</div>;
-  if (form.error) return <div>{form.error}</div>;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -87,12 +79,12 @@ function IzmeniProizvodContent() {
       setError(result.error || 'Greška!');
       return;
     }
-    router.push('/admin?page=proizvodi');
+    router.push('/admin/proizvodi');
   };
 
     const handleCancel = () => {
         // Vrati se na admin stranicu bez čuvanja promena
-        router.push('/admin?page=proizvodi');
+        router.push('/admin/proizvodi');
     };
 
   return (
@@ -192,7 +184,7 @@ function IzmeniProizvodContent() {
                       {fieldErrors.kolicina && <p className="text-red-500 text-sm mt-1">{fieldErrors.kolicina}</p>}
                   </div>
                   <ImageUpload
-                      currentImage={form.slika}
+                      currentImage={form.slika ?? undefined}
                       onImageChange={handleImageChange}
                       onImageRemove={handleImageRemove}
                       productId={id}

@@ -195,16 +195,4 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { id } = body;
-  if (!id) {
-    return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
-  }
-  const postoji = await prisma.proizvod.findUnique({ where: { id } });
-  if (!postoji) {
-    return NextResponse.json({ error: 'Proizvod nije pronađen.' }, { status: 404 });
-  }
-  await prisma.proizvod.delete({ where: { id } });
-  return NextResponse.json({ uspjesno_placanje: true });
-}
+
