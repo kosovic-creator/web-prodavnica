@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import '@/i18n/config';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import StripeButton from '@/components/Stripe Checkout';
+import PaymentSelector from '@/components/PaymentSelector';
 import { useKorpa } from "@/components/KorpaContext";
 import { FaShoppingCart, FaTrashAlt, FaPlus, FaMinus } from "react-icons/fa";
 import toast, { Toaster } from 'react-hot-toast';
@@ -378,8 +378,8 @@ export default function KorpaPage() {
                 {t('zavrsi_kupovinu')}
               </button>
             </div>
-            <div className="mt-2">
-              <StripeButton amount={stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0)} />
+            <div className="mt-4">
+              <PaymentSelector amount={stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0)} />
             </div>
           </div>
 
@@ -423,7 +423,7 @@ export default function KorpaPage() {
                 PayPal
               </button>
 
-              <StripeButton amount={stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0)} />
+              <PaymentSelector amount={stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0)} />
 
               <button
                 className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors"
