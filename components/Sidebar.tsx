@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle } from 'react-icons/fa';
+import { FaBoxOpen, FaUser, FaTimes, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
 import i18n from '@/i18n/config';
 import '@/i18n/config';

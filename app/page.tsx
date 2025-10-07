@@ -7,7 +7,7 @@ import { FaUserShield, FaSpinner } from "react-icons/fa";
 import { Suspense } from 'react';
 import ProizvodiBanner from '@/components/ProizvodiBanner';
 import ProizvodiHome from '@/components/ProizvodiGrid';
-import Footer from '@/components/footer';
+
 
 // Skeleton komponenta za Home stranicu
 function HomeSkeleton() {
@@ -124,7 +124,6 @@ function HomeContent() {
       )}
       <div className="bg-gray-100 py-8">
         <div className="container mx-auto px-4">
-          <Footer />
         </div>
       </div>
     </>

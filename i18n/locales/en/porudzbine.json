@@ -38,5 +38,6 @@
   "stranica": "Page",
   "od": "of",
   "stavke_porudzbine": "Order Items",
-  "naziv_proizvoda": "Product Name"
+  "naziv_proizvoda": "Product Name",
+  "greska_pri_dohvatanju_porudzbina": "An error occurred while fetching orders."
 }

@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import '@/i18n/config';
+import { toast } from 'react-hot-toast';
 
 interface PorudzbinaWithStavke extends Porudzbina {
   stavkePorudzbine?: StavkaPorudzbine[];
@@ -89,10 +90,11 @@ export default function MojePorudzbinePage() {
       }
     } catch (error) {
       console.error('Greška pri dohvatanju porudžbina:', error);
+      toast.error(t('greska_pri_dohvatanju_porudzbina'));
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, session?.user?.id]);
+  }, [page, pageSize, session?.user?.id, t]);
 
   useEffect(() => {
     if (session?.user?.id) {

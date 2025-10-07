@@ -40,5 +40,6 @@
   "stranica": "Stranica",
   "od": "od",
   "stavke_porudzbine": "Stavke porudžbine",
-  "naziv_proizvoda": "Naziv proizvoda"
+  "naziv_proizvoda": "Naziv proizvoda",
+  "greska_pri_dohvatanju_porudzbina": "Došlo je do greške pri dohvatanju porudžbina."
 }

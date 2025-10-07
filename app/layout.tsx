@@ -3,6 +3,7 @@
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Sidebar from '../components/Sidebar';
+import Footer from '@/components/footer';
 import { useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
@@ -63,6 +64,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </main>
 
                 </div>
+
+                {/* Footer - fiksiran na dnu */}
+                <Footer />
               </div>
 
               {/* Toast notifications */}
