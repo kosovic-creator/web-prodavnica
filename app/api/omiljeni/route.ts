@@ -23,8 +23,6 @@ export async function GET() {
       orderBy: { kreiran: 'desc' }
     });
 
-
-
     return NextResponse.json(omiljeni);
   } catch (error) {
     console.error('Error fetching omiljeni:', error);

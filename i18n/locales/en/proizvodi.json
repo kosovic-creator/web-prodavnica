@@ -86,5 +86,9 @@
   "kolicina_proizvoda_azurirana": "Product quantity has been updated.",
   "rezultati_pretrage_za": " Search results for: ",
   "Artikal je uklonjen iz omiljenih.": "Article has been removed from favorites.",
-  "Artikal je dodat u omiljene.": "Article has been added to favorites."
+  "Artikal je dodat u omiljene.": "Article has been added to favorites.",
+  "greska": "Error",
+  "neuspesno_uklanjanje": "Failed to remove",
+  "greska_uklanjanje_omiljeni": "Error while removing from favorites.",
+  "ucitavanje_omiljenih": "Loading favorite products..."
 }

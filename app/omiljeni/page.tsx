@@ -19,6 +19,12 @@ function OmiljeniContent() {
   const lang = searchParams?.get('lang') || 'sr';
   const router = useRouter();
 
+  // Helper function to get translated text
+  const getTranslation = (prevodi: { jezik: string; naziv: string; opis?: string | null; karakteristike?: string | null; kategorija: string }[], field: string) => {
+    const translation = prevodi.find(p => p.jezik === lang);
+    return translation?.[field as keyof typeof translation] || prevodi[0]?.[field as keyof typeof prevodi[0]] || '';
+  };
+
   function OmiljeniSkeleton() {
     return (
       <div className="animate-pulse flex space-x-4">
@@ -54,8 +60,8 @@ function OmiljeniContent() {
     if (!korisnikId) {
       toast.error(
         <span>
-          Morate biti prijavljeni za dodavanje u korpu!{' '}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">Prijavi se</a>
+          {t('morate_biti_prijavljeni_za_korpu')}{' '}
+          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
         </span>
       );
       return;
@@ -77,8 +83,8 @@ function OmiljeniContent() {
     if (!korisnikId) {
       toast.error(
         <span>
-          Morate biti prijavljeni za uklanjanje iz omiljenih!{' '}
-          <a href="/auth/prijava" className="underline text-blue-600 ml-2">Prijavi se</a>
+          {t('morate_biti_prijavljeni_za_omiljene')}{' '}
+          <a href="/auth/prijava" className="underline text-blue-600 ml-2">{t('prijavi_se')}</a>
         </span>
       );
       return;
@@ -92,14 +98,14 @@ function OmiljeniContent() {
 
       if (response.ok) {
         setOmiljeni(prevOmiljeni => prevOmiljeni.filter(o => o.id !== omiljeni.id));
-        toast.success('Artikal je uklonjen iz omiljenih.');
+        toast.success(t('uklonjen_iz_omiljenih'));
       } else {
         const errorData = await response.json();
-        toast.error(`Greška: ${errorData.error || 'Neuspešno uklanjanje'}`);
+        toast.error(`${t('greska')}: ${errorData.error || t('neuspesno_uklanjanje')}`);
       }
     } catch (error) {
       console.error('Error removing from omiljeni:', error);
-      toast.error('Greška prilikom uklanjanja iz omiljenih.');
+      toast.error(t('greska_uklanjanje_omiljeni'));
     }
   };
 
@@ -126,7 +132,7 @@ function OmiljeniContent() {
               <button
                 onClick={e => { e.stopPropagation(); handleUkloniOmiljeni(o); }}
                 className="w-8 h-8 rounded-full bg-red-100 text-black hover:bg-red-200 transition-colors disabled:opacity-50 flex items-center justify-center"
-                title='Ukloni iz omiljenih'
+                  title={t('ukloni_iz_omiljenih')}
               >
                 <FaMinus />
               </button>
@@ -137,11 +143,11 @@ function OmiljeniContent() {
                 </div>
               )}
               <div className="flex-1 space-y-2">
-                <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{o.proizvod.prevodi[0]?.naziv}</h3>
-                <p className="text-gray-600 text-sm line-clamp-2">{o.proizvod.prevodi[0]?.opis}</p>
-                <p className="text-gray-500 text-xs line-clamp-1">{o.proizvod.prevodi[0]?.karakteristike}</p>
+                <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{getTranslation(o.proizvod.prevodi, 'naziv')}</h3>
+                <p className="text-gray-600 text-sm line-clamp-2">{getTranslation(o.proizvod.prevodi, 'opis')}</p>
+                <p className="text-gray-500 text-xs line-clamp-1">{getTranslation(o.proizvod.prevodi, 'karakteristike')}</p>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">{t('kategorija')}: {o.proizvod.prevodi[0]?.kategorija}</span>
+                  <span className="text-gray-500">{t('kategorija')}: {getTranslation(o.proizvod.prevodi, 'kategorija')}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-xl font-bold text-blue-700">{o.proizvod.cena} €</div>
@@ -176,7 +182,7 @@ function OmiljeniContent() {
 }
 export default function ProizvodiPage() {
   return (
-    <Suspense fallback={<div className="o-4 text-center">Učitavanje omiljenih proizvoda...</div>}>
+    <Suspense fallback={<div className="p-4 text-center">Učitavanje omiljenih proizvoda...</div>}>
       <OmiljeniContent />
     </Suspense>
   );

@@ -134,7 +134,7 @@ export default function MojePorudzbinePage() {
         <div className="text-center max-w-md">
           <FaUser className="mx-auto text-6xl text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold text-gray-700 mb-2">{t('must_login')}</h2>
-          <p className="text-gray-500 mb-6">Da biste videli svoje porudžbine, morate se prijaviti.</p>
+          <p className="text-gray-500 mb-6">{t('pregledajte_istoriju')}</p>
           <Link
             href="/auth/prijava"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
@@ -157,10 +157,10 @@ export default function MojePorudzbinePage() {
         <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
           <div className="flex items-center gap-3 mb-2">
             <FaClipboardList className="text-2xl text-blue-600" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Moje porudžbine</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">{t('moje_porudzbine')}</h1>
           </div>
           <p className="text-gray-600 text-sm sm:text-base">
-            Pregledajte istoriju vaših kupovina i status porudžbina
+            {t('pregledajte_istoriju')}
           </p>
         </div>
 
@@ -168,13 +168,13 @@ export default function MojePorudzbinePage() {
         {porudzbine.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
             <FaBox className="mx-auto text-6xl text-gray-300 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">Nemate porudžbine</h3>
-            <p className="text-gray-500 mb-6">Kada napravite prvu kupovinu, ovde će se prikazati vaše porudžbine.</p>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">{t('nemate_porudzbine')}</h3>
+            <p className="text-gray-500 mb-6">{t('prva_kupovina')}</p>
             <Link
               href="/proizvodi"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
             >
-              Počnite kupovinu
+              {t('pocnite_kupovinu')}
             </Link>
           </div>
         ) : (
@@ -190,7 +190,7 @@ export default function MojePorudzbinePage() {
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 sm:mb-2">
                         <h3 className="font-semibold text-gray-800">
-                          Porudžbina #{porudzbina.id.slice(-8)}
+                          {t('porudzbina')} #{porudzbina.id.slice(-8)}
                         </h3>
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(porudzbina.status)}`}>
                           {porudzbina.status}
@@ -208,7 +208,7 @@ export default function MojePorudzbinePage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <FaBox className="text-blue-600" />
-                          <span>{porudzbina.stavkePorudzbine?.length || 0} artikala</span>
+                          <span>{porudzbina.stavkePorudzbine?.length || 0} {t('artikala')}</span>
                         </div>
                       </div>
                     </div>
@@ -217,12 +217,12 @@ export default function MojePorudzbinePage() {
                       <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition font-medium">
                         {expandedOrder === porudzbina.id ? (
                           <>
-                            <span className="text-sm">Sakrij detalje</span>
+                            <span className="text-sm">{t('sakrij_detalje')}</span>
                             <FaChevronUp />
                           </>
                         ) : (
                           <>
-                            <span className="text-sm">Prikaži detalje</span>
+                              <span className="text-sm">{t('prikazi_detalje')}</span>
                             <FaChevronDown />
                           </>
                         )}
@@ -234,7 +234,7 @@ export default function MojePorudzbinePage() {
                 {/* Order Details - Expanded */}
                 {expandedOrder === porudzbina.id && (
                   <div className="border-t bg-gray-50 p-4 sm:p-6">
-                    <h4 className="font-semibold text-gray-800 mb-4">Stavke porudžbine:</h4>
+                    <h4 className="font-semibold text-gray-800 mb-4">{t('stavke_porudzbine')}:</h4>
 
                     {porudzbina.stavkePorudzbine && porudzbina.stavkePorudzbine.length > 0 ? (
                       <div className="space-y-3">
@@ -265,7 +265,7 @@ export default function MojePorudzbinePage() {
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                                   <div className="flex-1 min-w-0">
                                     <h5 className="font-medium text-gray-800 truncate">
-                                      {stavka.proizvod?.naziv || 'Naziv proizvoda'}
+                                      {stavka.proizvod?.naziv || t('naziv_proizvoda')}
                                     </h5>
                                     {stavka.opis && (
                                       <p className="text-sm text-gray-600 mt-1">{stavka.opis}</p>
@@ -287,13 +287,13 @@ export default function MojePorudzbinePage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-center py-4">Nema dostupnih stavki za ovu porudžbinu.</p>
+                        <p className="text-gray-500 text-center py-4">{t('nema_dostupnih_stavki')}</p>
                     )}
 
                     {/* Order Total */}
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-800">Ukupno:</span>
+                        <span className="text-lg font-semibold text-gray-800">{t('ukupno')}:</span>
                         <span className="text-xl font-bold text-blue-600">{porudzbina.ukupno.toFixed(2)} €</span>
                       </div>
                     </div>
@@ -317,11 +317,11 @@ export default function MojePorudzbinePage() {
                   : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
-                Prethodna
+                {t('prethodna')}
               </button>
 
               <span className="text-gray-600">
-                Stranica {page} od {Math.ceil(total / pageSize)}
+                {t('stranica')} {page} {t('od')} {Math.ceil(total / pageSize)}
               </span>
 
               <button
@@ -333,7 +333,7 @@ export default function MojePorudzbinePage() {
                   : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
-                Sledeća
+                {t('sledeca')}
               </button>
             </div>
           </div>

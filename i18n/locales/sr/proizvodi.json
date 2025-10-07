@@ -83,6 +83,10 @@
   "proizvod_uklonjen_iz_korpe": "Proizvod je uklonjen iz korpe.",
   "rezultati_pretrage_za": " Rezultati pretraživanja za: ",
   "Artikal je uklonjen iz omiljenih.": "Artikal je uklonjen iz omiljenih.",
-  "Artikal je dodat u omiljene.": "Artikal je dodat u omiljene."
+  "Artikal je dodat u omiljene.": "Artikal je dodat u omiljene.",
+  "greska": "Greška",
+  "neuspesno_uklanjanje": "Neuspešno uklanjanje",
+  "greska_uklanjanje_omiljeni": "Greška prilikom uklanjanja iz omiljenih.",
+  "ucitavanje_omiljenih": "Učitavanje omiljenih proizvoda..."
 
 }
