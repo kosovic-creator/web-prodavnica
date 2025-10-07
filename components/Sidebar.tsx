@@ -59,7 +59,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
   // User menu items
   const userMenuItems = React.useMemo(() => [
-    { path: '/', icon: FaHome, label: t('pocetna') },
+    // { path: '/', icon: FaHome, label: t('pocetna') },
     { path: '/proizvodi', icon: FaShoppingBag, label: t('proizvodi') },
     ...(session?.user ? [
       // { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine') },
