@@ -210,22 +210,6 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 </button>
               )}
 
-              {/* Login/Logout */}
-              {!session?.user ? (
-                <button
-                  onClick={() => navigateWithLang('/auth/prijava')}
-                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
-                >
-                  <FaSignInAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
-                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
-                >
-                  <FaSignOutAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              )}
 
               {/* User Profile Dropdown */}
               {session?.user && (
@@ -278,6 +262,23 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     </div>
                   )}
                 </div>
+              )}
+
+              {/* Login/Logout */}
+              {!session?.user ? (
+                <button
+                  onClick={() => navigateWithLang('/auth/prijava')}
+                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                >
+                  <FaSignInAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
+                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                >
+                  <FaSignOutAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
               )}
 
               {/* Language Dropdown - Hide in admin section */}
