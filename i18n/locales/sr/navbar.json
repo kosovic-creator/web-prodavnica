@@ -7,6 +7,9 @@
   "admin": "Admin",
   "cart": "Korpa",
   "search": "Pretraga",
-  "title": "WebTrgovina"
+  "title": "WebTrgovina",
+  "favorites": "Omiljeni",
+  "my_orders": "Moje porudžbine",
+  "about_us": "O nama"
 
 }

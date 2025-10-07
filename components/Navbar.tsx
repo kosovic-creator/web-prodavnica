@@ -260,7 +260,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                       >
                         <FaHistory className="text-violet-600" />
                         <span className="text-sm">
-                          {isMounted ? t('orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
+                          {isMounted ? t('my_orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
                         </span>
                       </button>
                        <button
