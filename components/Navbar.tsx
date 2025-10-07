@@ -211,59 +211,6 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               )}
 
 
-              {/* User Profile Dropdown */}
-              {session?.user && (
-                <div className="relative user-dropdown">
-                  <button
-                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
-                  >
-                    <FaUser className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-
-                  {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                      <button
-                        onClick={() => {
-                          navigateWithLang('/profil');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
-                      >
-                        <FaUser className="text-violet-600" />
-                        <span className="text-sm">
-                          {isMounted ? t('profile') : (currentLanguage === 'en' ? 'Profile' : 'Profil')}
-                        </span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          navigateWithLang('/moje-porudzbine');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
-                      >
-                        <FaHistory className="text-violet-600" />
-                        <span className="text-sm">
-                          {isMounted ? t('my_orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
-                        </span>
-                      </button>
-                       <button
-                        onClick={() => {
-                          navigateWithLang('/omiljeni');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
-                      >
-                        <FaHeart className="text-violet-600" />
-                        <span className="text-sm">
-                          {isMounted ? t('favorites') : (currentLanguage === 'en' ? 'Favorites' : 'Omiljeni')}
-                        </span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {/* Login/Logout */}
               {!session?.user ? (
                 <button
@@ -273,12 +220,71 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                   <FaSignInAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               ) : (
-                <button
-                  onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
-                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
-                >
-                  <FaSignOutAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
+                <>
+                    {/* User Profile Dropdown */}
+                    <div className="relative user-dropdown">
+                      <button
+                        onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                        className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                      >
+                        <FaUser className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
+
+                      {userDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                          <button
+                            onClick={() => {
+                              navigateWithLang('/profil');
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                          >
+                            <FaUser className="text-violet-600" />
+                            <span className="text-sm">
+                              {isMounted ? t('profile') : (currentLanguage === 'en' ? 'Profile' : 'Profil')}
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              navigateWithLang('/moje-porudzbine');
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                          >
+                            <FaHistory className="text-violet-600" />
+                            <span className="text-sm">
+                              {isMounted ? t('my_orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              navigateWithLang('/omiljeni');
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                          >
+                            <FaHeart className="text-violet-600" />
+                            <span className="text-sm">
+                              {isMounted ? t('favorites') : (currentLanguage === 'en' ? 'Favorites' : 'Omiljeni')}
+                            </span>
+                          </button>
+                          <hr className="my-1 border-gray-200" />
+                          <button
+                            onClick={() => {
+                              signOut({ callbackUrl: "/auth/prijava" });
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                          >
+                            <FaSignOutAlt className="text-violet-600" />
+                            <span className="text-sm">
+                              {isMounted ? t('logout') : (currentLanguage === 'en' ? 'Logout' : 'Odjava')}
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </>
               )}
 
               {/* Language Dropdown - Hide in admin section */}
