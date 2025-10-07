@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';

@@ -210,7 +210,13 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                   <FaSignOutAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               )}
-
+              <button
+                type="button"
+                className="text-violet-600 px-4 py-3 rounded-lg transition touch-manipulation"
+                onClick={() => router.push('/profil')}
+              >
+                <FaUser />
+              </button>
               {/* Language Dropdown - Hide in admin section */}
               {!pathname?.startsWith('/admin') && (
                 <div className="relative">
@@ -258,7 +264,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
             >
               <FaUsers className="text-violet-600" />
               <span className="hidden sm:inline">
-               Korisnici
+                Korisnici
               </span>
             </Link>
             <Link
@@ -273,7 +279,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
             >
               <FaShoppingCart className="text-violet-600" />
-             Porudžbine
+              Porudžbine
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
@@ -315,6 +321,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 </button>
               )}
             </div>
+
             <button
               type="submit"
               className="bg-violet-600 text-white px-4 py-3 rounded-lg hover:bg-violet-700 transition touch-manipulation"
