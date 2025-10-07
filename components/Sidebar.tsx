@@ -89,7 +89,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🛒</span>
-            <h2 className="font-bold text-violet-700 text-lg">
+            <h2 className="font-bold text-blue-700 text-lg">
               {isAdmin ? t('admin_panel') : t('menu')}
             </h2>
           </div>
@@ -104,9 +104,9 @@ function SidebarContent({ open, onClose }: SidebarProps) {
 
         {/* User Info */}
         {session?.user && (
-          <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-violet-50 to-purple-50 flex-shrink-0">
+          <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-violet-600 text-white rounded-full flex items-center justify-center font-bold">
+              <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
                 {session.user.ime?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="min-w-0 flex-1">
@@ -140,12 +140,12 @@ function SidebarContent({ open, onClose }: SidebarProps) {
                     className={`
                       w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200
                       ${active
-                        ? 'bg-violet-100 text-violet-700 border-r-4 border-violet-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-violet-600'
+                        ? 'bg-blue-100 text-blue-700 border-r-4 border-blue-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
                       }
                     `}
                   >
-                    <Icon className={`w-4 h-4 ${active ? 'text-violet-600' : 'text-gray-500'}`} />
+                    <Icon className={`w-4 h-4 ${active ? 'text-blue-600' : 'text-gray-500'}`} />
                     <span className="font-medium text-sm truncate">{item.label}</span>
                   </button>
                 </li>

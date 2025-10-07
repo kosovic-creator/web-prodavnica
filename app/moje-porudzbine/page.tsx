@@ -137,7 +137,7 @@ export default function MojePorudzbinePage() {
           <p className="text-gray-500 mb-6">Da biste videli svoje porudžbine, morate se prijaviti.</p>
           <Link
             href="/auth/prijava"
-            className="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition font-medium"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
           >
             {t('login')}
           </Link>
@@ -156,7 +156,7 @@ export default function MojePorudzbinePage() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <FaClipboardList className="text-2xl text-violet-600" />
+            <FaClipboardList className="text-2xl text-blue-600" />
             <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Moje porudžbine</h1>
           </div>
           <p className="text-gray-600 text-sm sm:text-base">
@@ -172,7 +172,7 @@ export default function MojePorudzbinePage() {
             <p className="text-gray-500 mb-6">Kada napravite prvu kupovinu, ovde će se prikazati vaše porudžbine.</p>
             <Link
               href="/proizvodi"
-              className="inline-block bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition font-medium"
+              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
             >
               Počnite kupovinu
             </Link>
@@ -199,22 +199,22 @@ export default function MojePorudzbinePage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
-                          <FaCalendarAlt className="text-violet-600" />
+                          <FaCalendarAlt className="text-blue-600" />
                           <span>{formatDate(porudzbina.kreiran)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <FaEuroSign className="text-violet-600" />
+                          <FaEuroSign className="text-blue-600" />
                           <span className="font-semibold">{porudzbina.ukupno.toFixed(2)} €</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <FaBox className="text-violet-600" />
+                          <FaBox className="text-blue-600" />
                           <span>{porudzbina.stavkePorudzbine?.length || 0} artikala</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end">
-                      <button className="flex items-center gap-2 text-violet-600 hover:text-violet-700 transition font-medium">
+                      <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition font-medium">
                         {expandedOrder === porudzbina.id ? (
                           <>
                             <span className="text-sm">Sakrij detalje</span>
@@ -294,7 +294,7 @@ export default function MojePorudzbinePage() {
                     <div className="mt-4 pt-4 border-t border-gray-200">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-semibold text-gray-800">Ukupno:</span>
-                        <span className="text-xl font-bold text-violet-600">{porudzbina.ukupno.toFixed(2)} €</span>
+                        <span className="text-xl font-bold text-blue-600">{porudzbina.ukupno.toFixed(2)} €</span>
                       </div>
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default function MojePorudzbinePage() {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   page === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-violet-600 text-white hover:bg-violet-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
                 Prethodna
@@ -330,7 +330,7 @@ export default function MojePorudzbinePage() {
                 className={`px-4 py-2 rounded-lg font-medium transition ${
                   page >= Math.ceil(total / pageSize)
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-violet-600 text-white hover:bg-violet-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
                 Sledeća

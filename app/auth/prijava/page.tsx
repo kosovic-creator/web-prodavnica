@@ -67,12 +67,12 @@ export default function PrijavaForm() {
     <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
-          <FaSignInAlt className="text-violet-600" />
+          <FaSignInAlt className="text-blue-600" />
           {t('login.title')}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
-            <FaEnvelope className="text-violet-600 text-lg flex-shrink-0" />
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+            <FaEnvelope className="text-blue-600 text-lg flex-shrink-0" />
             <input
               type="email"
               placeholder={t('login.email')}
@@ -83,8 +83,8 @@ export default function PrijavaForm() {
               required
             />
           </div>
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 transition-all">
-            <FaLock className="text-violet-600 text-lg flex-shrink-0" />
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+            <FaLock className="text-blue-600 text-lg flex-shrink-0" />
             <input
               type="password"
               placeholder={t('login.password')}
@@ -98,7 +98,7 @@ export default function PrijavaForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
           >
             {loading ? <FaSpinner className="animate-spin" /> : <FaSignInAlt />}
             {loading ? t('login.loggingIn') : t('login.login')}
@@ -141,7 +141,7 @@ export default function PrijavaForm() {
             <button
               onClick={() => router.push('/auth/registracija')}
               disabled={loading}
-              className="text-violet-600 hover:text-violet-800 font-medium underline transition-colors disabled:opacity-50"
+              className="text-blue-600 hover:text-blue-800 font-medium underline transition-colors disabled:opacity-50"
             >
               {t('login.registerHere')}
             </button>

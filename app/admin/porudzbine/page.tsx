@@ -61,7 +61,7 @@ const PorudzbinePage = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
         );
     }
@@ -77,7 +77,7 @@ const PorudzbinePage = () => {
                           <p className="text-gray-600 mt-1">Pregled i upravljanje svim porudžbinama</p>
                       </div>
                       <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                               Ukupno: {porudzbine.length}
                           </span>
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
@@ -199,7 +199,7 @@ const PorudzbinePage = () => {
                                           {formatDate(porudzbina.kreiran?.toString() || '')}
                                       </td>
                                       {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                          <button className="text-violet-600 hover:text-violet-900 mr-3">
+                                          <button className="text-blue-600 hover:text-blue-900 mr-3">
                                               Detalji
                                           </button>
                                           <button className="text-indigo-600 hover:text-indigo-900">

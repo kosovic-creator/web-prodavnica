@@ -61,7 +61,7 @@ const KorisniciPage = () => {
     if (loading) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     );
 }
@@ -76,7 +76,7 @@ const KorisniciPage = () => {
                             <p className="text-gray-600 mt-1">Pregled i upravljanje registrovanim korisnicima</p>
                         </div>
                         <div className="mt-4 sm:mt-0">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-800">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                 Ukupno: {korisnici.length}
                             </span>
                         </div>
@@ -118,7 +118,7 @@ const KorisniciPage = () => {
                                       <td className="px-6 py-4 whitespace-nowrap">
                                           <div className="flex items-center">
                                               <div className="flex-shrink-0 h-10 w-10">
-                                                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-violet-400 to-purple-600 flex items-center justify-center">
+                                                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-600 flex items-center justify-center">
                                                       <span className="text-sm font-medium text-white">
                                                           {korisnik.ime ? korisnik.ime.charAt(0).toUpperCase() : 'N'}
                                                       </span>

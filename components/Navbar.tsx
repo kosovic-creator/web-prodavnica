@@ -142,7 +142,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg hover:bg-red-50 transition touch-manipulation min-w-0"
               >
                 <span className="text-xl sm:text-2xl">🛒</span>
-                <span className="font-bold text-violet-700 text-sm sm:text-base truncate">
+                <span className="font-bold text-blue-700 text-sm sm:text-base truncate">
                   <span className="hidden xs:inline">
                     {isMounted ? t('title') : (currentLanguage === 'en' ? 'WebShop' : 'WebTrgovina')}
                   </span>
@@ -160,9 +160,9 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     value={localSearch}
                     onChange={(e) => setLocalSearch(e.target.value)}
                     placeholder={isMounted ? t('search') + '...' : (currentLanguage === 'en' ? 'Search...' : 'Pretraga...')}
-                    className="border border-violet-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-violet-400 w-full text-base"
+                    className="border border-blue-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
                   />
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-violet-400" />
+                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
                   {localSearch && (
                     <button
                       type="button"
@@ -170,7 +170,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                         setLocalSearch('');
                         setSearchTerm('');
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-violet-600 p-1"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 p-1"
                     >
                       <FaTimes />
                     </button>
@@ -178,7 +178,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 </div>
                 <button
                   type="submit"
-                  className="bg-violet-600 text-white px-4 py-3 rounded-lg hover:bg-violet-700 transition touch-manipulation"
+                  className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition touch-manipulation"
                 >
                   <FaSearch />
                 </button>
@@ -190,18 +190,18 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               {/* Mobile Search Toggle */}
               <button
                 onClick={() => setShowMobileSearch(!showMobileSearch)}
-                className="lg:hidden p-2 sm:p-3 focus:outline-none rounded-lg hover:bg-violet-50 transition touch-manipulation"
+                className="lg:hidden p-2 sm:p-3 focus:outline-none rounded-lg hover:bg-blue-50 transition touch-manipulation"
               >
-                <FaSearch className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                <FaSearch className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
               {/* Korpa */}
               {session?.user && (
                 <button
                   onClick={() => navigateWithLang('/korpa')}
-                  className="relative flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                  className="relative flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-blue-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
                 >
-                  <FaShoppingCart className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaShoppingCart className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
                   {brojUKorpi > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full px-1.5 py-0.5 text-xs min-w-[18px] text-center leading-none">
                       {brojUKorpi > 99 ? '99+' : brojUKorpi}
@@ -215,9 +215,9 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
               {!session?.user ? (
                 <button
                   onClick={() => navigateWithLang('/auth/prijava')}
-                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                  className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-blue-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
                 >
-                  <FaSignInAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                  <FaSignInAlt className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               ) : (
                 <>
@@ -225,9 +225,9 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     <div className="relative user-dropdown">
                       <button
                         onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                        className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                        className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-blue-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
                       >
-                        <FaUser className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                        <FaUser className="text-blue-600 w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
 
                       {userDropdownOpen && (
@@ -239,7 +239,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
                           >
-                            <FaUser className="text-violet-600" />
+                            <FaUser className="text-blue-600" />
                             <span className="text-sm">
                               {isMounted ? t('profile') : (currentLanguage === 'en' ? 'Profile' : 'Profil')}
                             </span>
@@ -251,7 +251,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
                           >
-                            <FaHistory className="text-violet-600" />
+                            <FaHistory className="text-blue-600" />
                             <span className="text-sm">
                               {isMounted ? t('my_orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
                             </span>
@@ -263,7 +263,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
                           >
-                            <FaHeart className="text-violet-600" />
+                            <FaHeart className="text-blue-600" />
                             <span className="text-sm">
                               {isMounted ? t('favorites') : (currentLanguage === 'en' ? 'Favorites' : 'Omiljeni')}
                             </span>
@@ -276,7 +276,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
                           >
-                            <FaSignOutAlt className="text-violet-600" />
+                            <FaSignOutAlt className="text-blue-600" />
                             <span className="text-sm">
                               {isMounted ? t('logout') : (currentLanguage === 'en' ? 'Logout' : 'Odjava')}
                             </span>
@@ -303,7 +303,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     <div className="absolute right-0 mt-2 w-36 sm:w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                       <button
                         onClick={() => changeLanguage('sr')}
-                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'sr' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
+                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'sr' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                           }`}
                       >
                         <span className="text-lg sm:text-xl">🇲🇪</span>
@@ -311,7 +311,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                       </button>
                       <button
                         onClick={() => changeLanguage('en')}
-                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'en' ? 'bg-violet-50 text-violet-700' : 'text-gray-700'
+                        className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation ${currentLanguage === 'en' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                           }`}
                       >
                         <span className="text-lg sm:text-xl">🇬🇧</span>
@@ -330,32 +330,32 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
           <div className="flex items-center gap-2 ml-auto">
             <Link
               href="/admin/korisnici"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 transition touch-manipulation"
             >
-              <FaUsers className="text-violet-600" />
+              <FaUsers className="text-blue-600" />
               <span className="hidden sm:inline">
                 Korisnici
               </span>
             </Link>
             <Link
               href="/admin/proizvodi"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 transition touch-manipulation"
             >
-              <FaBox className="text-violet-600" />
+              <FaBox className="text-blue-600" />
               Artikli
             </Link>
             <Link
               href="/admin/porudzbine"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 transition touch-manipulation"
             >
-              <FaShoppingCart className="text-violet-600" />
+              <FaShoppingCart className="text-blue-600" />
               Porudžbine
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/auth/prijava" })}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-violet-50 transition touch-manipulation"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-50 transition touch-manipulation"
             >
-              <FaSignOutAlt className="text-violet-600" />
+              <FaSignOutAlt className="text-blue-600" />
               <span className="hidden sm:inline">
                 {isMounted ? t('logout') : (currentLanguage === 'en' ? 'Logout' : 'Odjava')}
               </span>
@@ -374,10 +374,10 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Pretraži proizvode..."
-                className="border border-violet-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-violet-400 w-full text-base"
+                className="border border-blue-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
                 autoFocus
               />
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-violet-400" />
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
               {localSearch && (
                 <button
                   type="button"
@@ -385,7 +385,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     setLocalSearch('');
                     setSearchTerm('');
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-violet-600 p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 p-1"
                 >
                   <FaTimes />
                 </button>
@@ -394,7 +394,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
 
             <button
               type="submit"
-              className="bg-violet-600 text-white px-4 py-3 rounded-lg hover:bg-violet-700 transition touch-manipulation"
+              className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition touch-manipulation"
             >
               <FaSearch />
             </button>

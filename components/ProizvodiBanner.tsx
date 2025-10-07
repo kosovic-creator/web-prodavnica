@@ -78,10 +78,10 @@ function ProizvodiBannerContent() {
 
   if (error || proizvodi.length === 0) {
     return (
-      <div className="w-full h-80 bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center mb-8">
+      <div className="w-full h-80 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-8">
         <div className="text-white text-center">
           <h2 className="text-2xl font-bold mb-2">{t('dobrodosli_trgovina')}</h2>
-          <p className="text-violet-100">{t('pronađite_proizvode')}</p>
+          <p className="text-blue-100">{t('pronađite_proizvode')}</p>
         </div>
       </div>
     );
@@ -141,10 +141,10 @@ function ProizvodiBannerContent() {
           )}
         </>
       ) : (
-        <div className="w-full h-full bg-gradient-to-r from-violet-500 to-purple-600 flex items-center justify-center">
+        <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
           <div className="text-white text-center">
             <h3 className="text-2xl font-bold mb-2">{currentProizvod?.naziv}</h3>
-            <p className="text-xl font-semibold text-violet-200">{currentProizvod?.cena} €</p>
+            <p className="text-xl font-semibold text-blue-200">{currentProizvod?.cena} €</p>
           </div>
           </div>
       )}

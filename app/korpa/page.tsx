@@ -178,7 +178,7 @@ export default function KorpaPage() {
   if (!session?.user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="text-gray-600">{t('preusmjeravanje') || "Preusmjeravamo vas na stranicu za prijavu..."}</p>
       </div>
     );
@@ -195,7 +195,7 @@ export default function KorpaPage() {
         </p>
         <button
           onClick={() => router.push('/proizvodi')}
-          className="bg-violet-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <FaShoppingCart />
           {t('nastavi_kupovinu') || 'Nastavite kupovinu'}
@@ -211,13 +211,13 @@ export default function KorpaPage() {
         <div className="flex-1 cart-mobile-container">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-              <FaShoppingCart className="text-violet-600" />
+              <FaShoppingCart className="text-blue-600" />
               {t('naslov')}
             </h1>
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="p-2 text-violet-600 hover:bg-violet-50 rounded-full transition-colors disabled:opacity-50"
+              className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors disabled:opacity-50"
               aria-label="Refresh cart"
             >
               <div className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`}>
@@ -230,7 +230,7 @@ export default function KorpaPage() {
 
           {/* Desktop Table View */}
           <div className="hidden md:block bg-white rounded shadow p-4 mb-4">
-            <table className="w-full mb-2 border border-violet-200 rounded-lg shadow-md text-sm">
+            <table className="w-full mb-2 border border-blue-200 rounded-lg shadow-md text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="px-4 lg:px-8 py-3 text-left align-middle">{t('proizvod')}</th>
@@ -290,7 +290,7 @@ export default function KorpaPage() {
               return (
                 <div
                   key={s.id}
-                  className="bg-white rounded-lg shadow-md border border-violet-200 cart-card"
+                  className="bg-white rounded-lg shadow-md border border-blue-200 cart-card"
                 >
                   <div className="p-4">
                     <div className="flex items-start gap-3">
@@ -315,7 +315,7 @@ export default function KorpaPage() {
                         </h3>
 
                         {/* Price */}
-                        <div className="text-lg font-bold text-violet-600 mb-3">
+                        <div className="text-lg font-bold text-blue-600 mb-3">
                           {s.proizvod ? (s.proizvod.cena * s.kolicina).toFixed(2) : '0.00'} EUR
                         </div>
 
@@ -367,12 +367,12 @@ export default function KorpaPage() {
           <div className="lg:hidden cart-fixed-bottom p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <FaShoppingCart className="text-violet-600" />
+                <FaShoppingCart className="text-blue-600" />
                 <span className="font-semibold">
                   {stavke.reduce((acc, s) => acc + s.kolicina, 0)} {t('kolicina')}
                 </span>
               </div>
-              <div className="text-xl font-bold text-violet-600">
+              <div className="text-xl font-bold text-blue-600">
                 {stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0).toFixed(2)} EUR
               </div>
             </div>
@@ -404,7 +404,7 @@ export default function KorpaPage() {
           {/* Desktop: Regular sidebar */}
           <div className="hidden lg:block bg-white rounded-lg shadow-md p-6 sticky top-4">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <FaShoppingCart className="text-violet-600" />
+              <FaShoppingCart className="text-blue-600" />
               {t('naslov')}
             </h2>
             <div className="space-y-3 mb-6">
@@ -423,7 +423,7 @@ export default function KorpaPage() {
               <hr className="border-gray-200" />
               <div className="flex justify-between font-bold text-lg">
                 <span>{t('ukupno')}:</span>
-                <span className="text-violet-600">{stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0).toFixed(2)} EUR</span>
+                <span className="text-blue-600">{stavke.reduce((acc, s) => acc + (s.proizvod ? s.proizvod.cena * s.kolicina : 0), 0).toFixed(2)} EUR</span>
               </div>
             </div>
 

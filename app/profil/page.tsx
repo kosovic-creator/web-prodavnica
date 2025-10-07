@@ -203,7 +203,7 @@ export default function ProfilPage() {
 
         <Toaster position="top-right" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2 text-center justify-center">
-          <FaUser className="text-violet-600" />
+          <FaUser className="text-blue-600" />
           {t('title')}
         </h1>
 
@@ -216,14 +216,14 @@ export default function ProfilPage() {
                   value={form.ime}
                   onChange={handleChange}
                   placeholder={t('name')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
                 <input
                   name="prezime"
                   value={form.prezime}
                   onChange={handleChange}
                   placeholder={t('surname')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
               </div>
               <input
@@ -231,14 +231,14 @@ export default function ProfilPage() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder={t('email')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
               />
               <input
                 name="telefon"
                 value={form.telefon}
                 onChange={handleChange}
                 placeholder={t('phone')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -246,14 +246,14 @@ export default function ProfilPage() {
                   value={form.drzava}
                   onChange={handleChange}
                   placeholder={t('country')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
                 <input
                   name="grad"
                   value={form.grad}
                   onChange={handleChange}
                   placeholder={t('city')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -262,14 +262,14 @@ export default function ProfilPage() {
                   value={form.postanskiBroj}
                   onChange={handleChange}
                   placeholder={t('postal_code')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
                 <input
                   name="adresa"
                   value={form.adresa}
                   onChange={handleChange}
                   placeholder={t('address')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
                 />
               </div>
               <input
@@ -277,12 +277,12 @@ export default function ProfilPage() {
                 value={form.slika}
                 onChange={handleChange}
                 placeholder={t('profile_image')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
               />
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium"
+                  className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-base font-medium"
                   disabled={loading}
                 >
                   <FaSave />
@@ -304,7 +304,7 @@ export default function ProfilPage() {
             <div className="space-y-4">
               {/* {form.slika && (
                 <div className="flex justify-center mb-6">
-                  <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-violet-200" />
+                  <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-blue-200" />
                 </div>
               )} */}
 
@@ -353,7 +353,7 @@ export default function ProfilPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
-                <button className="flex-1 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>
+                  <button className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={() => setEditMode(true)}>
                   <FaEdit />
                   {t('izmjeni_profil')}
                 </button>

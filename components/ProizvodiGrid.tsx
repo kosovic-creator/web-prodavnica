@@ -136,7 +136,7 @@ function ProizvodiGrid() {
                   />
                 </div>
               ) : (
-                <div className="w-24 h-24 bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
                   <span className="text-4xl">
                     {proizvod.kategorija === 'bicikla' ? '🚴' :
                       proizvod.kategorija === 'patike' ? '👟' : '📦'}
@@ -167,7 +167,7 @@ function ProizvodiGrid() {
             {/* Kategorija */}
             {proizvod.kategorija && (
               <p className="text-center mb-4">
-                <span className="inline-block bg-violet-100 text-violet-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                   {t('kategorija')}: {proizvod.kategorija}
                 </span>
               </p>
@@ -175,7 +175,7 @@ function ProizvodiGrid() {
 
             {/* Cijena */}
             <p className="text-center mb-4">
-              <span className="text-2xl font-bold text-violet-600">
+              <span className="text-2xl font-bold text-blue-600">
                 {proizvod.cena} €
               </span>
             </p>
@@ -200,14 +200,14 @@ function ProizvodiGrid() {
             <div className="flex gap-2">
               <Link
                 href={`/proizvodi/${proizvod.id}`}
-                className="flex-1 bg-violet-600 text-white py-2 px-4 rounded-lg hover:bg-violet-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 <FaEye />
                 {t('detalji')}
               </Link>
 
               <button
-                className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={e => { e.stopPropagation(); handleDodajUKorpu(proizvod); }}
                 disabled={proizvod.kolicina === 0 || addingToCart === proizvod.id}
               >

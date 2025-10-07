@@ -100,7 +100,7 @@ const ProizvodPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -116,7 +116,7 @@ const ProizvodPage = () => {
               <p className="text-gray-600 mt-1">Pregled i upravljanje inventarom proizvoda</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 cursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
                 <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -197,7 +197,7 @@ const ProizvodPage = () => {
                 id="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Unesite naziv ili opis proizvoda..."
               />
             </div>
@@ -209,7 +209,7 @@ const ProizvodPage = () => {
                 id="category"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Sve kategorije</option>
                 {categories.map(category => (
@@ -307,7 +307,7 @@ const ProizvodPage = () => {
                         {formatDate(proizvod.kreiran.toString())}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-violet-600 hover:text-violet-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
+                        <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni
                         </button>
                         <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleProizvodDelete(proizvod.id)}>

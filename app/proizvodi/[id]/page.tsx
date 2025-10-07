@@ -82,7 +82,7 @@ export default function ProizvodPage() {
         {/* Dugme za nazad */}
         <button
           onClick={handleNazad}
-          className="flex items-center gap-2 mb-6 text-violet-600 hover:text-violet-700 transition"
+          className="flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-700 transition"
         >
           <FaArrowLeft />
           {t('nazad') || 'Nazad na proizvode'}
@@ -116,7 +116,7 @@ export default function ProizvodPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{proizvod.naziv}</h1>
 
               <div className="mb-6">
-                <div className="text-3xl font-bold text-violet-700 mb-2">{proizvod.cena} €</div>
+                <div className="text-3xl font-bold text-blue-700 mb-2">{proizvod.cena} €</div>
                 <div className={`text-sm font-semibold ${proizvod.kolicina === 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {proizvod.kolicina === 0 ? t('nema_na_zalihama') : `${t('kolicina')}: ${proizvod.kolicina}`}
                 </div>
@@ -145,7 +145,7 @@ export default function ProizvodPage() {
               <button
                 className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition ${proizvod.kolicina === 0
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-violet-600 text-white hover:bg-violet-700 shadow-md hover:shadow-lg'
+                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg'
                   }`}
                 onClick={() => handleDodajUKorpu(proizvod)}
                 disabled={proizvod.kolicina === 0}

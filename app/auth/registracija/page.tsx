@@ -56,18 +56,18 @@ export default function RegistracijaPage() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <Toaster position="top-right" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
-          <FaUserPlus className="text-violet-600" />
+          <FaUserPlus className="text-blue-600" />
           {t('register.title')}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-            <FaEnvelope className="text-violet-600 text-lg flex-shrink-0" />
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+            <FaEnvelope className="text-blue-600 text-lg flex-shrink-0" />
           <input
               id="email"
               name="email"
               type="email"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder={t('register.email')}
@@ -75,27 +75,27 @@ export default function RegistracijaPage() {
         </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaUser className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaUser className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 id="name"
                 name="name"
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
                 value={ime}
                 onChange={e => setIme(e.target.value)}
                 placeholder={t('register.name')}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaUser className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaUser className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 id="surname"
                 name="surname"
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
                 value={prezime}
                 onChange={e => setPrezime(e.target.value)}
                 placeholder={t('register.surname')}
@@ -103,8 +103,8 @@ export default function RegistracijaPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-            <FaPhone className="text-violet-600 text-lg flex-shrink-0" />
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+            <FaPhone className="text-blue-600 text-lg flex-shrink-0" />
           <input
             type="text"
               placeholder={t('register.phone')}
@@ -115,8 +115,8 @@ export default function RegistracijaPage() {
         </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaGlobe className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaGlobe className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 type="text"
                 placeholder={t('register.country')}
@@ -125,8 +125,8 @@ export default function RegistracijaPage() {
                 onChange={e => setDrzava(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaCity className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaCity className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 type="text"
                 placeholder={t('register.city')}
@@ -138,8 +138,8 @@ export default function RegistracijaPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaHashtag className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaHashtag className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 type="number"
                 placeholder={t('register.postal_code')}
@@ -148,8 +148,8 @@ export default function RegistracijaPage() {
                 onChange={e => setPostanskiBroj(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-              <FaMapMarkerAlt className="text-violet-600 text-lg flex-shrink-0" />
+            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+              <FaMapMarkerAlt className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 type="text"
                 placeholder={t('register.address')}
@@ -160,21 +160,21 @@ export default function RegistracijaPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-violet-400 transition-colors">
-            <FaLock className="text-violet-600 text-lg flex-shrink-0" />
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+            <FaLock className="text-blue-600 text-lg flex-shrink-0" />
           <input
               id="password"
               name="password"
               type="password"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-violet-400 hover:border-violet-400 transition-colors !focus:ring-0 !ring-0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
               value={lozinka}
               onChange={e => setLozinka(e.target.value)}
               placeholder={t('register.password')}
             />
         </div>
 
-          <button type="submit" className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-violet-700 transition-colors text-base font-medium">
+          <button type="submit" className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors text-base font-medium">
           <FaUserPlus />
             {t('register.register')}
         </button>
@@ -186,7 +186,7 @@ export default function RegistracijaPage() {
             {t('register.have_account')}{' '}
             <button
               onClick={() => router.push('/auth/prijava')}
-              className="text-violet-600 hover:text-violet-800 font-medium underline transition-colors"
+              className="text-blue-600 hover:text-blue-800 font-medium underline transition-colors"
             >
               {t('login.login')}
             </button>

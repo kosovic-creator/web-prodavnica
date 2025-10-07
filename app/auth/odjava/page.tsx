@@ -8,7 +8,7 @@ export default function OdjavaPage() {
     signOut({ callbackUrl: "/auth/prijava" });
   }, []);
   return (
-    <div className="flex items-center justify-center h-32 gap-2 text-violet-700 font-semibold">
+    <div className="flex items-center justify-center h-32 gap-2 text-blue-700 font-semibold">
       <FaSignOutAlt className="text-2xl" />
       <span>Odjavljujem...</span>
     </div>

@@ -107,14 +107,14 @@ function ProizvodiContent() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Toaster position="top-center" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
-          <FaBoxOpen className="text-violet-600" />
+          <FaBoxOpen className="text-blue-600" />
           {t('artikli')}
         </h1>
 
         {/* Prikaži search info samo ako nije loading */}
         {!loading && searchTerm && (
-          <div className="mb-6 p-4 bg-violet-100 border-l-4 border-violet-500 rounded-lg">
-            <p className="text-violet-700 text-sm md:text-base">
+          <div className="mb-6 p-4 bg-blue-100 border-l-4 border-blue-500 rounded-lg">
+            <p className="text-blue-700 text-sm md:text-base">
               {t("rezultati_pretrage_za")}: <strong>&quot;{searchTerm}&quot;</strong>
               <span className="ml-2 text-xs md:text-sm">({filteredProizvodi.length} {t("artikli")})</span>
             </p>
@@ -155,7 +155,7 @@ function ProizvodiContent() {
                             <span className="text-gray-500">{t('kategorija')}: {p.kategorija}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <div className="text-xl font-bold text-violet-700">{p.cena} €</div>
+                                  <div className="text-xl font-bold text-blue-700">{p.cena} €</div>
                             <div className={`text-xs font-medium px-2 py-1 rounded ${p.kolicina === 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
                                 {t('kolicina')}: {p.kolicina}
                             </div>
@@ -171,7 +171,7 @@ function ProizvodiContent() {
                   </Link>
 
                   <button
-                    className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={e => { e.stopPropagation(); handleDodajUKorpu(p); }}
                                   disabled={p.kolicina === 0 || addingToCart === p.id}
                   >
@@ -202,7 +202,7 @@ function ProizvodiContent() {
                 onClick={() => setPage(page - 1)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${page === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-violet-600 text-white hover:bg-violet-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
                 {t('prethodna')}
@@ -216,7 +216,7 @@ function ProizvodiContent() {
                 onClick={() => setPage(page + 1)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${page >= Math.ceil(total / pageSize)
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-violet-600 text-white hover:bg-violet-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
                 {t('sljedeca')}

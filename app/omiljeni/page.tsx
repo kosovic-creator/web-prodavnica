@@ -144,7 +144,7 @@ function OmiljeniContent() {
                   <span className="text-gray-500">{t('kategorija')}: {o.proizvod.prevodi[0]?.kategorija}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-xl font-bold text-violet-700">{o.proizvod.cena} €</div>
+                  <div className="text-xl font-bold text-blue-700">{o.proizvod.cena} €</div>
                   <div className={`text-xs font-medium px-2 py-1 rounded ${o.proizvod.kolicina === 0 ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
                     {t('kolicina')}: {o.proizvod.kolicina}
                   </div>
@@ -158,7 +158,7 @@ function OmiljeniContent() {
                     {t('detalji')}
                   </Link>
                   <button
-                    className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white px-3 py-2 rounded-lg hover:bg-violet-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={e => { e.stopPropagation(); handleDodajUKorpu(o); }}
                     disabled={o.proizvod.kolicina === 0}
                   >

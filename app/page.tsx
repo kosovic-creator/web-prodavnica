@@ -102,8 +102,8 @@ function HomeContent() {
     <>
       {session?.user?.uloga === 'admin' ? (
         <div className="p-8">
-          <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-violet-700">
-            <FaUserShield className="text-violet-600" />
+          <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-blue-700">
+            <FaUserShield className="text-blue-600" />
             {adminPanelText}
           </h1>
           <AdminHome />
