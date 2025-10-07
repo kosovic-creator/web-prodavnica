@@ -2,7 +2,7 @@
 'use client';
 import { useSession, signOut } from "next-auth/react";
 import React, { useEffect, useState, Suspense } from "react";
-import { FaShoppingCart, FaHome, FaUser, FaSignInAlt, FaSignOutAlt, FaUserShield, FaChevronDown, FaSearch, FaTimes, FaBars, FaUsers, FaBox } from "react-icons/fa";
+import { FaShoppingCart, FaHome, FaUser, FaSignInAlt, FaSignOutAlt, FaUserShield, FaChevronDown, FaSearch, FaTimes, FaBars, FaUsers, FaBox, FaHistory, FaHeart } from "react-icons/fa";
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n/config';
 import { useKorpa } from "@/components/KorpaContext";
@@ -25,6 +25,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams(); // Sada je u Suspense boundary
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('sr');
   const [localSearch, setLocalSearch] = useState('');
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -63,6 +64,22 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
     return () => window.removeEventListener('korpaChanged', handler);
   }, [setBrojStavki]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (languageDropdownOpen && !target.closest('.language-dropdown')) {
+        setLanguageDropdownOpen(false);
+      }
+      if (userDropdownOpen && !target.closest('.user-dropdown')) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [languageDropdownOpen, userDropdownOpen]);
+
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
     setCurrentLanguage(lang);
@@ -79,8 +96,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
 
   const navigateWithLang = (path: string) => {
     try {
-      const currentLang = searchParams?.get('lang') || 'sr';
-      router.push(`${path}?lang=${currentLang}`);
+      router.push(`${path}?lang=${currentLanguage}`);
     } catch (error) {
       router.push(`${path}?lang=sr`);
     }
@@ -210,16 +226,63 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                   <FaSignOutAlt className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               )}
-              <button
-                type="button"
-                className="text-violet-600 px-4 py-3 rounded-lg transition touch-manipulation"
-                onClick={() => router.push('/profil')}
-              >
-                <FaUser />
-              </button>
+
+              {/* User Profile Dropdown */}
+              {session?.user && (
+                <div className="relative user-dropdown">
+                  <button
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center justify-center p-2 sm:p-3 rounded-lg hover:bg-violet-50 transition touch-manipulation min-w-[44px] min-h-[44px]"
+                  >
+                    <FaUser className="text-violet-600 w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                      <button
+                        onClick={() => {
+                          navigateWithLang('/profil');
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                      >
+                        <FaUser className="text-violet-600" />
+                        <span className="text-sm">
+                          {isMounted ? t('profile') : (currentLanguage === 'en' ? 'Profile' : 'Profil')}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigateWithLang('/moje-porudzbine');
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                      >
+                        <FaHistory className="text-violet-600" />
+                        <span className="text-sm">
+                          {isMounted ? t('orders') : (currentLanguage === 'en' ? 'My Orders' : 'Moje porudžbine')}
+                        </span>
+                      </button>
+                       <button
+                        onClick={() => {
+                          navigateWithLang('/omiljeni');
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors touch-manipulation text-gray-700"
+                      >
+                        <FaHeart className="text-violet-600" />
+                        <span className="text-sm">
+                          {isMounted ? t('favorites') : (currentLanguage === 'en' ? 'Favorites' : 'Omiljeni')}
+                        </span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Language Dropdown - Hide in admin section */}
               {!pathname?.startsWith('/admin') && (
-                <div className="relative">
+                <div className="relative language-dropdown">
                   <button
                     onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
                     className="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none touch-manipulation min-w-[44px] min-h-[44px]"

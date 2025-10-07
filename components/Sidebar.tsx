@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle, FaHeart, FaHistory, FaShoppingCart } from 'react-icons/fa';
+import { FaBoxOpen, FaUser, FaTimes, FaHome, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
 import i18n from '@/i18n/config';
 import '@/i18n/config';
@@ -62,9 +62,9 @@ function SidebarContent({ open, onClose }: SidebarProps) {
     { path: '/', icon: FaHome, label: t('pocetna') },
     { path: '/proizvodi', icon: FaShoppingBag, label: t('proizvodi') },
     ...(session?.user ? [
-      { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine') },
-      { path: '/korpa', icon: FaShoppingCart, label: t('korpa') },
-      { path: '/omiljeni', icon: FaHeart, label: t('omiljeni') },
+      // { path: '/moje-porudzbine', icon: FaHistory, label: t('moje_narudzbine') },
+      // { path: '/korpa', icon: FaShoppingCart, label: t('korpa') },
+      // { path: '/omiljeni', icon: FaHeart, label: t('omiljeni') },
       //  { path: '/profil', icon: FaUser, label: t('profile') },
     ] : []),
 
