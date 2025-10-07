@@ -16,5 +16,11 @@
   "nastavi_kupovinu": "Continue shopping",
   "dostava": "Delivery",
   "zavrsi_kupovinu": "Finish shopping",
-  "ucitavanje": "Loading cart..."
+  "ucitavanje": "Loading cart...",
+  "prazna_korpa": "Your cart is empty",
+  "nema_proizvoda": "You currently have no products in your cart. Add something from our selection!",
+  "preusmjeravanje": "Redirecting you to the login page...",
+  "artikal_izbrisan": "Item successfully removed",
+  "error": "An error occurred. Please try again.",
+  "must_login": "You must be logged in to view the cart."
 }

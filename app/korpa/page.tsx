@@ -1,6 +1,6 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import { FaUser } from "react-icons/fa";
+
 import React, { useState, useEffect } from 'react';
 import { StavkaKorpe } from '../../types';
 import { useTranslation } from 'react-i18next';
@@ -24,19 +24,22 @@ export default function KorpaPage() {
   const router = useRouter();
   const { resetKorpa } = useKorpa();
 
-  // Apply mobile optimizations
-
 
   useEffect(() => {
     fetchKorpa();
   }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Redirect to products page if cart is empty
+  // Handle toast message and redirect for unauthenticated users
   useEffect(() => {
-    if (!loading && stavke.length === 0 && session?.user) {
-      router.push('/proizvodi');
+    if (!loading && session === null) {
+      toast.error(t('must_login') || "Morate biti prijavljeni da vidite korpu.", { duration: 3000 });
+      const timeoutId = setTimeout(() => {
+        router.push('/auth/prijava');
+      }, 3000);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [loading, stavke.length, session?.user, router]);
+  }, [session, loading, router, t]);
 
   const fetchKorpa = async () => {
     setLoading(true);
@@ -90,7 +93,6 @@ export default function KorpaPage() {
 
       const korisnikId = session?.user?.id;
       if (!korisnikId) return;
-
       const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
       const data = await res.json();
       setStavke(data.stavke);
@@ -99,6 +101,7 @@ export default function KorpaPage() {
       const broj = data.stavke.reduce((acc: number, s: StavkaKorpe) => acc + s.kolicina, 0);
       localStorage.setItem('brojUKorpi', broj.toString());
       window.dispatchEvent(new Event('korpaChanged'));
+      toast.success(t('artikal_izbrisan'), { duration: 3000 });
     } catch (error) {
       console.error('Greška pri brisanju stavke:', error);
       toast.error(t('error'), { duration: 3000 });
@@ -171,19 +174,34 @@ export default function KorpaPage() {
   };
 
   if (loading) return <div className="p-4">{t('loading') || "Učitavanje..."}</div>;
+
   if (!session?.user) {
     return (
-      <div className="flex flex-col items-center gap-2 text-red-600 mt-8">
-        <div className="flex items-center gap-2">
-          <FaUser />
-          <span>{t('must_login')}</span>
-        </div>
-        <a href="/auth/prijava" className="text-blue-600 underline mt-2">{t('login')}</a>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+        <p className="text-gray-600">{t('preusmjeravanje') || "Preusmjeravamo vas na stranicu za prijavu..."}</p>
       </div>
     );
   }
   if (!stavke.length) {
-    return <div className="p-4">{t('loading') || "Učitavanje..."}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
+        <div className="text-gray-300 mb-4">
+          <FaShoppingCart size={80} />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-700 mb-2">{t('prazna_korpa') || 'Vaša korpa je prazna'}</h2>
+        <p className="text-gray-600 mb-6 max-w-md">
+          {t('nema_proizvoda') || 'Trenutno nemate proizvoda u korpi. Dodajte nešto iz naše ponude!'}
+        </p>
+        <button
+          onClick={() => router.push('/proizvodi')}
+          className="bg-violet-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
+        >
+          <FaShoppingCart />
+          {t('nastavi_kupovinu') || 'Nastavite kupovinu'}
+        </button>
+      </div>
+    );
   }
 
   return (

@@ -9,6 +9,7 @@ import { KorpaProvider } from "@/components/KorpaContext";
 import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
 
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   `}>
                     {children}
                   </main>
+
                 </div>
               </div>
 

@@ -16,5 +16,12 @@
   "nastavi_kupovinu": "Nastavi kupovinu",
   "dostava": "Dostava",
   "zavrsi_kupovinu": "Završi kupovinu",
-  "ucitavanje": "Učitavanje korpe..."
+  "ucitavanje": "Učitavanje korpe...",
+  "prazna_korpa": "Vaša korpa je prazna",
+  "nema_proizvoda": "Trenutno nemate proizvoda u korpi. Dodajte nešto iz naše ponude!",
+  "preusmjeravanje": "Preusmjeravamo vas na stranicu za prijavu...",
+  "artikal_izbrisan": "Artikal je uspešno izbrisan",
+  "error": "Došlo je do greške. Pokušajte ponovo.",
+  "must_login": "Morate biti prijavljeni da vidite korpu."
+
 }
