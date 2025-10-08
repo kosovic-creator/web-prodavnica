@@ -154,15 +154,14 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
             {/* Center Section - Desktop Search */}
             <div className="hidden lg:flex flex-1 max-w-md mx-4">
               <form onSubmit={handleSearch} className="flex items-center gap-2 w-full">
-                <div className="relative w-full">
+                <div className="flex items-center w-full gap-2">
                   <input
                     type="text"
                     value={localSearch}
                     onChange={(e) => setLocalSearch(e.target.value)}
                     placeholder={isMounted ? t('search') + '...' : (currentLanguage === 'en' ? 'Search...' : 'Pretraga...')}
-                    className="border border-blue-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
+                    className="border border-blue-300 rounded-lg p-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
                   />
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
                   {localSearch && (
                     <button
                       type="button"
@@ -170,9 +169,10 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                         setLocalSearch('');
                         setSearchTerm('');
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 p-1"
+                      className="text-gray-400 hover:text-red-600 w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center text-lg font-bold flex-shrink-0"
+                      title="Obriši pretragu"
                     >
-                      <FaTimes />
+                      ×
                     </button>
                   )}
                 </div>
@@ -368,16 +368,15 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
       {showMobileSearch && !isAdmin && (
         <div className="lg:hidden bg-white border-b border-gray-200 p-3">
           <form onSubmit={handleSearch} className="flex items-center gap-2">
-            <div className="relative flex-1">
+            <div className="flex items-center flex-1 gap-2">
               <input
                 type="text"
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Pretraži proizvode..."
-                className="border border-blue-300 rounded-lg p-3 pl-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
+                className="border border-blue-300 rounded-lg p-3 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full text-base"
                 autoFocus
               />
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
               {localSearch && (
                 <button
                   type="button"
@@ -385,9 +384,10 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                     setLocalSearch('');
                     setSearchTerm('');
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 p-1"
+                  className="text-gray-400 hover:text-red-600 w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center text-lg font-bold flex-shrink-0"
+                  title="Obriši pretragu"
                 >
-                  <FaTimes />
+                  ×
                 </button>
               )}
             </div>

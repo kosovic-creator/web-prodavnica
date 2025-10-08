@@ -7,17 +7,21 @@ const PorudzbinePage = () => {
     const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/porudzbine')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Porudzbine data:', data);
-        setPorudzbine(data.porudzbine || []);
-      })
-      .catch(error => {
-        console.error('Error fetching porudzbine data:', error);
-      })
-        .finally(() => setLoading(false));
+      fetchPorudzbine();
   }, []);
+
+    const fetchPorudzbine = async () => {
+        try {
+            const response = await fetch('/api/porudzbine');
+            const data = await response.json();
+            console.log('Porudzbine data:', data);
+            setPorudzbine(data.porudzbine || []);
+    } catch (error) {
+        console.error('Error fetching porudzbine data:', error);
+      } finally {
+          setLoading(false);
+      }
+  };
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('sr-RS', {
@@ -154,10 +158,7 @@ const PorudzbinePage = () => {
                                   </th>
                                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                       Datum kreiranja
-                                  </th>
-                                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                      Akcije
-                                  </th> */}
+                                    </th>
                               </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
@@ -198,14 +199,6 @@ const PorudzbinePage = () => {
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                           {formatDate(porudzbina.kreiran?.toString() || '')}
                                       </td>
-                                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                          <button className="text-blue-600 hover:text-blue-900 mr-3">
-                                              Detalji
-                                          </button>
-                                          <button className="text-indigo-600 hover:text-indigo-900">
-                                              Izmeni
-                                          </button>
-                                      </td> */}
                                   </tr>
                               ))}
                           </tbody>
@@ -219,6 +212,8 @@ const PorudzbinePage = () => {
                   )}
               </div>
           </div>
+
+
     </div>
   )
 }

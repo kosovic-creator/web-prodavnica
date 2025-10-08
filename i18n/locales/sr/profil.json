@@ -35,6 +35,17 @@
   "izmjeni_profil": "Izmijeni profil",
   "obrisi_korisnika": "Obriši korisnika",
   "sacuvaj_izmjene": "Sačuvaj izmjene",
-  "odkazivanje": "Otkazivanje"
+  "odkazivanje": "Otkazivanje",
+  "potvrda_brisanja_profila": "Da li ste sigurni da želite da obrišete svoj profil? Ova akcija je nepovratna.",
+  "greska_pri_cuvanju": "Došlo je do greške prilikom čuvanja.",
+  "greska_pri_brisanju": "Došlo je do greške prilikom brisanja.",
+  "greska_pri_očitavanju": "Došlo je do greške prilikom učitavanja.",
+  "profil_obrisan": "Vaš profil je uspješno obrisan.",
+  "logout_success": "Uspešno ste se odjavili.",
+  "confirm": "Potvrdi",
+  "cancel": "Otkaži",
+  "Ne možete obrisati korisnika koji ima porudžbine. Prvo obrišite sve porudžbine korisnika.": "Ne možete obrisati korisnika koji ima porudžbine. Prvo obrišite sve porudžbine korisnika.",
+  "korisnik_obrisan": "Korisnik je uspešno obrisan."
+
 
 }

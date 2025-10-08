@@ -39,5 +39,14 @@
   "od": "of",
   "stavke_porudzbine": "Order Items",
   "naziv_proizvoda": "Product Name",
-  "greska_pri_dohvatanju_porudzbina": "An error occurred while fetching orders."
+  "greska_pri_dohvatanju_porudzbina": "An error occurred while fetching orders.",
+  "obrisi_porudzbinu": "Delete order",
+  "potvrda_brisanja_porudzbine": "Are you sure you want to delete this order? This action is irreversible.",
+  "greska_pri_brisanju_porudzbine": "An error occurred while deleting the order.",
+  "loading": "Loading...",
+  "Ne možete obrisati porudžbinu koja je u statusu 'Obrađena' ili 'Isporučena'.": "You cannot delete an order that is in 'Processed' or 'Delivered' status.",
+  "obrisi": "Delete",
+  "otkazi": "Cancel",
+  "akcija_se_ne_moze_ponistiti": "This action cannot be undone.",
+  "potvrda_brisanja": "Order deletion confirmation"
 }

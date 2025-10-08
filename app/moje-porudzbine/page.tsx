@@ -8,65 +8,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import '@/i18n/config';
 import { toast } from 'react-hot-toast';
+import ConfirmModal from '@/components/ui/ConfirmModal';
+import Loading from '@/components/Loadning';
 
 interface PorudzbinaWithStavke extends Porudzbina {
   stavkePorudzbine?: StavkaPorudzbine[];
 }
 
-// Skeleton komponenta za porudžbine
-function OrdersSkeleton() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-4 px-2 sm:px-4 lg:px-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header skeleton */}
-        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6 animate-pulse">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-6 h-6 bg-gray-200 rounded"></div>
-            <div className="w-40 h-8 bg-gray-200 rounded"></div>
-          </div>
-          <div className="w-80 h-5 bg-gray-200 rounded"></div>
-        </div>
 
-        {/* Orders skeleton */}
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-              <div className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 sm:mb-2">
-                      <div className="w-32 h-6 bg-gray-200 rounded"></div>
-                      <div className="w-20 h-6 bg-gray-200 rounded-full"></div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                        <div className="w-24 h-4 bg-gray-200 rounded"></div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                        <div className="w-16 h-4 bg-gray-200 rounded"></div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                        <div className="w-20 h-4 bg-gray-200 rounded"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between sm:justify-end">
-                    <div className="w-28 h-8 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function MojePorudzbinePage() {
   const { t } = useTranslation('porudzbine');
@@ -77,6 +26,14 @@ export default function MojePorudzbinePage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const pageSize = 10;
+
+  // Delete modal state
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    porudzbinaId: '',
+    porudzbinaNaziv: ''
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchMojePorudzbine = useCallback(async () => {
     try {
@@ -104,6 +61,49 @@ export default function MojePorudzbinePage() {
 
   const toggleExpandOrder = (orderId: string) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
+  };
+
+  const openDeleteModal = (id: string, naziv: string) => {
+    setDeleteModal({
+      isOpen: true,
+      porudzbinaId: id,
+      porudzbinaNaziv: naziv
+    });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      porudzbinaId: '',
+      porudzbinaNaziv: ''
+    });
+  };
+
+  const handleDeletePorudzbina = async () => {
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch('/api/porudzbine', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: deleteModal.porudzbinaId }),
+      });
+
+      if (response.ok) {
+        toast.success(t('porudzbina_obrisana') || 'Porudžbina je uspešno obrisana!');
+        // Refresh data after deletion
+        await fetchMojePorudzbine();
+        closeDeleteModal();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || t('greska_pri_brisanju') || 'Greška pri brisanju porudžbine');
+      }
+    } catch (error) {
+      console.error('Error deleting porudzbina:', error);
+      toast.error(t('greska_pri_brisanju') || 'Došlo je do greške prilikom brisanja porudžbine');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const formatDate = (date: string | Date) => {
@@ -149,7 +149,7 @@ export default function MojePorudzbinePage() {
   }
 
   if (loading) {
-    return <OrdersSkeleton />;
+    return <Loading />;
   }
 
   return (
@@ -215,8 +215,11 @@ export default function MojePorudzbinePage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end">
-                      <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition font-medium">
+                    <div className="flex items-center justify-between sm:justify-end gap-3">
+                      <button
+                        onClick={() => toggleExpandOrder(porudzbina.id)}
+                        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition font-medium"
+                      >
                         {expandedOrder === porudzbina.id ? (
                           <>
                             <span className="text-sm">{t('sakrij_detalje')}</span>
@@ -228,6 +231,20 @@ export default function MojePorudzbinePage() {
                             <FaChevronDown />
                           </>
                         )}
+                      </button>
+
+                      <button
+                        onClick={() => openDeleteModal(
+                          porudzbina.id,
+                          `#${porudzbina.id.slice(0, 8)}... (${porudzbina.ukupno.toFixed(2)} €)`
+                        )}
+                        className="flex items-center gap-2 text-red-600 hover:text-red-700 transition font-medium"
+                        title={t('obrisi_porudzbinu') || 'Obriši porudžbinu'}
+                      >
+                        <span className="text-sm">{t('obrisi_porudzbinu') || 'Obriši'}</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -340,6 +357,19 @@ export default function MojePorudzbinePage() {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={deleteModal.isOpen}
+          onClose={closeDeleteModal}
+          onConfirm={handleDeletePorudzbina}
+          title={t('potvrda_brisanja') || 'Potvrda brisanja'}
+          message={`${t('potvrda_brisanja_porudzbine') || 'Da li ste sigurni da želite da obrišete porudžbinu'} "${deleteModal.porudzbinaNaziv}"? ${t('akcija_se_ne_moze_ponistiti') || 'Ova akcija se ne može poništiti.'}`}
+          confirmText={t('obrisi') || 'Obriši'}
+          cancelText={t('otkazi') || 'Otkaži'}
+          isDestructive={true}
+          isLoading={isDeleting}
+        />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Korisnik } from '@/types';
 import toast from 'react-hot-toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import Loading from '@/components/Loadning';
 
 
 const KorisniciPage = () => {
@@ -87,7 +88,7 @@ const KorisniciPage = () => {
                 const errorData = await response.json();
                 if (response.status === 409) {
                     // Conflict - user has orders
-                    toast.error(`${errorData.error} (Porudžbina: ${errorData.ordersCount})`);
+                    toast.error(`${errorData.error} (Korisnici: ${errorData.korisniciCount})`);
                 } else {
                     toast.error(`Greška pri brisanju: ${errorData.error}`);
                 }
@@ -117,12 +118,8 @@ const KorisniciPage = () => {
     });
 
     if (loading) {
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-    );
-}
+        return <Loading />;
+    }
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

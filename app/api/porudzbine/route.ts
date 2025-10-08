@@ -137,11 +137,49 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { id } = body;
-  if (!id) {
-    return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
+  try {
+    const body = await req.json();
+    const { id } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
+    }
+
+    // First check if order exists
+    const existingPorudzbina = await prisma.porudzbina.findUnique({
+      where: { id },
+      include: {
+        stavkePorudzbine: true
+      }
+    });
+
+    if (!existingPorudzbina) {
+      return NextResponse.json({ error: 'Porudžbina nije pronađena' }, { status: 404 });
+    }
+
+    // Delete related data first in a transaction
+    await prisma.$transaction(async (tx) => {
+      // Delete order items first
+      await tx.stavkaPorudzbine.deleteMany({
+        where: { porudzbinaId: id }
+      });
+
+      // Then delete the order
+      await tx.porudzbina.delete({
+        where: { id }
+      });
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Porudžbina je uspešno obrisana',
+      id
+    });
+  } catch (error) {
+    console.error('Error deleting porudzbina:', error);
+    return NextResponse.json({
+      error: 'Greška pri brisanju porudžbine',
+      details: error instanceof Error ? error.message : 'Nepoznata greška'
+    }, { status: 500 });
   }
-  await prisma.porudzbina.delete({ where: { id } });
-  return NextResponse.json({ uspjesno_placanje: true });
 }

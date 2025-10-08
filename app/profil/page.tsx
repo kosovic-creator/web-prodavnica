@@ -8,64 +8,15 @@ import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import Loading from '@/components/Loadning';
 
-// Skeleton komponenta za profil
-function ProfileSkeleton() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        {/* Header skeleton */}
-        <div className="flex items-center justify-center gap-2 mb-6 animate-pulse">
-          <div className="w-8 h-8 bg-gray-200 rounded"></div>
-          <div className="w-24 h-8 bg-gray-200 rounded"></div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-          {/* Profile image skeleton */}
-          <div className="flex justify-center mb-6">
-            <div className="w-[120px] h-[120px] bg-gray-200 rounded-full"></div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                {/* Left column fields */}
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
-                    <div className="h-5 bg-gray-200 rounded w-full"></div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-3">
-                {/* Right column fields */}
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
-                    <div className="h-5 bg-gray-200 rounded w-full"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Buttons skeleton */}
-            <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t">
-              <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
-              <div className="flex-1 h-12 bg-gray-200 rounded-lg"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 export default function ProfilPage() {
   const { t } = useTranslation('profil');
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState("");
+  const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
     ime: '',
     prezime: '',
@@ -93,7 +44,7 @@ export default function ProfilPage() {
         .then(res => {
           if (!res.ok) {
             throw new Error('Failed to fetch user data');
-            setError('Greška pri učitavanju Profila');
+
           }
           return res.json();
         })
@@ -113,6 +64,7 @@ export default function ProfilPage() {
         })
         .catch(error => {
           console.error('Error fetching user data:', error);
+          toast.error(t('greska_pri_ocitavanju'));
           // Postaviti osnovne podatke iz session-a ako API poziv ne uspe
           setForm({
             ime: session.user.ime || '',
@@ -144,7 +96,7 @@ export default function ProfilPage() {
   }, [session?.user, status, userLoaded, router]);
 
   if (status === "loading" || !userLoaded) {
-    return <ProfileSkeleton />;
+    return <Loading />;
   }
 
   if (!session?.user) {
@@ -169,10 +121,6 @@ export default function ProfilPage() {
         toast.error(data.error || t('greska_pri_cuvanju'));
       } else {
         toast.success(t('korisnik_izmjenjen'));
-        // setInterval(() => {
-        //   setError('korisnik je izmjenjen');
-        // }, 3000);
-
         setEditMode(false);
       }
     } catch {
@@ -386,10 +334,10 @@ export default function ProfilPage() {
           isOpen={deleteModal.isOpen}
           onClose={closeDeleteModal}
           onConfirm={handleDelete}
-          title={t('brisanje_profila') || 'Brisanje profila'}
+          title={t('obrisi_korisnika') }
           message={t('potvrda_brisanja_profila') || 'Da li ste sigurni da želite da obrišete svoj profil? Ova akcija se ne može poništiti i svi vaši podaci će biti trajno obrisani.'}
-          confirmText={t('obrisi') || 'Obriši'}
-          cancelText={t('otkazi') || 'Otkaži'}
+          confirmText={t('confirm') || 'Obriši'}
+          cancelText={t('cancel') || 'Otkaži'}
           isDestructive={true}
           isLoading={isDeleting}
         />
