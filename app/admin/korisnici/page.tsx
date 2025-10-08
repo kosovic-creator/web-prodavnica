@@ -9,7 +9,9 @@ const KorisniciPage = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalUsers, setTotalUsers] = useState(0);
-    const [pageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(25);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterRole, setFilterRole] = useState('');
 
 
     useEffect(() => {
@@ -75,6 +77,18 @@ const KorisniciPage = () => {
         return new Date(date).toLocaleDateString('sr-RS');
     };
 
+    // Filter korisnici based on search and role
+    const filteredUsers = korisnici.filter(korisnik => {
+        const matchesSearch = !searchTerm ||
+            (korisnik.ime && korisnik.ime.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (korisnik.prezime && korisnik.prezime.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (korisnik.email && korisnik.email.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const matchesRole = !filterRole || korisnik.uloga === filterRole;
+
+        return matchesSearch && matchesRole;
+    });
+
     if (loading) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -97,6 +111,94 @@ const KorisniciPage = () => {
                                 Ukupno: {totalUsers}
                             </span>
                         </div>
+                    </div>
+                </div>
+
+                {/* Filters and Controls */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+                                Pretraži korisnike
+                            </label>
+                            <input
+                                type="text"
+                                id="search"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Ime, prezime, email..."
+                            />
+                            {(searchTerm || filterRole) && (
+                                <>
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        ℹ️ {pageSize >= 999999
+                                            ? `Pronađeno ${filteredUsers.length} od ${korisnici.length} učitanih korisnika`
+                                            : `Filtriranje radi samo na trenutno učitanim korisnicima`
+                                        }
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            setSearchTerm('');
+                                            setFilterRole('');
+                                        }}
+                                        className="mt-2 text-sm text-blue-600 hover:underline"
+                                    >
+                                        Resetuj filtere
+                                    </button>
+                                </>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                                Filter po ulozi
+                            </label>
+                            <select
+                                id="role"
+                                value={filterRole}
+                                onChange={(e) => setFilterRole(e.target.value)}
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="">Sve uloge</option>
+                                <option value="korisnik">Korisnik</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label htmlFor="pageSize" className="block text-sm font-medium text-gray-700 mb-2">
+                                Korisnika po stranici
+                            </label>
+                            <select
+                                id="pageSize"
+                                value={pageSize}
+                                onChange={(e) => {
+                                    const newPageSize = Number(e.target.value);
+                                    setPageSize(newPageSize);
+                                    setCurrentPage(1); // Reset to first page when changing page size
+                                }}
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value={10}>10</option>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                                <option value={999999}>Svi (bez paginacije)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="text-sm text-gray-600 text-center pt-4 border-t">
+                        {(searchTerm || filterRole) ? (
+                            pageSize >= 999999
+                                ? `Prikazano: ${filteredUsers.length} od ${korisnici.length} učitanih korisnika`
+                                : `Filtrirano: ${filteredUsers.length} korisnika na stranici ${currentPage}`
+                        ) : (
+                            pageSize >= 999999
+                                ? `Prikazano: ${korisnici.length} od ${totalUsers} korisnika`
+                                : `Stranica ${currentPage} od ${Math.ceil(totalUsers / pageSize)} • ${korisnici.length} od ${totalUsers} korisnika`
+                        )}
                     </div>
                 </div>
 
@@ -130,7 +232,7 @@ const KorisniciPage = () => {
                                 </tr>
                             </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
-                              {korisnici.map((korisnik) => (
+                                {filteredUsers.map((korisnik) => (
                                   <tr key={korisnik.id} className="hover:bg-gray-50 transition-colors duration-200">
                                       <td className="px-6 py-4 whitespace-nowrap">
                                           <div className="flex items-center">
@@ -192,15 +294,25 @@ const KorisniciPage = () => {
                       </table>
                   </div>
 
-                    {korisnici.length === 0 && !loading && (
+                    {filteredUsers.length === 0 && !loading && (
                       <div className="text-center py-12">
-                          <div className="text-gray-500 text-lg">Nema registrovanih korisnika</div>
+                            <div className="text-gray-500 text-lg">
+                                {(searchTerm || filterRole)
+                                    ? 'Nema korisnika koji odgovaraju kriterijumima pretrage'
+                                    : 'Nema registrovanih korisnika'
+                                }
+                            </div>
+                            {(searchTerm || filterRole) && (
+                                <p className="text-gray-400 text-sm mt-2">
+                                    Pokušajte sa različitim kriterijumima pretrage
+                                </p>
+                            )}
                       </div>
                   )}
               </div>
 
                 {/* Pagination */}
-                {totalUsers > pageSize && (
+                {totalUsers > pageSize && pageSize < 999999 && (
                     <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
                         <div className="flex-1 flex justify-between sm:hidden">
                             <button

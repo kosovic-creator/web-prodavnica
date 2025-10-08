@@ -13,7 +13,7 @@ const ProizvodPage = () => {
   const [filterCategory, setFilterCategory] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
 
 
 
@@ -165,8 +165,8 @@ const ProizvodPage = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Stranica</p>
-                <p className="text-2xl font-semibold text-gray-900">{currentPage}</p>
+                <p className="text-sm text-gray-600">{pageSize >= 999999 ? 'Način prikaza' : 'Stranica'}</p>
+                <p className="text-2xl font-semibold text-gray-900">{pageSize >= 999999 ? 'Svi' : currentPage}</p>
               </div>
             </div>
           </div>
@@ -180,7 +180,7 @@ const ProizvodPage = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Po stranici</p>
-                <p className="text-2xl font-semibold text-gray-900">{pageSize}</p>
+                <p className="text-2xl font-semibold text-gray-900">{pageSize >= 999999 ? 'Sve' : pageSize}</p>
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@ const ProizvodPage = () => {
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
                 Pretraži proizvode
@@ -216,9 +216,23 @@ const ProizvodPage = () => {
                 placeholder="Unesite naziv ili opis proizvoda..."
               />
               {(searchTerm || filterCategory) && (
-                <p className="mt-1 text-xs text-gray-500">
-                  ℹ️ Pretražuje se samo trenutna stranica ({proizvodi.length} od {totalProducts} proizvoda)
-                </p>
+                <>
+                  <p className="mt-1 text-xs text-gray-500">
+                    ℹ️ {pageSize >= 999999
+                      ? `Pretražuje se kroz sve proizvode (${proizvodi.length} učitano)`
+                      : `Pretražuje se samo trenutna stranica (${proizvodi.length} od ${totalProducts} proizvoda)`
+                    }
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setFilterCategory('');
+                    }}
+                    className="mt-2 text-sm text-blue-600 hover:underline"
+                  >
+                    Resetuj filtere
+                  </button>
+                </>
               )}
             </div>
             <div>
@@ -235,6 +249,27 @@ const ProizvodPage = () => {
                 {categories.map(category => (
                   <option key={category} value={category}>{category}</option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="pageSize" className="block text-sm font-medium text-gray-700 mb-2">
+                Proizvoda po stranici
+              </label>
+              <select
+                id="pageSize"
+                value={pageSize}
+                onChange={(e) => {
+                  const newPageSize = Number(e.target.value);
+                  setPageSize(newPageSize);
+                  setCurrentPage(1); // Reset to first page when changing page size
+                }}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={999999}>Sve (bez paginacije)</option>
               </select>
             </div>
           </div>
@@ -351,7 +386,7 @@ const ProizvodPage = () => {
         </div>
 
         {/* Pagination */}
-        {totalProducts > pageSize && (
+        {totalProducts > pageSize && pageSize < 999999 && (
           <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6 rounded-lg shadow-sm">
             <div className="flex-1 flex justify-between sm:hidden">
               <button
