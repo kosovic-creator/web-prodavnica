@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSession } from "next-auth/react";
 import AdminHome from './admin/page';
 import { FaUserShield, FaSpinner } from "react-icons/fa";
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import ProizvodiBanner from '@/components/ProizvodiBanner';
 import ProizvodiHome from '@/components/ProizvodiGrid';
 
@@ -69,16 +69,18 @@ function AdminSkeleton() {
     <div className="p-8 animate-pulse">
       {/* Header skeleton */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-8 h-8 bg-gray-200 rounded"></div>
-        <div className="w-32 h-8 bg-gray-200 rounded"></div>
+        <div className="w-8 h-8 bg-blue-200 rounded flex items-center justify-center">
+          <FaUserShield className="text-blue-400 text-sm" />
+        </div>
+        <div className="w-40 h-8 bg-blue-100 rounded"></div>
       </div>
 
       {/* Admin content skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: 6 }).map((_, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="w-12 h-12 bg-gray-200 rounded-lg mb-4"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-blue-100">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg mb-4"></div>
+            <div className="h-6 bg-blue-100 rounded w-3/4 mb-2"></div>
             <div className="h-4 bg-gray-200 rounded w-full"></div>
           </div>
         ))}
@@ -90,38 +92,65 @@ function AdminSkeleton() {
 function HomeContent() {
   const { t, ready } = useTranslation('home');
   const { data: session, status } = useSession();
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [previousUserRole, setPreviousUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (ready && status !== 'loading') {
+      // Small delay to prevent flickering when data is available quickly
+      const timer = setTimeout(() => {
+        setIsInitialized(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [ready, status]);
+
+  useEffect(() => {
+    if (session?.user?.uloga && session.user.uloga !== previousUserRole) {
+      setPreviousUserRole(session.user.uloga);
+    }
+  }, [session?.user?.uloga, previousUserRole]);
 
   // Show loading while translations or session are loading
-  if (!ready || status === 'loading') {
-    return session?.user?.uloga === 'admin' ? <AdminSkeleton /> : <HomeSkeleton />;
+  if (!isInitialized) {
+    // Show appropriate skeleton based on known user role
+    if (session?.user?.uloga === 'admin' || previousUserRole === 'admin') {
+      return <AdminSkeleton />;
+    }
+    // Otherwise show home skeleton
+    return <HomeSkeleton />;
   }
 
   const adminPanelText = t('admin_panel') || 'Admin Panel';
 
+  // Only render admin content if we're sure the user is admin
+  if (session?.user?.uloga === 'admin') {
+    return (
+      <div className="p-8">
+        <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-blue-700">
+          <FaUserShield className="text-blue-600" />
+          {adminPanelText}
+        </h1>
+        <AdminHome />
+      </div>
+    );
+  }
+
+  // Regular user content
   return (
     <>
-      {session?.user?.uloga === 'admin' ? (
-        <div className="p-8">
-          <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-blue-700">
-            <FaUserShield className="text-blue-600" />
-            {adminPanelText}
-          </h1>
-          <AdminHome />
-        </div>
-      ) : (
-          <div className="flex flex-col">
-            {/* Banner za proizvode */}
-            <ProizvodiBanner />
+      <div className="flex flex-col">
+        {/* Banner za proizvode */}
+        <ProizvodiBanner />
 
-            {/* Sekcija proizvoda */}
-            <div className="container mx-auto px-4 py-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                {t('our_products')}
-              </h2>
-              <ProizvodiHome />
-            </div>
+        {/* Sekcija proizvoda */}
+        <div className="container mx-auto px-4 py-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            {t('our_products')}
+          </h2>
+          <ProizvodiHome />
         </div>
-      )}
+      </div>
       <div className="bg-gray-100 py-8">
         <div className="container mx-auto px-4">
         </div>
