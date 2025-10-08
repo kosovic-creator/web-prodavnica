@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Proizvod } from '@/types';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 const ProizvodPage = () => {
   const router = useRouter();
@@ -14,6 +15,13 @@ const ProizvodPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [pageSize, setPageSize] = useState(50);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    proizvodId: '',
+    proizvodNaziv: ''
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
+
 
 
 
@@ -36,13 +44,27 @@ const ProizvodPage = () => {
     fetchProizvodi();
   }, [currentPage, pageSize]);
 
-  const handleProizvodDelete = async (id: string) => {
-    if (!confirm('Da li ste sigurni da želite da obrišete ovaj proizvod?')) {
-      return;
-    }
+  const openDeleteModal = (id: string, naziv: string) => {
+    setDeleteModal({
+      isOpen: true,
+      proizvodId: id,
+      proizvodNaziv: naziv
+    });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      proizvodId: '',
+      proizvodNaziv: ''
+    });
+  };
+
+  const handleProizvodDelete = async () => {
+    setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/proizvodi/${id}`, {
+      const response = await fetch(`/api/proizvodi/${deleteModal.proizvodId}`, {
         method: 'DELETE',
       });
 
@@ -61,6 +83,8 @@ const ProizvodPage = () => {
         if (newData.proizvodi.length === 0 && currentPage > 1) {
           setCurrentPage(currentPage - 1);
         }
+
+        closeDeleteModal();
       } else {
         const errorData = await response.json();
         toast.error(`Greška pri brisanju: ${errorData.error}`);
@@ -68,6 +92,8 @@ const ProizvodPage = () => {
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error('Došlo je do greške pri brisanju proizvoda.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -365,7 +391,7 @@ const ProizvodPage = () => {
                         <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni
                         </button>
-                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => handleProizvodDelete(proizvod.id)}>
+                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => openDeleteModal(proizvod.id, `${proizvod.naziv || ''}`.trim() || proizvod.id)}>
                           Obriši
                         </button>
                       </td>
@@ -476,6 +502,19 @@ const ProizvodPage = () => {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={deleteModal.isOpen}
+          onClose={closeDeleteModal}
+          onConfirm={handleProizvodDelete}
+          title="Brisanje proizvoda"
+          message={`Da li ste sigurni da želite da obrišete proizvod "${deleteModal.proizvodNaziv}"? Ova akcija se ne može poništiti.`}
+          confirmText="Obriši"
+          cancelText="Otkaži"
+          isDestructive={true}
+          isLoading={isDeleting}
+        />
       </div>
     </div>
   )

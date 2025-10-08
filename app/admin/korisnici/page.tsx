@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Korisnik } from '@/types';
 import toast from 'react-hot-toast';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 
 const KorisniciPage = () => {
@@ -12,6 +13,14 @@ const KorisniciPage = () => {
     const [pageSize, setPageSize] = useState(25);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterRole, setFilterRole] = useState('');
+
+    // Modal state
+    const [deleteModal, setDeleteModal] = useState({
+        isOpen: false,
+        korisnikId: '',
+        korisnikNaziv: ''
+    });
+    const [isDeleting, setIsDeleting] = useState(false);
 
 
     useEffect(() => {
@@ -33,13 +42,27 @@ const KorisniciPage = () => {
         fetchKorisnici();
     }, [currentPage, pageSize]);
 
-    const handleDeleteKorisnik = async (id: string) => {
-        if (!confirm('Da li ste sigurni da želite da obrišete ovog korisnika?')) {
-            return;
-        }
+    const openDeleteModal = (id: string, naziv: string) => {
+        setDeleteModal({
+            isOpen: true,
+            korisnikId: id,
+            korisnikNaziv: naziv
+        });
+    };
+
+    const closeDeleteModal = () => {
+        setDeleteModal({
+            isOpen: false,
+            korisnikId: '',
+            korisnikNaziv: ''
+        });
+    };
+
+    const handleDeleteKorisnik = async () => {
+        setIsDeleting(true);
 
         try {
-            const response = await fetch(`/api/korisnici/${id}`, {
+            const response = await fetch(`/api/korisnici/${deleteModal.korisnikId}`, {
                 method: 'DELETE',
             });
 
@@ -58,6 +81,8 @@ const KorisniciPage = () => {
                 if (newData.korisnici.length === 0 && currentPage > 1) {
                     setCurrentPage(currentPage - 1);
                 }
+
+                closeDeleteModal();
             } else {
                 const errorData = await response.json();
                 if (response.status === 409) {
@@ -70,6 +95,8 @@ const KorisniciPage = () => {
         } catch (error) {
             console.error('Error deleting korisnik:', error);
             toast.error('Došlo je do greške prilikom brisanja korisnika');
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -282,7 +309,7 @@ const KorisniciPage = () => {
                                       </td>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium cursor-pointer">
                                           <button
-                                              onClick={() => handleDeleteKorisnik(korisnik.id)}
+                                                onClick={() => openDeleteModal(korisnik.id, `${korisnik.ime || ''} ${korisnik.prezime || ''}`.trim() || korisnik.email)}
                                               className="text-red-600 hover:text-red-900"
                                           >
                                               Obriši
@@ -403,6 +430,19 @@ const KorisniciPage = () => {
                     </div>
                 )}
           </div>
+
+            {/* Delete Confirmation Modal */}
+            <ConfirmModal
+                isOpen={deleteModal.isOpen}
+                onClose={closeDeleteModal}
+                onConfirm={handleDeleteKorisnik}
+                title="Brisanje korisnika"
+                message={`Da li ste sigurni da želite da obrišete korisnika "${deleteModal.korisnikNaziv}"? Ova akcija se ne može poništiti.`}
+                confirmText="Obriši"
+                cancelText="Otkaži"
+                isDestructive={true}
+                isLoading={isDeleting}
+            />
       </div>
   )
 }

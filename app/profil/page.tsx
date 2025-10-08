@@ -7,6 +7,7 @@ import '@/i18n/config';
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 // Skeleton komponenta za profil
 function ProfileSkeleton() {
@@ -79,6 +80,12 @@ export default function ProfilPage() {
   });
   const [loading, setLoading] = useState(false);
   const [userLoaded, setUserLoaded] = useState(false);
+
+  // Delete modal state
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -174,9 +181,16 @@ export default function ProfilPage() {
     setLoading(false);
   };
 
+  const openDeleteModal = () => {
+    setDeleteModal({ isOpen: true });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false });
+  };
+
   const handleDelete = async () => {
-    if (!window.confirm(t('potvrdi_obrisi'))) return;
-    setLoading(true);
+    setIsDeleting(true);
     try {
       const res = await fetch('/api/korisnici', {
         method: 'DELETE',
@@ -192,8 +206,9 @@ export default function ProfilPage() {
       }
     } catch {
       toast.error(t('greska_pri_cuvanju'));
+    } finally {
+      setIsDeleting(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -357,7 +372,7 @@ export default function ProfilPage() {
                   <FaEdit />
                   {t('izmjeni_profil')}
                 </button>
-                <button className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={handleDelete}>
+                  <button className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base font-medium" onClick={openDeleteModal}>
                   <FaTrash />
                   {t('obrisi_korisnika')}
                 </button>
@@ -365,6 +380,19 @@ export default function ProfilPage() {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={deleteModal.isOpen}
+          onClose={closeDeleteModal}
+          onConfirm={handleDelete}
+          title={t('brisanje_profila') || 'Brisanje profila'}
+          message={t('potvrda_brisanja_profila') || 'Da li ste sigurni da želite da obrišete svoj profil? Ova akcija se ne može poništiti i svi vaši podaci će biti trajno obrisani.'}
+          confirmText={t('obrisi') || 'Obriši'}
+          cancelText={t('otkazi') || 'Otkaži'}
+          isDestructive={true}
+          isLoading={isDeleting}
+        />
       </div>
     </div>
   );
