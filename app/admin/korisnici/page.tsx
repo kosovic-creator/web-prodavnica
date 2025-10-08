@@ -2,25 +2,34 @@
 import React, { useEffect, useState } from 'react'
 import { Korisnik } from '@/types';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+
 
 const KorisniciPage = () => {
     const [korisnici, setKorisnici] = useState<Korisnik[]>([]);
     const [loading, setLoading] = useState(true);
-    const router = useRouter();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalUsers, setTotalUsers] = useState(0);
+    const [pageSize] = useState(10);
+
 
     useEffect(() => {
-        fetch('/api/korisnici')
-            .then(response => response.json())
-            .then(data => {
+        const fetchKorisnici = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`/api/korisnici?page=${currentPage}&pageSize=${pageSize}`);
+                const data = await response.json();
                 console.log('Korisnici data:', data);
                 setKorisnici(data.korisnici || []);
-            })
-            .catch(error => {
+                setTotalUsers(data.total || 0);
+            } catch (error) {
                 console.error('Error fetching korisnici data:', error);
-      })
-          .finally(() => setLoading(false));
-  }, []);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchKorisnici();
+    }, [currentPage, pageSize]);
 
     const handleDeleteKorisnik = async (id: string) => {
         if (!confirm('Da li ste sigurni da želite da obrišete ovog korisnika?')) {
@@ -35,10 +44,18 @@ const KorisniciPage = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Korisnik obrisan:', data);
-                // Update local state to remove the deleted user
-                setKorisnici(prevKorisnici => prevKorisnici.filter(korisnik => korisnik.id !== id));
                 toast.success('Korisnik je uspešno obrisan!');
-                router.push('/admin/korisnici'); // Redirect to users list after deletion
+
+                // Refresh the current page data after deletion
+                const response2 = await fetch(`/api/korisnici?page=${currentPage}&pageSize=${pageSize}`);
+                const newData = await response2.json();
+                setKorisnici(newData.korisnici || []);
+                setTotalUsers(newData.total || 0);
+
+                // If current page is empty and not the first page, go to previous page
+                if (newData.korisnici.length === 0 && currentPage > 1) {
+                    setCurrentPage(currentPage - 1);
+                }
             } else {
                 const errorData = await response.json();
                 if (response.status === 409) {
@@ -77,7 +94,7 @@ const KorisniciPage = () => {
                         </div>
                         <div className="mt-4 sm:mt-0">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                Ukupno: {korisnici.length}
+                                Ukupno: {totalUsers}
                             </span>
                         </div>
                     </div>
@@ -175,12 +192,104 @@ const KorisniciPage = () => {
                       </table>
                   </div>
 
-                  {korisnici.length === 0 && (
+                    {korisnici.length === 0 && !loading && (
                       <div className="text-center py-12">
                           <div className="text-gray-500 text-lg">Nema registrovanih korisnika</div>
                       </div>
                   )}
               </div>
+
+                {/* Pagination */}
+                {totalUsers > pageSize && (
+                    <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                        <div className="flex-1 flex justify-between sm:hidden">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Prethodna
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalUsers / pageSize)))}
+                                disabled={currentPage === Math.ceil(totalUsers / pageSize)}
+                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Sljedeća
+                            </button>
+                        </div>
+                        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    Prikazuje se <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> do{' '}
+                                    <span className="font-medium">
+                                        {Math.min(currentPage * pageSize, totalUsers)}
+                                    </span>{' '}
+                                    od <span className="font-medium">{totalUsers}</span> rezultata
+                                </p>
+                            </div>
+                            <div>
+                                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <span className="sr-only">Prethodna</span>
+                                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+
+                                    {/* Page numbers */}
+                                    {Array.from({ length: Math.ceil(totalUsers / pageSize) }, (_, i) => i + 1)
+                                        .filter(page => {
+                                            const totalPages = Math.ceil(totalUsers / pageSize);
+                                            if (totalPages <= 7) return true;
+                                            if (page <= 2) return true;
+                                            if (page >= totalPages - 1) return true;
+                                            if (Math.abs(page - currentPage) <= 1) return true;
+                                            return false;
+                                        })
+                                        .map((page, index, array) => {
+                                            const prevPage = array[index - 1];
+                                            const showDots = prevPage && page - prevPage > 1;
+
+                                            return (
+                                                <React.Fragment key={page}>
+                                                    {showDots && (
+                                                        <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                                            ...
+                                                        </span>
+                                                    )}
+                                                    <button
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === page
+                                                                ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                </React.Fragment>
+                                            );
+                                        })}
+
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalUsers / pageSize)))}
+                                        disabled={currentPage === Math.ceil(totalUsers / pageSize)}
+                                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <span className="sr-only">Sljedeća</span>
+                                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                )}
           </div>
       </div>
   )
