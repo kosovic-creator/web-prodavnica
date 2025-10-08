@@ -216,14 +216,14 @@ export default function ProfilPage() {
                   value={form.ime}
                   onChange={handleChange}
                   placeholder={t('name')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
                 <input
                   name="prezime"
                   value={form.prezime}
                   onChange={handleChange}
                   placeholder={t('surname')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
               </div>
               <input
@@ -231,14 +231,14 @@ export default function ProfilPage() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder={t('email')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
               />
               <input
                 name="telefon"
                 value={form.telefon}
                 onChange={handleChange}
                 placeholder={t('phone')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -246,14 +246,14 @@ export default function ProfilPage() {
                   value={form.drzava}
                   onChange={handleChange}
                   placeholder={t('country')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
                 <input
                   name="grad"
                   value={form.grad}
                   onChange={handleChange}
                   placeholder={t('city')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -262,14 +262,14 @@ export default function ProfilPage() {
                   value={form.postanskiBroj}
                   onChange={handleChange}
                   placeholder={t('postal_code')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
                 <input
                   name="adresa"
                   value={form.adresa}
                   onChange={handleChange}
                   placeholder={t('address')}
-                  className="border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
               </div>
               <input
@@ -277,7 +277,7 @@ export default function ProfilPage() {
                 value={form.slika}
                 onChange={handleChange}
                 placeholder={t('profile_image')}
-                className="w-full border border-gray-300 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base"
+                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
               />
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button

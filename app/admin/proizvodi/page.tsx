@@ -131,7 +131,7 @@ const ProizvodPage = () => {
               <p className="text-gray-600 mt-1">Pregled i upravljanje inventarom proizvoda</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
+              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 input-focusfocus:ring-offset-2 input-focuscursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
                 <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -212,7 +212,7 @@ const ProizvodPage = () => {
                 id="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 input-focus"
                 placeholder="Unesite naziv ili opis proizvoda..."
               />
               {(searchTerm || filterCategory) && (
@@ -243,7 +243,7 @@ const ProizvodPage = () => {
                 id="category"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
               >
                 <option value="">Sve kategorije</option>
                 {categories.map(category => (
@@ -263,7 +263,7 @@ const ProizvodPage = () => {
                   setPageSize(newPageSize);
                   setCurrentPage(1); // Reset to first page when changing page size
                 }}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>

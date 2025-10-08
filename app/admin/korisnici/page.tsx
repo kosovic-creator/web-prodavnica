@@ -126,7 +126,7 @@ const KorisniciPage = () => {
                                 id="search"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 input-focus"
                                 placeholder="Ime, prezime, email..."
                             />
                             {(searchTerm || filterRole) && (
@@ -158,7 +158,7 @@ const KorisniciPage = () => {
                                 id="role"
                                 value={filterRole}
                                 onChange={(e) => setFilterRole(e.target.value)}
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
                             >
                                 <option value="">Sve uloge</option>
                                 <option value="korisnik">Korisnik</option>
@@ -178,7 +178,7 @@ const KorisniciPage = () => {
                                     setPageSize(newPageSize);
                                     setCurrentPage(1); // Reset to first page when changing page size
                                 }}
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
                             >
                                 <option value={10}>10</option>
                                 <option value={25}>25</option>

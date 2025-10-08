@@ -19,6 +19,35 @@ select:disabled,
   cursor: not-allowed !important;
 }
 
+/* Custom focus stilovi za inpute sa plavom bojom */
+.input-focus {
+  @apply focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all;
+}
+
+/* Za direktne input/select elemente sa input-focus klasom */
+input.input-focus:focus,
+select.input-focus:focus,
+textarea.input-focus:focus {
+  @apply border-blue-500 ring-2 ring-blue-100 outline-none;
+}
+
+.input-focus input:focus,
+.input-focus select:focus {
+  @apply outline-none;
+}
+
+/* Globalno za sve input/select elemente */
+input:focus,
+select:focus,
+textarea:focus {
+  @apply ring-2 ring-blue-100 border-blue-500 outline-none;
+}
+
+/* Za input kontejnere sa focus-within */
+.focus-input:focus-within {
+  @apply border-blue-500 ring-2 ring-blue-100;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

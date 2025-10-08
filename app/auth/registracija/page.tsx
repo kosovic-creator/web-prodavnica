@@ -67,7 +67,7 @@ export default function RegistracijaPage() {
               name="email"
               type="email"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder={t('register.email')}
@@ -82,7 +82,7 @@ export default function RegistracijaPage() {
                 name="name"
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
                 value={ime}
                 onChange={e => setIme(e.target.value)}
                 placeholder={t('register.name')}
@@ -95,7 +95,7 @@ export default function RegistracijaPage() {
                 name="surname"
                 type="text"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
                 value={prezime}
                 onChange={e => setPrezime(e.target.value)}
                 placeholder={t('register.surname')}
@@ -108,7 +108,7 @@ export default function RegistracijaPage() {
           <input
             type="text"
               placeholder={t('register.phone')}
-              className="flex-1 outline-none bg-transparent text-base focus:ring-0"
+              className="flex-1 outline-none bg-transparent text-base input-focus"
             value={telefon}
             onChange={e => setTelefon(e.target.value)}
           />
@@ -120,7 +120,7 @@ export default function RegistracijaPage() {
               <input
                 type="text"
                 placeholder={t('register.country')}
-                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
+                className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={drzava}
                 onChange={e => setDrzava(e.target.value)}
               />
@@ -130,7 +130,7 @@ export default function RegistracijaPage() {
               <input
                 type="text"
                 placeholder={t('register.city')}
-                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
+                className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={grad}
                 onChange={e => setGrad(e.target.value)}
               />
@@ -143,7 +143,7 @@ export default function RegistracijaPage() {
               <input
                 type="number"
                 placeholder={t('register.postal_code')}
-                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
+                className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={postanskiBroj}
                 onChange={e => setPostanskiBroj(e.target.value)}
               />
@@ -153,7 +153,7 @@ export default function RegistracijaPage() {
               <input
                 type="text"
                 placeholder={t('register.address')}
-                className="flex-1 outline-none bg-transparent text-base focus:ring-0"
+                className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={adresa}
                 onChange={e => setAdresa(e.target.value)}
               />
@@ -167,7 +167,7 @@ export default function RegistracijaPage() {
               name="password"
               type="password"
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-400 hover:border-blue-400 transition-colors !focus:ring-0 !ring-0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={lozinka}
               onChange={e => setLozinka(e.target.value)}
               placeholder={t('register.password')}

@@ -101,7 +101,7 @@ function IzmeniProizvodContent() {
                           name="naziv"
                           value={form.naziv || ""}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder={"Unesite naziv proizvoda"}
                           required
                       />
@@ -117,7 +117,7 @@ function IzmeniProizvodContent() {
                           type="number"
                           value={form.cena || ""}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder="Unesite cenu"
                           required
                       />
@@ -132,7 +132,7 @@ function IzmeniProizvodContent() {
                           name="opis"
                           value={form.opis || ""}
                           onChange={handleChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder="Unesite opis"
                       />
                       {fieldErrors.opis && <p className="text-red-500 text-sm mt-1">{fieldErrors.opis}</p>}
@@ -147,7 +147,7 @@ function IzmeniProizvodContent() {
                           value={form.karakteristike || ""}
                           onChange={handleChange}
                           type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder="Unesite karakteristike"
                       />
                       {fieldErrors.karakteristike && <p className="text-red-500 text-sm mt-1">{fieldErrors.karakteristike}</p>}
@@ -162,7 +162,7 @@ function IzmeniProizvodContent() {
                           value={form.kategorija || ""}
                           onChange={handleChange}
                           type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder="Unesite kategoriju"
                       />
                       {fieldErrors.kategorija && <p className="text-red-500 text-sm mt-1">{fieldErrors.kategorija}</p>}
@@ -177,7 +177,7 @@ function IzmeniProizvodContent() {
                           value={form.kolicina || ""}
                           onChange={handleChange}
                           type="number"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
                           placeholder="Unesite količinu"
                           required
                       />

@@ -7,7 +7,6 @@ import { FaPlus, FaTimes } from 'react-icons/fa';
 import { proizvodSchemaStatic } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
-import DodajProizvodSkeleton from '@/components/Skeletoni';
 import { TranslationData } from '@/types';
 
 
@@ -194,7 +193,7 @@ function DodajProizvodPage() {
     };
     return (
         <>
-            <DodajProizvodSkeleton />
+
             <div className="max-w-2xl mx-auto p-8">
                 <h2 className="text-2xl text-blue-600 font-semibold mb-6">Dodaj novi proizvod</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -210,7 +209,7 @@ function DodajProizvodPage() {
                                 : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
-                            🇷🇸 Srpski
+                            🇲🇪 Crnogorski
                             {translations.sr.naziv && translations.sr.kategorija && (
                                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>
                             )}
@@ -245,9 +244,9 @@ function DodajProizvodPage() {
                             name="naziv"
                             value={translations[activeLanguage].naziv}
                             onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors[`${activeLanguage}_naziv`]
+                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_naziv`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
+                                : 'border-gray-300 input-focus'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Naziv proizvoda' : 'Product name'}
                             required
@@ -267,9 +266,9 @@ function DodajProizvodPage() {
                             value={translations[activeLanguage].kategorija}
                             onChange={handleChange}
                             type="text"
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors[`${activeLanguage}_kategorija`]
+                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_kategorija`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
+                                : 'border-gray-300 input-focus'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Kategorija proizvoda' : 'Product category'}
                             required
@@ -290,9 +289,9 @@ function DodajProizvodPage() {
                             name="opis"
                             value={translations[activeLanguage].opis}
                             onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors[`${activeLanguage}_opis`]
+                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_opis`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
+                                : 'border-gray-300 input-focus'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Opis proizvoda' : 'Product description'}
                             rows={4}
@@ -311,9 +310,9 @@ function DodajProizvodPage() {
                             name="karakteristike"
                             value={translations[activeLanguage].karakteristike}
                             onChange={handleChange}
-                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors[`${activeLanguage}_karakteristike`]
+                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_karakteristike`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 focus:ring-blue-500'
+                                : 'border-gray-300 input-focus'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Karakteristike proizvoda' : 'Product features'}
                             rows={4}
@@ -339,9 +338,9 @@ function DodajProizvodPage() {
                                 step="0.01"
                                 value={form.cena}
                                 onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors['sr_cena'] || validationErrors['en_cena']
+                                    className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors['sr_cena'] || validationErrors['en_cena']
                                     ? 'border-red-300 focus:ring-red-500'
-                                    : 'border-gray-300 focus:ring-blue-500'
+                                    : 'border-gray-300 input-focus'
                                     }`}
                                 placeholder="0.00"
                                 required
@@ -364,9 +363,9 @@ function DodajProizvodPage() {
                                 onChange={handleChange}
                                 type="number"
                                 min="0"
-                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${validationErrors['sr_kolicina'] || validationErrors['en_kolicina']
+                                    className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors['sr_kolicina'] || validationErrors['en_kolicina']
                                     ? 'border-red-300 focus:ring-red-500'
-                                    : 'border-gray-300 focus:ring-blue-500'
+                                    : 'border-gray-300 input-focus'
                                     }`}
                                 placeholder="0"
                                 required

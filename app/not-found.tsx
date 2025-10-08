@@ -11,7 +11,7 @@ function NotFound() {
       </h1>
       <Link
         href="/"
-        className="inline-block  hover:bg--red-200 text-white px-6 py-3 text-lg rounded-lg shadow transition -transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        className="inline-block  hover:bg--red-200 text-white px-6 py-3 text-lg rounded-lg shadow transition -transform transform hover:scale-105 input-focusfocus:ring-red-500 focus:ring-opacity-50"
       >
         {t("back_to_home")}
       </Link>

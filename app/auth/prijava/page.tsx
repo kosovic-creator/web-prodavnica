@@ -7,24 +7,7 @@ import { FaSignInAlt, FaEnvelope, FaLock, FaGoogle, FaSpinner } from "react-icon
 import '@/i18n/config';
 
 // Pomeri PrijavaSkeleton komponentu unutar glavne komponente ili u zasebnu komponentu
-const PrijavaSkeleton = () => (
-  <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
-    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 animate-pulse">
-      <div className="h-10 bg-gray-300 rounded w-3/4 mx-auto mb-6"></div>
-      <div className="space-y-4">
-        <div className="h-12 bg-gray-300 rounded"></div>
-        <div className="h-12 bg-gray-300 rounded"></div>
-        <div className="h-12 bg-gray-300 rounded"></div>
-      </div>
-      <div className="mt-6 space-y-4">
-        <div className="h-12 bg-gray-300 rounded"></div>
-      </div>
-      <div className="mt-6 text-center border-t pt-4">
-        <div className="h-6 bg-gray-300 rounded w-1/2 mx-auto"></div>
-      </div>
-    </div>
-  </div>
-);
+
 
 export default function PrijavaForm() {
   const { t } = useTranslation('auth');
@@ -60,7 +43,7 @@ export default function PrijavaForm() {
 
   // Prikazuje skeleton dok je loading true
   if (loading) {
-    return <PrijavaSkeleton />;
+    <p>Loading...</p>;
   }
 
   return (
@@ -71,7 +54,7 @@ export default function PrijavaForm() {
           {t('login.title')}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg input-focus">
             <FaEnvelope className="text-blue-600 text-lg flex-shrink-0" />
             <input
               type="email"
@@ -83,7 +66,7 @@ export default function PrijavaForm() {
               required
             />
           </div>
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg input-focus">
             <FaLock className="text-blue-600 text-lg flex-shrink-0" />
             <input
               type="password"
