@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useSession } from 'next-auth/react';
 // import Image from "next/image";
@@ -86,7 +87,7 @@ export default function ProfilPage() {
       // Ako nema session-a i nije loading, postavi userLoaded na true
       setUserLoaded(true);
     }
-  }, [session?.user?.id, session?.user, status]);
+  }, [session?.user?.id, session?.user, status, t]);
 
   useEffect(() => {
     if (!session?.user && status !== "loading" && userLoaded) {
