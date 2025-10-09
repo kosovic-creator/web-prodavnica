@@ -9,6 +9,7 @@ import '@/i18n/config';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
+import Loading from '@/components/Loadning';
 
 function OmiljeniContent() {
   const { t } = useTranslation('proizvodi');
@@ -25,17 +26,7 @@ function OmiljeniContent() {
     return translation?.[field as keyof typeof translation] || prevodi[0]?.[field as keyof typeof prevodi[0]] || '';
   };
 
-  function OmiljeniSkeleton() {
-    return (
-      <div className="animate-pulse flex space-x-4">
-        <div className="flex-1 space-y-6 py-1">
-          <div className="h-4 bg-gray-300 rounded w-3/4" />
-          <div className="h-4 bg-gray-300 rounded w-5/6" />
-          <div className="h-4 bg-gray-300 rounded w-2/3" />
-        </div>
-      </div>
-    );
-  }
+
 
   useEffect(() => {
     setLoading(true);
@@ -112,7 +103,7 @@ function OmiljeniContent() {
   return (
     loading ? (
       <div className="space-y-4">
-        <OmiljeniSkeleton />
+        <Loading />
       </div>
     ) : (
       <> <Toaster position="top-center" />

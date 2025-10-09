@@ -12,6 +12,7 @@ import { useSearch } from '@/components/SearchContext';
 import Link from 'next/link';
 import OmiljeniButton from '@/components/OmiljeniButton';
 import ProductSkeleton from '@/components/Skeletoni';
+import { t } from 'i18next';
 
 
 function ProizvodiContent() {
@@ -231,7 +232,7 @@ function ProizvodiContent() {
 
 export default function ProizvodiPage() {
   return (
-    <Suspense fallback={<div className="p-4 text-center">Učitavanje proizvoda...</div>}>
+    <Suspense fallback={<div className="p-4 text-center">{t('ucitavanje_proizvoda')}...</div>}>
       <ProizvodiContent />
     </Suspense>
   );
