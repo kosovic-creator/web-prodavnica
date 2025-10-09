@@ -12,32 +12,38 @@ import { registracijaSchema } from "@/zod";
 export default function RegistracijaPage() {
   const { t } = useTranslation('auth');
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [lozinka, setLozinka] = useState("");
-  const [ime, setIme] = useState("");
-  const [prezime, setPrezime] = useState("");
-  const [telefon, setTelefon] = useState("");
-  const [drzava, setDrzava] = useState("");
-  const [grad, setGrad] = useState("");
-  const [postanskiBroj, setPostanskiBroj] = useState("");
-  const [adresa, setAdresa] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    lozinka: "",
+    ime: "",
+    prezime: "",
+    telefon: "",
+    drzava: "",
+    grad: "",
+    postanskiBroj: "",
+    adresa: ""
+  });
+
+  const { email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj, adresa } = form;
+
+  // Ispravno pozicionirana handleChange funkcija
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Validacija na frontendu
-    const result = registracijaSchema(t).safeParse({ email, lozinka, ime, prezime, telefon });
+    const result = registracijaSchema.safeParse({ email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj, adresa });
     if (!result.success) {
-      // Prikaz prve greške
       toast.error(result.error.issues[0].message);
       return;
     }
-    // ...dalje slanje na backend
     try {
-      // Backend poziv
       const res = await fetch("/api/auth/registracija", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj: Number(postanskiBroj), adresa }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -49,7 +55,7 @@ export default function RegistracijaPage() {
     } catch {
       toast.error(t('register.error_occurred'));
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
@@ -62,42 +68,42 @@ export default function RegistracijaPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
             <FaEnvelope className="text-blue-600 text-lg flex-shrink-0" />
-          <input
+            <input
               id="email"
               name="email"
               type="email"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={handleChange}
               placeholder={t('register.email')}
             />
-        </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaUser className="text-blue-600 text-lg flex-shrink-0" />
               <input
-                id="name"
-                name="name"
+                id="ime"
+                name="ime"
                 type="text"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
                 value={ime}
-                onChange={e => setIme(e.target.value)}
+                onChange={handleChange}
                 placeholder={t('register.name')}
               />
             </div>
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaUser className="text-blue-600 text-lg flex-shrink-0" />
               <input
-                id="surname"
-                name="surname"
+                id="prezime"
+                name="prezime"
                 type="text"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
                 value={prezime}
-                onChange={e => setPrezime(e.target.value)}
+                onChange={handleChange}
                 placeholder={t('register.surname')}
               />
             </div>
@@ -105,34 +111,40 @@ export default function RegistracijaPage() {
 
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
             <FaPhone className="text-blue-600 text-lg flex-shrink-0" />
-          <input
-            type="text"
+            <input
+              id="telefon"
+              name="telefon"
+              type="text"
               placeholder={t('register.phone')}
               className="flex-1 outline-none bg-transparent text-base input-focus"
-            value={telefon}
-            onChange={e => setTelefon(e.target.value)}
-          />
-        </div>
+              value={telefon}
+              onChange={handleChange}
+            />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaGlobe className="text-blue-600 text-lg flex-shrink-0" />
               <input
+                id="drzava"
+                name="drzava"
                 type="text"
                 placeholder={t('register.country')}
                 className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={drzava}
-                onChange={e => setDrzava(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaCity className="text-blue-600 text-lg flex-shrink-0" />
               <input
+                id="grad"
+                name="grad"
                 type="text"
                 placeholder={t('register.city')}
                 className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={grad}
-                onChange={e => setGrad(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -141,44 +153,48 @@ export default function RegistracijaPage() {
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaHashtag className="text-blue-600 text-lg flex-shrink-0" />
               <input
+                id="postanskiBroj"
+                name="postanskiBroj"
                 type="number"
                 placeholder={t('register.postal_code')}
                 className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={postanskiBroj}
-                onChange={e => setPostanskiBroj(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaMapMarkerAlt className="text-blue-600 text-lg flex-shrink-0" />
               <input
+                id="adresa"
+                name="adresa"
                 type="text"
                 placeholder={t('register.address')}
                 className="flex-1 outline-none bg-transparent text-base input-focus"
                 value={adresa}
-                onChange={e => setAdresa(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
 
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
             <FaLock className="text-blue-600 text-lg flex-shrink-0" />
-          <input
-              id="password"
-              name="password"
+            <input
+              id="lozinka"
+              name="lozinka"
               type="password"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={lozinka}
-              onChange={e => setLozinka(e.target.value)}
+              onChange={handleChange}
               placeholder={t('register.password')}
             />
-        </div>
+          </div>
 
           <button type="submit" className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors text-base font-medium">
-          <FaUserPlus />
+            <FaUserPlus />
             {t('register.register')}
-        </button>
-      </form>
+          </button>
+        </form>
 
         {/* Login link */}
         <div className="mt-6 text-center border-t pt-4">
@@ -196,3 +212,4 @@ export default function RegistracijaPage() {
     </div>
   );
 }
+

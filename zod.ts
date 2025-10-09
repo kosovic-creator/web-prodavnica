@@ -56,17 +56,7 @@ export const proizvodSchema = (t: TranslateFn) => z.object({
   kolicina: z.number().min(1, { message: t('kolicina_error') }),
 });
 
-export const registracijaSchema = (t: TranslateFn) => z.object({
-    email: z.string().email({ message: t('email_error') }),
-    lozinka: z.string().min(6, { message: t('lozinka_error') }),
-    ime: z.string().min(2, { message: t('ime_error') }),
-    prezime: z.string().min(2, { message: t('prezime_error') }),
-    telefon: z.string().min(5, { message: t('telefon_error') }).max(15).regex(/^\+?[0-9\s]*$/, { message: t('telefon_error') }).optional(),
-    drzava: z.string().min(2, { message: t('drzava_error') }),
-    grad: z.string().min(2, { message: t('grad_error') }).optional(),
-    postanskiBroj: z.string().min(2, { message: t('postanskiBroj_error') }).optional(),
-    adresa: z.string().min(2, { message: t('adresa_error') }).optional(),
-});
+
 export const porudzbineSchema = (t: TranslateFn) => z.object({
     korisnikId: z.string().min(1, { message: t('required') }),
     ukupno: z.string().min(1, { message: t('required') }),
@@ -81,3 +71,16 @@ export const adminPorudzbineSchema = z.object({
     status: z.string().min(1, { message: 'Status je obavezan' }),
     email: z.string().email({ message: 'Neispravna email adresa' }).optional().or(z.literal('')),
 });
+
+export const registracijaSchema = z.object({
+    email: z.string().email(),
+    lozinka: z.string().min(6),
+    ime: z.string().min(2),
+    prezime: z.string().min(2),
+    telefon: z.string().min(5),
+    drzava: z.string().min(2),
+    grad: z.string().min(2),
+    postanskiBroj: z.string().min(2),
+    adresa: z.string().min(2),
+});
+

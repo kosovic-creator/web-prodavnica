@@ -3,10 +3,19 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-export async function POST(req: Request) {
-
-  const body = await req.json();
-  const { email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj, adresa } = body;
+export async function POST(request: Request) {
+  const data = await request.json();
+  const {
+    email,
+    lozinka,
+    ime,
+    prezime,
+    telefon,
+    drzava,
+    grad,
+    postanskiBroj,
+    adresa,
+  } = data;
   const postoji = await prisma.korisnik.findUnique({ where: { email } });
   if (postoji) {
     return NextResponse.json({ error: "Email već postoji." }, { status: 400 });
@@ -23,7 +32,7 @@ export async function POST(req: Request) {
       telefon,
       drzava,
       grad,
-      postanskiBroj,
+      postanskiBroj: postanskiBroj ? Number(postanskiBroj) : null,
       adresa,
       emailVerifikacijaToken: token,
       emailVerifikacijaIstice: istice,

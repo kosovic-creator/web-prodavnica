@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-// Removed i18n - using Serbian text directly
 import ImageUpload from '@/components/ImageUpload';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import { proizvodSchemaStatic } from '@/zod';
@@ -12,7 +11,6 @@ import { TranslationData } from '@/types';
 
 function DodajProizvodPage() {
     const router = useRouter();
-    // Removed useTranslation - using direct Serbian text
     const [form, setForm] = useState({
         cena: '',
         kolicina: '',
