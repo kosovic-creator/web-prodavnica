@@ -36,9 +36,9 @@ function ProizvodiBannerContent() {
         return res.json();
       })
       .then(data => {
-        if (Array.isArray(data)) {
-          // Prilagodi polja za oba jezika
-          const proizvodiSaSlikama = data.filter((p: Proizvod) =>
+        const proizvodiArr = Array.isArray(data.proizvodi) ? data.proizvodi : [];
+        if (proizvodiArr.length > 0) {
+          const proizvodiSaSlikama = proizvodiArr.filter((p: Proizvod) =>
             p.slika &&
             p.slika.trim() !== '' &&
             (p.slika.startsWith('http') || p.slika.startsWith('/'))
@@ -46,7 +46,7 @@ function ProizvodiBannerContent() {
           if (proizvodiSaSlikama.length > 0) {
             setProizvodi(proizvodiSaSlikama);
           } else {
-            setProizvodi(data);
+            setProizvodi(proizvodiArr);
           }
         } else {
           setError(t('nema_dostupnih_proizvoda'));
