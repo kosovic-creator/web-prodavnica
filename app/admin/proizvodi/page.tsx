@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { Proizvod } from '@/types';
 
 
@@ -131,14 +130,14 @@ const ProizvodPage = () => {
 
   // Get unique categories from current page
   // Pretpostavljam da je default srpski, može se proširiti za en
-  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija_sr)));
+  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija)));
 
   // Note: With pagination, filtering should be done server-side for better performance
   // For now, we'll use client-side filtering for the current page only
   const filteredProducts = proizvodi.filter(proizvod => {
-    const matchesSearch = (proizvod.naziv_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-      (proizvod.opis_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === '' || proizvod.kategorija_sr === filterCategory;
+    const matchesSearch = (proizvod.naziv?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+      (proizvod.opis?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === '' || proizvod.kategorija === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -308,27 +307,14 @@ const ProizvodPage = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Proizvod
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Kategorija
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Cena
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Na stanju
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Kreiran
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Akcije
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Naziv</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opis</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategorija</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cena</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Na stanju</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kreiran</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akcije</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -336,58 +322,43 @@ const ProizvodPage = () => {
                   const stockStatus = getStockStatus(proizvod.kolicina);
                   return (
                     <tr key={proizvod.id} className="hover:bg-gray-50 transition-colors duration-200">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12">
-                            {proizvod.slika ? (
-                              <Image
-                                className="h-12 w-12 rounded-lg object-cover"
-                                src={proizvod.slika}
-                                alt={proizvod.naziv_sr || 'Slika proizvoda'}
-                                width={48}
-                                height={48}
-                              />
-                            ) : (
-                              <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                                <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">
-                              {proizvod.naziv_sr}
-                            </div>
-                            <div className="text-sm text-gray-500 max-w-[200px] truncate">
-                              {proizvod.opis_sr || 'Nema opisa'}
-                            </div>
-                          </div>
-                        </div>
+                      {/* Naziv */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-[200px] truncate">
+                        {proizvod.naziv}
                       </td>
+                      {/* Opis */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-[200px] truncate">
+                        {proizvod.opis || 'Nema opisa'}
+                      </td>
+                      {/* Kategorija */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {proizvod.kategorija_sr || 'Nema kategorije'}
+                          {proizvod.kategorija || 'Nema kategorije'}
                         </span>
                       </td>
+                      {/* Cena */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">
                           {formatCurrency(proizvod.cena)}
                         </div>
                       </td>
+                      {/* Na stanju */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {proizvod.kolicina} kom
                         </div>
                       </td>
+                      {/* Status */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stockStatus.color}`}>
                           {stockStatus.text}
                         </span>
                       </td>
+                      {/* Kreiran */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(proizvod.kreiran.toString())}
                       </td>
+                      {/* Akcije */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni

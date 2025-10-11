@@ -1,19 +1,25 @@
 export type Proizvod = {
   id: string;
-  naziv_sr: string;
+  // API polja
+  naziv: string;
+  opis: string;
+  kategorija: string;
+  karakteristike?: string;
+  // Lokalizovana polja
+  naziv_sr?: string;
   naziv_en?: string;
-  opis_sr: string;
+  opis_sr?: string;
   opis_en?: string;
   karakteristike_sr?: string;
   karakteristike_en?: string;
-  kategorija_sr: string;
+  kategorija_sr?: string;
   kategorija_en?: string;
   cena: number;
   kolicina: number;
   slika?: string;
   kreiran: Date;
   azuriran: Date;
- 
+
 }
 
 export type Korisnik = {
