@@ -36,12 +36,30 @@ function IzmeniProizvodContent() {
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   useEffect(() => {
     if (id) {
-        // Uzmi jezik iz URL-a ili iz i18n ili default 'sr'
-        const langFromUrl = searchParams?.get('lang');
-        const currentLang = langFromUrl || 'sr';
-        fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
+      const langFromUrl = searchParams?.get('lang');
+      const currentLang = langFromUrl || 'sr';
+      fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
         .then(res => res.json())
-        .then(data => setForm(data));
+        .then(data => {
+          // Mapiraj API polja na polja forme
+          setForm(form => ({
+            ...form,
+            id: data.id,
+            cena: data.cena,
+            slika: data.slika,
+            kolicina: data.kolicina,
+            kreiran: data.kreiran,
+            azuriran: data.azuriran,
+            naziv_sr: currentLang === 'sr' ? (data.naziv ?? '') : (form?.naziv_sr ?? ''),
+            naziv_en: currentLang === 'en' ? (data.naziv ?? '') : (form?.naziv_en ?? ''),
+            opis_sr: currentLang === 'sr' ? (data.opis ?? '') : (form?.opis_sr ?? ''),
+            opis_en: currentLang === 'en' ? (data.opis ?? '') : (form?.opis_en ?? ''),
+            karakteristike_sr: currentLang === 'sr' ? (data.karakteristike ?? '') : (form?.karakteristike_sr ?? ''),
+            karakteristike_en: currentLang === 'en' ? (data.karakteristike ?? '') : (form?.karakteristike_en ?? ''),
+            kategorija_sr: currentLang === 'sr' ? (data.kategorija ?? '') : (form?.kategorija_sr ?? ''),
+            kategorija_en: currentLang === 'en' ? (data.kategorija ?? '') : (form?.kategorija_en ?? ''),
+          }));
+        });
     }
   }, [id, searchParams]);
 
