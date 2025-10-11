@@ -11,6 +11,9 @@ export type Proizvod = {
   cena: number;
   kolicina: number;
   slika?: string;
+  kreiran: Date;
+  azuriran: Date;
+ 
 }
 
 export type Korisnik = {

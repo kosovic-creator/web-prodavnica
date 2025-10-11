@@ -1,11 +1,9 @@
 'use client';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Proizvod as ProizvodBase } from '@/types';
+import { Proizvod } from '@/types';
 
-type Proizvod = ProizvodBase & {
-  createdAt: string;
-};
+
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -138,8 +136,8 @@ const ProizvodPage = () => {
   // Note: With pagination, filtering should be done server-side for better performance
   // For now, we'll use client-side filtering for the current page only
   const filteredProducts = proizvodi.filter(proizvod => {
-    const matchesSearch = proizvod.naziv_sr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proizvod.opis_sr?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (proizvod.naziv_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+      (proizvod.opis_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === '' || proizvod.kategorija_sr === filterCategory;
     return matchesSearch && matchesCategory;
   });
@@ -275,8 +273,8 @@ const ProizvodPage = () => {
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
               >
                 <option value="">Sve kategorije</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                {categories.map((category, idx) => (
+                  <option key={category || idx} value={category}>{category}</option>
                 ))}
               </select>
             </div>
@@ -345,7 +343,7 @@ const ProizvodPage = () => {
                               <Image
                                 className="h-12 w-12 rounded-lg object-cover"
                                 src={proizvod.slika}
-                                alt={proizvod.naziv_sr}
+                                alt={proizvod.naziv_sr || 'Slika proizvoda'}
                                 width={48}
                                 height={48}
                               />
@@ -388,7 +386,7 @@ const ProizvodPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(proizvod.createdAt.toString())}
+                        {formatDate(proizvod.kreiran.toString())}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>

@@ -83,16 +83,22 @@ function DodajProizvodPage() {
         setError(null);
         setValidationErrors({});
 
-        // Pripremi payload za backend
+        // Pripremi payload za backend, ensure all fields are strings
         const payload = {
             cena: Number(form.cena),
             kolicina: Number(form.kolicina),
-            slika: form.slika,
-            ...formTranslations
+            slika: form.slika || '',
+            naziv_sr: formTranslations.naziv_sr || '',
+            opis_sr: formTranslations.opis_sr || '',
+            karakteristike_sr: formTranslations.karakteristike_sr || '',
+            kategorija_sr: formTranslations.kategorija_sr || '',
+            naziv_en: formTranslations.naziv_en || '',
+            opis_en: formTranslations.opis_en || '',
+            karakteristike_en: formTranslations.karakteristike_en || '',
+            kategorija_en: formTranslations.kategorija_en || '',
         };
         // Loguj payload
         console.log('Payload za backend:', payload);
-        alert('Payload koji se šalje na backend:\n' + JSON.stringify(payload, null, 2));
 
         // Validacija celog objekta
         try {
@@ -109,44 +115,12 @@ function DodajProizvodPage() {
             return;
         }
 
-        // Validate English translation using Zod schema
-        try {
-            const schema = noviProizvodSchemaStatic;
-            const englishTranslation = {
-                naziv: formTranslations.naziv_en,
-                opis: formTranslations.opis_en,
-                karakteristike: formTranslations.karakteristike_en,
-                kategorija: formTranslations.kategorija_en,
-            };
-
-            schema.parse({
-                naziv: englishTranslation.naziv,
-                cena: Number(form.cena) || 0,
-                slika: form.slika,
-                opis: englishTranslation.opis || '',
-                karakteristike: englishTranslation.karakteristike,
-                kategorija: englishTranslation.kategorija,
-                kolicina: Number(form.kolicina) || 0,
-            });
-        } catch (zodError) {
-            const errors = { ...validationErrors };
-            if (zodError instanceof ZodError) {
-                zodError.issues.forEach((issue) => {
-                    const field = issue.path[0] as string;
-                    errors[`en_${field}`] = issue.message;
-                });
-            }
-            setValidationErrors(errors);
-            setError('Please fix errors in English translation.');
-            return;
-        }
-
         // Additional validation checks
-        if (!formTranslations.naziv_sr || !formTranslations.naziv_en) {
+        if (!payload.naziv_sr || !payload.naziv_en) {
             setError('Naziv je obavezan i za srpski i za engleski jezik!');
             return;
         }
-        if (!formTranslations.kategorija_sr || !formTranslations.kategorija_en) {
+        if (!payload.kategorija_sr || !payload.kategorija_en) {
             setError('Kategorija je obavezna i za srpski i za engleski jezik!');
             return;
         }
