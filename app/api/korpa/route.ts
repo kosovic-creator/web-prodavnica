@@ -3,6 +3,9 @@ import prisma from '@/lib/prisma';
 
 export async function POST(request: Request) {
   const { korisnikId, proizvodId, kolicina } = await request.json();
+  if (!korisnikId) {
+    return NextResponse.json({ error: 'Niste prijavljeni' }, { status: 401 });
+  }
   // Dodaj ili ažuriraj stavku u korpi
   const existing = await prisma.stavkaKorpe.findUnique({
     where: { korisnikId_proizvodId: { korisnikId, proizvodId } }
