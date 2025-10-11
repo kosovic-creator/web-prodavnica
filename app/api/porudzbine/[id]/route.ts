@@ -18,11 +18,7 @@ export async function GET(
       include: {
         stavkePorudzbine: {
           include: {
-            proizvod: {
-              include: {
-                prevodi: true
-              }
-            }
+            proizvod: true
           }
         },
         korisnik: {

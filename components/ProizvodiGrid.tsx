@@ -128,7 +128,9 @@ function ProizvodiGrid() {
                   <div className="relative w-24 h-24">
                     <Image
                       src={proizvod.slika}
-                      alt={currentLang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr}
+                      alt={
+                        (currentLang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr) || 'Proizvod'
+                      }
                       fill
                       className="object-contain"
                       sizes="96px"

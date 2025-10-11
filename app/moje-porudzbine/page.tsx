@@ -284,7 +284,7 @@ export default function MojePorudzbinePage() {
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                                   <div className="flex-1 min-w-0">
                                     <h5 className="font-medium text-gray-800 truncate">
-                                      {stavka.proizvod?.naziv || t('naziv_proizvoda')}
+                                      {stavka.proizvod?.naziv_sr || t('naziv_proizvoda')}
                                     </h5>
                                     {stavka.opis && (
                                       <p className="text-sm text-gray-600 mt-1">{stavka.opis}</p>

@@ -244,9 +244,9 @@ export default function KorpaPage() {
                   <tr key={s.id} className="border-b">
                     <td className="px-4 lg:px-8 py-3 text-left align-middle flex items-center gap-2">
                       {s.proizvod?.slika && (
-                        <Image src={s.proizvod.slika} alt={s.proizvod.naziv || ''} width={48} height={48} className="object-contain rounded" />
+                        <Image src={s.proizvod.slika} alt={s.proizvod.naziv_sr || ''} width={48} height={48} className="object-contain rounded" />
                       )}
-                      <span className="font-semibold">{s.proizvod?.naziv}</span>
+                      <span className="font-semibold">{s.proizvod?.naziv_sr}</span>
                     </td>
                     <td className="px-4 lg:px-8 py-3 text-left align-middle">
                       <div className="flex items-center gap-2">
@@ -299,7 +299,7 @@ export default function KorpaPage() {
                         {s.proizvod?.slika && (
                           <Image
                             src={s.proizvod.slika}
-                            alt={s.proizvod.naziv || ''}
+                            alt={s.proizvod.naziv_sr || ''}
                             width={80}
                             height={80}
                             className="object-contain rounded-lg cart-image"
@@ -311,7 +311,7 @@ export default function KorpaPage() {
                       {/* Product Info */}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-gray-900 truncate mb-2">
-                          {s.proizvod?.naziv}
+                          {s.proizvod?.naziv_sr || 'Nema naziva'}
                         </h3>
 
                         {/* Price */}

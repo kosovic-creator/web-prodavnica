@@ -1,7 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Proizvod } from '@/types';
+import { Proizvod as ProizvodBase } from '@/types';
+
+type Proizvod = ProizvodBase & {
+  createdAt: string;
+};
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -128,14 +132,15 @@ const ProizvodPage = () => {
   };
 
   // Get unique categories from current page
-  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija)));
+  // Pretpostavljam da je default srpski, može se proširiti za en
+  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija_sr)));
 
   // Note: With pagination, filtering should be done server-side for better performance
   // For now, we'll use client-side filtering for the current page only
   const filteredProducts = proizvodi.filter(proizvod => {
-    const matchesSearch = proizvod.naziv.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proizvod.opis?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === '' || proizvod.kategorija === filterCategory;
+    const matchesSearch = proizvod.naziv_sr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      proizvod.opis_sr?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === '' || proizvod.kategorija_sr === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -340,7 +345,7 @@ const ProizvodPage = () => {
                               <Image
                                 className="h-12 w-12 rounded-lg object-cover"
                                 src={proizvod.slika}
-                                alt={proizvod.naziv}
+                                alt={proizvod.naziv_sr}
                                 width={48}
                                 height={48}
                               />
@@ -354,17 +359,17 @@ const ProizvodPage = () => {
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">
-                              {proizvod.naziv}
+                              {proizvod.naziv_sr}
                             </div>
                             <div className="text-sm text-gray-500 max-w-[200px] truncate">
-                              {proizvod.opis || 'Nema opisa'}
+                              {proizvod.opis_sr || 'Nema opisa'}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {proizvod.kategorija}
+                          {proizvod.kategorija_sr || 'Nema kategorije'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -383,13 +388,13 @@ const ProizvodPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(proizvod.kreiran.toString())}
+                        {formatDate(proizvod.createdAt.toString())}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
                           Izmeni
                         </button>
-                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => openDeleteModal(proizvod.id, `${proizvod.naziv || ''}`.trim() || proizvod.id)}>
+                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => openDeleteModal(proizvod.id, `${proizvod.naziv_sr || ''}`.trim() || proizvod.id)}>
                           Obriši
                         </button>
                       </td>

@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import { noviProizvodSchemaStatic } from '@/zod'; // prilagodi putanju
-import { noviProizvodSchema } from '@/zod'; // prilagodi putanju
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
-import { TranslationData } from '@/types';
+
 
 
 function DodajProizvodPage() {

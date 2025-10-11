@@ -38,7 +38,7 @@ function ProizvodiBannerContent() {
       .then(data => {
         if (Array.isArray(data)) {
           // Prilagodi polja za oba jezika
-          const proizvodiSaSlikama = data.proizvodi.filter((p: Proizvod) =>
+          const proizvodiSaSlikama = data.filter((p: Proizvod) =>
             p.slika &&
             p.slika.trim() !== '' &&
             (p.slika.startsWith('http') || p.slika.startsWith('/'))
@@ -46,7 +46,7 @@ function ProizvodiBannerContent() {
           if (proizvodiSaSlikama.length > 0) {
             setProizvodi(proizvodiSaSlikama);
           } else {
-            setProizvodi(data.proizvodi);
+            setProizvodi(data);
           }
         } else {
           setError(t('nema_dostupnih_proizvoda'));
@@ -99,7 +99,7 @@ function ProizvodiBannerContent() {
         <>
           <Image
             src={imageUrl}
-            alt={naziv}
+            alt={naziv ?? ''}
             fill
             className="object-contain transition-all duration-700 ease-in-out"
             priority
