@@ -324,16 +324,16 @@ const ProizvodPage = () => {
                     <tr key={proizvod.id} className="hover:bg-gray-50 transition-colors duration-200">
                       {/* Naziv */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-[200px] truncate">
-                        {proizvod.naziv}
+                        {proizvod.naziv_sr}
                       </td>
                       {/* Opis */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-[200px] truncate">
-                        {proizvod.opis || 'Nema opisa'}
+                        {proizvod.opis_sr}
                       </td>
                       {/* Kategorija */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {proizvod.kategorija || 'Nema kategorije'}
+                          {proizvod.kategorija_sr || 'Nema kategorije'}
                         </span>
                       </td>
                       {/* Cena */}

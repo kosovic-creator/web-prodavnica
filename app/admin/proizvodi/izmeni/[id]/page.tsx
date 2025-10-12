@@ -22,11 +22,9 @@ function IzmeniProizvodContent() {
 
   useEffect(() => {
     if (id) {
-      const currentLang = activeLanguage;
-      fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
+      fetch(`/api/proizvodi/${id}`)
         .then(res => res.json())
         .then(data => {
-          // Mapiraj API polja na polja forme
           setForm({
             id: data.id ?? "",
             cena: data.cena ?? 0,
@@ -34,23 +32,21 @@ function IzmeniProizvodContent() {
             kolicina: data.kolicina ?? 0,
             kreiran: data.kreiran ?? "",
             azuriran: data.azuriran ?? "",
-
-            naziv_sr: currentLang === 'sr' ? (data.naziv ?? '') : (form?.naziv_sr ?? ''),
-            naziv_en: currentLang === 'en' ? (data.naziv ?? '') : (form?.naziv_en ?? ''),
-            opis_sr: currentLang === 'sr' ? (data.opis ?? '') : (form?.opis_sr ?? ''),
-            opis_en: currentLang === 'en' ? (data.opis ?? '') : (form?.opis_en ?? ''),
-            karakteristike_sr: currentLang == 'sr' ? (data.karakteristike ?? '') : (form?.karakteristike_sr ?? ''),
-            karakteristike_en: currentLang == 'en' ? (data.karakteristike ?? '') : (form?.karakteristike_en ?? ''),
-            kategorija_sr: currentLang == 'sr' ? (data.kategorija ?? '') : (form?.kategorija_sr ?? ''),
-            kategorija_en: currentLang == 'en' ? (data.kategorija ?? '') : (form?.kategorija_en ?? ''),
-            // Dodaj obavezna polja iz tipa Proizvod ako ih API vraća
-            naziv: data.naziv ?? "",
-            opis: data.opis ?? "",
-            kategorija: data.kategorija ?? "",
+            naziv_sr: data.naziv_sr ?? '',
+            naziv_en: data.naziv_en ?? '',
+            opis_sr: data.opis_sr ?? '',
+            opis_en: data.opis_en ?? '',
+            karakteristike_sr: data.karakteristike_sr ?? '',
+            karakteristike_en: data.karakteristike_en ?? '',
+            kategorija_sr: data.kategorija_sr ?? '',
+            kategorija_en: data.kategorija_en ?? '',
+            naziv: data.naziv ?? '',
+            opis: data.opis ?? '',
+            kategorija: data.kategorija ?? '',
           });
         });
     }
-  }, [id, activeLanguage]);
+  }, [id]);
 
   if (!form) return <div>Učitavanje...</div>;
 
