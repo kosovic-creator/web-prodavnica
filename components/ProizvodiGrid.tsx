@@ -127,13 +127,14 @@ function ProizvodiGrid() {
                 {proizvod.slika ? (
                   <div className="relative w-24 h-24">
                     <Image
-                      src={proizvod.slika}
+                      src={getCloudinaryOptimizedUrl(proizvod.slika)}
                       alt={
                         (currentLang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr) || 'Proizvod'
                       }
                       fill
                       className="object-contain"
-                      sizes="96px"
+                      sizes="(max-width: 768px) 100vw, 96px"
+                      quality={90}
                     />
                   </div>
                 ) : (
@@ -219,4 +220,10 @@ export default function ProizvodiHome() {
       <ProizvodiGrid />
     </Suspense>
   );
+}
+
+// Cloudinary optimizacija URL-a
+function getCloudinaryOptimizedUrl(url: string) {
+  if (!url.includes('res.cloudinary.com')) return url;
+  return url.replace('/upload/', '/upload/f_auto,q_auto,w_400,h_400/');
 }
