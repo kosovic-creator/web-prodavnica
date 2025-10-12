@@ -169,7 +169,7 @@ export default function KorpaPage() {
   const handleZavrsiKupovinu = async () => {
     const success = await potvrdiPorudzbinu();
     if (success) {
-      router.push('/proizvodi');
+      router.push('/podaci-preuzimanja');
     }
   };
 

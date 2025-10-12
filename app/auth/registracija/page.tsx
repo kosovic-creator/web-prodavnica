@@ -3,10 +3,10 @@
 import { useState } from "react";
 import '@/i18n/config';
 import { useTranslation } from 'react-i18next';
-import { FaUserPlus, FaEnvelope, FaLock, FaUser, FaPhone, FaGlobe, FaCity, FaMapMarkerAlt, FaHashtag } from "react-icons/fa";
+import { FaUserPlus, FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
-import { registracijaSchema } from "@/zod";
+// ...existing code...
 
 
 export default function RegistracijaPage() {
@@ -15,16 +15,11 @@ export default function RegistracijaPage() {
   const [form, setForm] = useState({
     email: "",
     lozinka: "",
+    potvrdaLozinke: "",
     ime: "",
-    prezime: "",
-    telefon: "",
-    drzava: "",
-    grad: "",
-    postanskiBroj: "",
-    adresa: ""
+    prezime: ""
   });
-
-  const { email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj, adresa } = form;
+  const { email, lozinka, potvrdaLozinke, ime, prezime } = form;
 
   // Ispravno pozicionirana handleChange funkcija
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,17 +28,19 @@ export default function RegistracijaPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Validacija na frontendu
-    const result = registracijaSchema.safeParse({ email, lozinka, ime, prezime, telefon, drzava, grad, postanskiBroj, adresa });
-    if (!result.success) {
-      toast.error(result.error.issues[0].message);
+    if (!email || !lozinka || !potvrdaLozinke || !ime || !prezime) {
+      toast.error('Sva polja su obavezna.');
+      return;
+    }
+    if (lozinka !== potvrdaLozinke) {
+      toast.error('Lozinke se ne poklapaju.');
       return;
     }
     try {
       const res = await fetch("/api/auth/registracija", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ email, lozinka, ime, prezime }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -79,7 +76,6 @@ export default function RegistracijaPage() {
               placeholder={t('register.email')}
             />
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
               <FaUser className="text-blue-600 text-lg flex-shrink-0" />
@@ -108,74 +104,6 @@ export default function RegistracijaPage() {
               />
             </div>
           </div>
-
-          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
-            <FaPhone className="text-blue-600 text-lg flex-shrink-0" />
-            <input
-              id="telefon"
-              name="telefon"
-              type="text"
-              placeholder={t('register.phone')}
-              className="flex-1 outline-none bg-transparent text-base input-focus"
-              value={telefon}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
-              <FaGlobe className="text-blue-600 text-lg flex-shrink-0" />
-              <input
-                id="drzava"
-                name="drzava"
-                type="text"
-                placeholder={t('register.country')}
-                className="flex-1 outline-none bg-transparent text-base input-focus"
-                value={drzava}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
-              <FaCity className="text-blue-600 text-lg flex-shrink-0" />
-              <input
-                id="grad"
-                name="grad"
-                type="text"
-                placeholder={t('register.city')}
-                className="flex-1 outline-none bg-transparent text-base input-focus"
-                value={grad}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
-              <FaHashtag className="text-blue-600 text-lg flex-shrink-0" />
-              <input
-                id="postanskiBroj"
-                name="postanskiBroj"
-                type="number"
-                placeholder={t('register.postal_code')}
-                className="flex-1 outline-none bg-transparent text-base input-focus"
-                value={postanskiBroj}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
-              <FaMapMarkerAlt className="text-blue-600 text-lg flex-shrink-0" />
-              <input
-                id="adresa"
-                name="adresa"
-                type="text"
-                placeholder={t('register.address')}
-                className="flex-1 outline-none bg-transparent text-base input-focus"
-                value={adresa}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
             <FaLock className="text-blue-600 text-lg flex-shrink-0" />
             <input
@@ -187,6 +115,19 @@ export default function RegistracijaPage() {
               value={lozinka}
               onChange={handleChange}
               placeholder={t('register.password')}
+            />
+          </div>
+          <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
+            <FaLock className="text-blue-600 text-lg flex-shrink-0" />
+            <input
+              id="potvrdaLozinke"
+              name="potvrdaLozinke"
+              type="password"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
+              value={potvrdaLozinke}
+              onChange={handleChange}
+              placeholder="Potvrda lozinke"
             />
           </div>
 

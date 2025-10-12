@@ -28,7 +28,8 @@ export default function ProfilPage() {
     postanskiBroj: '',
     adresa: '',
     uloga: 'korisnik',
-    slika: '',
+    // ...existing code...
+    podaciId: '',
   });
   const [loading, setLoading] = useState(false);
   const [userLoaded, setUserLoaded] = useState(false);
@@ -40,53 +41,39 @@ export default function ProfilPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      fetch(`/api/korisnici/${session.user.id}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Failed to fetch user data');
-
-          }
-          return res.json();
-        })
-        .then(data => {
+    async function fetchData() {
+      if (session?.user?.id) {
+        try {
+          const [korisnikRes, podaciRes] = await Promise.all([
+            fetch(`/api/korisnici/${session.user.id}`),
+            fetch(`/api/podaci-preuzimanja?korisnikId=${session.user.id}`)
+          ]);
+          const korisnik = korisnikRes.ok ? await korisnikRes.json() : null;
+          const podaciArr = podaciRes.ok ? await podaciRes.json() : [];
+          const podaci = podaciArr[0] || {};
           setForm({
-            ime: data.ime || '',
-            prezime: data.prezime || '',
-            email: data.email || '',
-            telefon: data.telefon || '',
-            drzava: data.drzava || '',
-            grad: data.grad || '',
-            postanskiBroj: data.postanskiBroj?.toString() || '',
-            adresa: data.adresa || '',
-            uloga: data.uloga || 'korisnik',
-            slika: data.slika || '',
+            ime: korisnik?.ime || session.user.ime || '',
+            prezime: korisnik?.prezime || session.user.prezime || '',
+            email: korisnik?.email || session.user.email || '',
+            telefon: podaci?.telefon || '',
+            drzava: podaci?.drzava || '',
+            grad: podaci?.grad || '',
+            postanskiBroj: podaci?.postanskiBroj?.toString() || '',
+            adresa: podaci?.adresa || '',
+            uloga: korisnik?.uloga || 'korisnik',
+            // ...existing code...
+            podaciId: podaci?.id || '',
           });
-        })
-        .catch(error => {
-          console.error('Error fetching user data:', error);
+        } catch (error) {
           toast.error(t('greska_pri_ocitavanju'));
-          // Postaviti osnovne podatke iz session-a ako API poziv ne uspe
-          setForm({
-            ime: session.user.ime || '',
-            prezime: session.user.prezime || '',
-            email: session.user.email || '',
-            telefon: '',
-            drzava: '',
-            grad: '',
-            postanskiBroj: '',
-            adresa: '',
-            uloga: 'korisnik',
-            slika: session.user.slika || '',
-          });
-        })
-        .finally(() => {
+        } finally {
           setUserLoaded(true);
-        });
-    } else if (status !== "loading") {
-      // Ako nema session-a i nije loading, postavi userLoaded na true
-      setUserLoaded(true);
+        }
+      } else if (status !== "loading") {
+        setUserLoaded(true);
+      }
     }
+    fetchData();
   }, [session?.user?.id, session?.user, status, t]);
 
   useEffect(() => {
@@ -112,14 +99,52 @@ export default function ProfilPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/korisnici', {
+      // Update Korisnik
+      const korisnikRes = await fetch('/api/korisnici', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: session.user.id, ...form }),
+        body: JSON.stringify({
+          id: session.user.id,
+          ime: form.ime,
+          prezime: form.prezime,
+          email: form.email,
+          uloga: form.uloga,
+          // ...existing code...
+        }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error || t('greska_pri_cuvanju'));
+      const korisnikData = await korisnikRes.json();
+      // Update PodaciPreuzimanja
+      let podaciRes;
+      if (form.podaciId) {
+        podaciRes = await fetch('/api/podaci-preuzimanja', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: form.podaciId,
+            adresa: form.adresa,
+            drzava: form.drzava,
+            grad: form.grad,
+            postanskiBroj: Number(form.postanskiBroj),
+            telefon: form.telefon,
+          }),
+        });
+      } else {
+        podaciRes = await fetch('/api/podaci-preuzimanja', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            korisnikId: session.user.id,
+            adresa: form.adresa,
+            drzava: form.drzava,
+            grad: form.grad,
+            postanskiBroj: Number(form.postanskiBroj),
+            telefon: form.telefon,
+          }),
+        });
+      }
+      const podaciData = await podaciRes.json();
+      if (!korisnikRes.ok || !podaciRes.ok) {
+        toast.error(korisnikData.error || podaciData.error || t('greska_pri_cuvanju'));
       } else {
         toast.success(t('korisnik_izmjenjen'));
         setEditMode(false);
@@ -236,13 +261,7 @@ export default function ProfilPage() {
                   className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
               </div>
-              <input
-                name="slika"
-                value={form.slika}
-                onChange={handleChange}
-                placeholder={t('profile_image')}
-                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-              />
+              {/* Polje za sliku uklonjeno */}
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
                   type="submit"
@@ -266,11 +285,7 @@ export default function ProfilPage() {
         ) : (
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="space-y-4">
-              {/* {form.slika && (
-                <div className="flex justify-center mb-6">
-                  <Image src={form.slika} alt={t('profile_image') || "Profil"} width={120} height={120} className="rounded-full border-4 border-blue-200" />
-                </div>
-              )} */}
+                {/* Prikaz slike uklonjen */}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">

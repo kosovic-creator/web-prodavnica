@@ -62,7 +62,6 @@ export const authOptions: NextAuthOptions = {
           email: korisnik.email,
           uloga: korisnik.uloga,
           ime: korisnik.ime,
-          slika: korisnik.slika,
         };
       },
     }),
@@ -87,13 +86,9 @@ export const authOptions: NextAuthOptions = {
                 email: user.email!,
                 ime: user.name || "",
                 prezime: "", // default value
-                slika: user.image || "",
                 uloga: "korisnik",
                 lozinka: "", // OAuth users may not have a password
-                telefon: "", // default value
-                grad: "", // default value
-                adresa: "", // default value
-                emailVerifikovan: true, // OAuth korisnici su automatski verifikovani
+
               },
             });
           } else {
@@ -102,8 +97,6 @@ export const authOptions: NextAuthOptions = {
               where: { email: user.email! },
               data: {
                 ime: user.name || postojeciKorisnik.ime,
-                slika: user.image || postojeciKorisnik.slika,
-                emailVerifikovan: true,
               },
             });
           }
@@ -132,7 +125,6 @@ export const authOptions: NextAuthOptions = {
             (token as CustomToken).id = korisnikIzBaze.id;
             (token as CustomToken).uloga = korisnikIzBaze.uloga;
             (token as CustomToken).ime = korisnikIzBaze.ime || undefined;
-            (token as CustomToken).slika = korisnikIzBaze.slika || undefined;
           }
         }
       }
