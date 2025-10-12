@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import ProizvodiBanner from '@/components/ProizvodiBanner';
 import ProizvodiHome from '@/components/ProizvodiGrid';
-import Loading from './uspjesno_placanje/loading';
+import Loading from '@/components/Loadning';
 
 
 function HomeContent() {

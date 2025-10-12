@@ -57,6 +57,8 @@ export const KorpaProvider = ({ children }: { children: React.ReactNode }) => {
   const resetKorpa = () => {
     setStavke([]);
     setBrojStavki(0);
+    localStorage.setItem('brojUKorpi', '0');
+    window.dispatchEvent(new Event('korpaChanged'));
     console.log('resetKorpa called');
   };
 
