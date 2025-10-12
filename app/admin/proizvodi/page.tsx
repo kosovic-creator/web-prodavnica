@@ -356,7 +356,7 @@ const ProizvodPage = () => {
                       </td>
                       {/* Kreiran */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(proizvod.kreiran.toString())}
+                        {formatDate(proizvod.kreiran?.toString() ?? "")}
                       </td>
                       {/* Akcije */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

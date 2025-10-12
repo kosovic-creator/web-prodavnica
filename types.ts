@@ -19,8 +19,31 @@ export type Proizvod = {
   slika?: string;
   kreiran: Date;
   azuriran: Date;
-
 }
+
+// export type Proizvod = {
+//   id: string;
+//   // API polja
+//   cena: number;
+//   slika?: string | null;
+//   kolicina: number;
+//   naziv: string;
+//   opis?: string | null;
+//   kategorija: string;
+//   karakteristike?: string | null;
+//   // Lokalizovana polja
+//   naziv_sr: string;
+//   naziv_en: string;
+//   opis_sr?: string;
+//   opis_en?: string;
+//   karakteristike_sr?: string;
+//   karakteristike_en?: string;
+//   kategorija_sr: string;
+//   kategorija_en: string;
+//   kreiran?: Date;
+//   azuriran?: Date;
+// };
+
 
 export type Korisnik = {
   id: string;
@@ -64,7 +87,7 @@ export type Porudzbina = {
   azuriran: Date;
   idPlacanja?: string | null;
   stavkePorudzbine?: StavkaPorudzbine[];
-   korisnik: {
+  korisnik: {
     id: string;
     ime: string | null;
     prezime: string | null;
@@ -120,9 +143,9 @@ export type ProizvodTranslation = {
 };
 
 export type TranslationData = {
-    naziv: string;
-    opis: string;
-    karakteristike: string;
-    kategorija: string;
+  naziv: string;
+  opis: string;
+  karakteristike: string;
+  kategorija: string;
 };
 

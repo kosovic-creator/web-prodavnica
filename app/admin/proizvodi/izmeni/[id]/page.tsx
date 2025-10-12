@@ -1,32 +1,16 @@
-
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React, { useEffect, useState, Suspense } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 // Removed i18n - using Serbian text directly
 import { noviProizvodSchemaStatic } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 import { FaSave, FaTimes } from 'react-icons/fa';
+import { Proizvod } from '@/types';
 
-type Proizvod = {
-  id?: string;
-  cena: number;
-  slika?: string | null;
-  kolicina: number;
-  naziv_sr: string;
-  naziv_en: string;
-  opis_sr?: string;
-  opis_en?: string;
-  karakteristike_sr?: string;
-  karakteristike_en?: string;
-  kategorija_sr: string;
-  kategorija_en: string;
-  kreiran?: Date;
-  azuriran?: Date;
-};
 
 function IzmeniProizvodContent() {
   const params = useParams<{ id: string }>();
-    const searchParams = useSearchParams();
   const id = params?.id;
   const router = useRouter();
     // Removed useTranslation - using direct Serbian text
@@ -34,36 +18,39 @@ function IzmeniProizvodContent() {
   const [form, setForm] = useState<Proizvod | null>(null);
     const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [activeLanguage, setActiveLanguage] = useState<'sr' | 'en'>('sr');
+
   useEffect(() => {
     if (id) {
-      const langFromUrl = searchParams?.get('lang');
-      const currentLang = langFromUrl || 'sr';
+      const currentLang = activeLanguage;
       fetch(`/api/proizvodi/${id}?lang=${currentLang}`)
         .then(res => res.json())
         .then(data => {
           // Mapiraj API polja na polja forme
-          setForm(form => ({
-            ...form,
-            id: data.id,
-            cena: data.cena,
-            slika: data.slika,
-            kolicina: data.kolicina,
-            kreiran: data.kreiran,
-            azuriran: data.azuriran,
+          setForm({
+            id: data.id ?? "",
+            cena: data.cena ?? 0,
+            slika: data.slika ?? "",
+            kolicina: data.kolicina ?? 0,
+            kreiran: data.kreiran ?? "",
+            azuriran: data.azuriran ?? "",
+
             naziv_sr: currentLang === 'sr' ? (data.naziv ?? '') : (form?.naziv_sr ?? ''),
             naziv_en: currentLang === 'en' ? (data.naziv ?? '') : (form?.naziv_en ?? ''),
             opis_sr: currentLang === 'sr' ? (data.opis ?? '') : (form?.opis_sr ?? ''),
             opis_en: currentLang === 'en' ? (data.opis ?? '') : (form?.opis_en ?? ''),
-            karakteristike_sr: currentLang === 'sr' ? (data.karakteristike ?? '') : (form?.karakteristike_sr ?? ''),
-            karakteristike_en: currentLang === 'en' ? (data.karakteristike ?? '') : (form?.karakteristike_en ?? ''),
-            kategorija_sr: currentLang === 'sr' ? (data.kategorija ?? '') : (form?.kategorija_sr ?? ''),
-            kategorija_en: currentLang === 'en' ? (data.kategorija ?? '') : (form?.kategorija_en ?? ''),
-          }));
+            karakteristike_sr: currentLang == 'sr' ? (data.karakteristike ?? '') : (form?.karakteristike_sr ?? ''),
+            karakteristike_en: currentLang == 'en' ? (data.karakteristike ?? '') : (form?.karakteristike_en ?? ''),
+            kategorija_sr: currentLang == 'sr' ? (data.kategorija ?? '') : (form?.kategorija_sr ?? ''),
+            kategorija_en: currentLang == 'en' ? (data.kategorija ?? '') : (form?.kategorija_en ?? ''),
+            // Dodaj obavezna polja iz tipa Proizvod ako ih API vraća
+            naziv: data.naziv ?? "",
+            opis: data.opis ?? "",
+            kategorija: data.kategorija ?? "",
+          });
         });
     }
-  }, [id, searchParams]);
-
-const [activeLanguage, setActiveLanguage] = useState<'sr' | 'en'>('sr');
+  }, [id, activeLanguage]);
 
   if (!form) return <div>Učitavanje...</div>;
 
