@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+ 'use client';
 import { useSession } from 'next-auth/react';
-// import Image from "next/image";
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaSave, FaTimes, FaEdit, FaTrash } from "react-icons/fa";
 import '@/i18n/config';
@@ -64,7 +63,7 @@ export default function ProfilPage() {
             // ...existing code...
             podaciId: podaci?.id || '',
           });
-        } catch (error) {
+        } catch {
           toast.error(t('greska_pri_ocitavanju'));
         } finally {
           setUserLoaded(true);

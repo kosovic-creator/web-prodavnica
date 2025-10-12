@@ -174,7 +174,7 @@ function OmiljeniContent() {
     )
   );
 }
-export default function ProizvodiPage() {
+export default function OmiljeniPage() {
   return (
     <Suspense fallback={<div className="p-4 text-center">Učitavanje omiljenih proizvoda...</div>}>
       <OmiljeniContent />
