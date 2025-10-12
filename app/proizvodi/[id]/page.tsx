@@ -130,19 +130,19 @@ export default function ProizvodPage() {
               <div className="space-y-4 mb-6">
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">{t('opis') || 'Opis'}:</h3>
-                  <p className="text-gray-600">{opis}</p>
+                  <p className="text-gray-600">{lang === 'en' ? proizvod.opis_en : proizvod.opis_sr}</p>
                 </div>
 
-                {karakteristike && (
+                {(lang === 'en' ? proizvod.karakteristike_en : proizvod.karakteristike_sr) && (
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-2">{t('karakteristike') || 'Karakteristike'}:</h3>
-                    <p className="text-gray-600">{karakteristike}</p>
+                    <p className="text-gray-600">{lang === 'en' ? proizvod.karakteristike_en : proizvod.karakteristike_sr}</p>
                   </div>
                 )}
 
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">{t('kategorija') || 'Kategorija'}:</h3>
-                  <p className="text-gray-600">{kategorija}</p>
+                  <p className="text-gray-600">{lang === 'en' ? (proizvod.kategorija_en || t('nema_kategorije') || 'No category') : (proizvod.kategorija_sr || t('nema_kategorije') || 'Nema kategorije')}</p>
                 </div>
               </div>
 

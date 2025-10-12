@@ -3,8 +3,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(req: Request) {
     const url = new URL(req.url);
-    const id = url.pathname.split('/').pop();
-  const lang = url.searchParams.get('lang') || 'sr'; // Default to Serbian
+  const id = url.pathname.split('/').pop();
 
   if (!id) {
     return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
@@ -33,7 +32,7 @@ export async function GET(req: Request) {
   if (!proizvod) {
     return NextResponse.json({ error: 'Proizvod nije pronađen.' }, { status: 404 });
   }
-  // Vraća polja prema jeziku
+  // Vraća sva polja za oba jezika
   return NextResponse.json({
     id: proizvod.id,
     cena: proizvod.cena,
@@ -41,10 +40,14 @@ export async function GET(req: Request) {
     kolicina: proizvod.kolicina,
     kreiran: proizvod.kreiran,
     azuriran: proizvod.azuriran,
-    naziv: lang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr,
-    opis: lang === 'en' ? proizvod.opis_en : proizvod.opis_sr,
-    karakteristike: lang === 'en' ? proizvod.karakteristike_en : proizvod.karakteristike_sr,
-    kategorija: lang === 'en' ? proizvod.kategorija_en : proizvod.kategorija_sr,
+    naziv_sr: proizvod.naziv_sr,
+    naziv_en: proizvod.naziv_en,
+    opis_sr: proizvod.opis_sr,
+    opis_en: proizvod.opis_en,
+    karakteristike_sr: proizvod.karakteristike_sr,
+    karakteristike_en: proizvod.karakteristike_en,
+    kategorija_sr: proizvod.kategorija_sr,
+    kategorija_en: proizvod.kategorija_en,
   });
 }
 

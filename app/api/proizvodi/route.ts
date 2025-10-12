@@ -6,7 +6,6 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const page = Number(searchParams.get('page')) || 1;
   let pageSize = Number(searchParams.get('pageSize')) || 10;
-  const lang = searchParams.get('lang') || 'sr'; // Default to Serbian
   pageSize = Math.max(pageSize, 10);
   const skip = (page - 1) * pageSize;
 
@@ -35,22 +34,23 @@ export async function GET(req: Request) {
     prisma.proizvod.count(),
   ]);
 
-  // Merge translations with product metadata
-  const proizvodiSaPrevod = proizvodi.map(proizvod => {
-    // Vraća polja za traženi jezik
-    return {
-      id: proizvod.id,
-      cena: proizvod.cena,
-      slika: proizvod.slika,
-      kolicina: proizvod.kolicina,
-      kreiran: proizvod.kreiran,
-      azuriran: proizvod.azuriran,
-      naziv: lang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr,
-      opis: lang === 'en' ? proizvod.opis_en : proizvod.opis_sr,
-      karakteristike: lang === 'en' ? proizvod.karakteristike_en : proizvod.karakteristike_sr,
-      kategorija: lang === 'en' ? proizvod.kategorija_en : proizvod.kategorija_sr,
-    };
-  });
+  // Vraća sva polja za oba jezika za svaki proizvod
+  const proizvodiSaPrevod = proizvodi.map(proizvod => ({
+    id: proizvod.id,
+    cena: proizvod.cena,
+    slika: proizvod.slika,
+    kolicina: proizvod.kolicina,
+    kreiran: proizvod.kreiran,
+    azuriran: proizvod.azuriran,
+    naziv_sr: proizvod.naziv_sr,
+    naziv_en: proizvod.naziv_en,
+    opis_sr: proizvod.opis_sr,
+    opis_en: proizvod.opis_en,
+    karakteristike_sr: proizvod.karakteristike_sr,
+    karakteristike_en: proizvod.karakteristike_en,
+    kategorija_sr: proizvod.kategorija_sr,
+    kategorija_en: proizvod.kategorija_en,
+  }));
   return NextResponse.json({ proizvodi: proizvodiSaPrevod, total });
 }
 
