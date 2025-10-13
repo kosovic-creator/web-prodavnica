@@ -199,7 +199,7 @@ export default function KorpaPage() {
         body: JSON.stringify({
           email: session?.user?.email,
           subject: 'Potvrda porudžbine',
-        text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime} ${session.user.prezime} ${info.adresa}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
+        text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime}\nIme: ${session.user.prezime}\nPrezime: ${info.prezime}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
         }),
       });
 
