@@ -125,7 +125,6 @@ export default function KorpaPage() {
         localStorage.setItem('brojUKorpi', '0');
         window.dispatchEvent(new Event('korpaChanged'));
         console.log('Korpa je uspešno obrisana');
-        toast.success(t('cart_emptied'), { duration: 3000 });
       } else {
         console.error('Greška pri brisanju korpe');
       }
@@ -199,7 +198,7 @@ export default function KorpaPage() {
         body: JSON.stringify({
           email: session?.user?.email,
           subject: 'Potvrda porudžbine',
-        text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime}\nIme: ${session.user.prezime}\nPrezime: ${info.prezime}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
+          text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nIme:  ${session.user.ime}\nPrezime: ${session.user.prezime}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
         }),
       });
 

@@ -15,7 +15,7 @@ interface CustomUser {
   email: string;
   uloga?: string;
   ime?: string;
-  slika?: string;
+  prezime?: string;
 }
 
 interface CustomToken {
@@ -23,7 +23,7 @@ interface CustomToken {
   email?: string;
   uloga?: string;
   ime?: string;
-  slika?: string;
+  prezime?: string;
   [key: string]: unknown;
 }
 
@@ -32,7 +32,7 @@ interface CustomSessionUser {
   email?: string;
   uloga?: string;
   ime?: string;
-  slika?: string;
+  prezime?: string;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -62,6 +62,7 @@ export const authOptions: NextAuthOptions = {
           email: korisnik.email,
           uloga: korisnik.uloga,
           ime: korisnik.ime,
+          prezime: korisnik.prezime,
         };
       },
     }),
@@ -115,7 +116,8 @@ export const authOptions: NextAuthOptions = {
           (token as CustomToken).id = u.id;
           (token as CustomToken).uloga = u.uloga;
           (token as CustomToken).ime = u.ime;
-          (token as CustomToken).slika = u.slika;
+          (token as CustomToken).prezime = u.prezime;
+          // ...existing code...
         } else {
           // Za OAuth provider-e, dobijamo podatke iz baze
           const korisnikIzBaze = await prisma.korisnik.findUnique({
@@ -125,6 +127,7 @@ export const authOptions: NextAuthOptions = {
             (token as CustomToken).id = korisnikIzBaze.id;
             (token as CustomToken).uloga = korisnikIzBaze.uloga;
             (token as CustomToken).ime = korisnikIzBaze.ime || undefined;
+            (token as CustomToken).prezime = korisnikIzBaze.prezime || undefined;
           }
         }
       }
@@ -135,7 +138,8 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         (session.user as CustomSessionUser).uloga = (token as CustomToken).uloga;
         (session.user as CustomSessionUser).ime = (token as CustomToken).ime;
-        (session.user as CustomSessionUser).slika = (token as CustomToken).slika;
+        (session.user as CustomSessionUser).prezime = (token as CustomToken).prezime;
+        // ...existing code...
         (session.user as CustomSessionUser).id = (token as CustomToken).id;
       }
       return session;

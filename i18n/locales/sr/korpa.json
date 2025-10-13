@@ -22,6 +22,8 @@
   "preusmjeravanje": "Preusmjeravamo vas na stranicu za prijavu...",
   "artikal_izbrisan": "Artikal je uspešno izbrisan",
   "error": "Došlo je do greške. Pokušajte ponovo.",
-  "must_login": "Morate biti prijavljeni da vidite korpu."
+  "must_login": "Morate biti prijavljeni da vidite korpu.",
+  "'no_data_redirect'": "Nema podataka. Bićete preusmereni na početnu stranicu.",
+  "cart_emptied": "Korpa je uspešno obrisana"
 
 }

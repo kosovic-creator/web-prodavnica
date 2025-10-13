@@ -111,13 +111,6 @@ export async function POST(req: Request) {
         pass: process.env.EMAIL_PASS, // postavite u .env
       },
     });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Porudžbina prihvaćena',
-      text: 'Vaša porudžbina je uspešno prihvaćena. Hvala na kupovini!',
-    });
   }
 
   return NextResponse.json(porudzbina);
