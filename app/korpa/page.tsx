@@ -203,6 +203,7 @@ export default function KorpaPage() {
             <table style="width:100%;font-size:16px;line-height:1.7;">
               <tr><td style="font-weight:bold;width:120px;">Ime:</td><td>${session.user.ime}</td></tr>
               <tr><td style="font-weight:bold;">Prezime:</td><td>${session.user.prezime}</td></tr>
+              <tr><td style="font-weight:bold;">Adresa:</td><td>${info.adresa}</td></tr>
               <tr><td style="font-weight:bold;">Grad:</td><td>${info.grad}</td></tr>
               <tr><td style="font-weight:bold;">Država:</td><td>${info.drzava}</td></tr>
               <tr><td style="font-weight:bold;">Telefon:</td><td>${info.telefon}</td></tr>
