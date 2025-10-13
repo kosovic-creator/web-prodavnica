@@ -3,12 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { useKorpa } from '@/components/KorpaContext';
 import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+
 export default function UspjesnoPlacanjePage() {
   const { stavke, resetKorpa } = useKorpa();
   const [isLoading, setIsLoading] = useState(true);
   const [paymentProvider, setPaymentProvider] = useState<'monripay' | 'unknown'>('unknown');
   const [emailError, setEmailError] = useState<string | null>(null);
   const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     // Detekcija providera
@@ -78,7 +82,9 @@ export default function UspjesnoPlacanjePage() {
   </div>`,
             }),
           });
+          toast.success('Email potvrde je poslat', { duration: 3000 });
           console.log('Email potvrde je poslat');
+          router.push('/');
         } catch (error) {
           console.error('Greška pri slanju email-a:', error);
         }
