@@ -1,5 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
 
 export default function PodaciPreuzimanjaPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -42,7 +44,17 @@ export default function PodaciPreuzimanjaPage() {
       const data = await res.json();
       if (res.ok) {
         setMessage('Podaci su uspešno sačuvani!');
-        setForm(initialState);
+        // Slanje emaila korisniku
+        await fetch('/api/email/posalji', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: session?.user?.email,
+            subject: 'Podaci za preuzimanje su sačuvani',
+            text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime} ${session.user.prezime} ${form.adresa}\nGrad: ${form.grad}\nDržava: ${form.drzava}\nTelefon: ${form.telefon}`,
+          }),
+        });
+        router.push('/');
       } else {
         setMessage(data.error || 'Greška pri unosu.');
       }

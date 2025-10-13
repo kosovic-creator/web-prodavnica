@@ -152,7 +152,6 @@ export default function KorpaPage() {
         }),
       });
       if (response.ok) {
-        toast.success(t('artikal_dod'), { duration: 3000 });
         await isprazniKorpu();
 
         return true;
@@ -167,9 +166,43 @@ export default function KorpaPage() {
   };
 
   const handleZavrsiKupovinu = async () => {
+    const korisnikId = session?.user?.id;
+    if (!korisnikId) return;
+
+
+    // Provjeri podatke preuzimanja
+    const res = await fetch(`/api/podaci-preuzimanja?korisnikId=${korisnikId}`);
+    const data = await res.json();
+    console.log('API podaci:', data);
+    // Prilagodi uslov prema formatu odgovora (array)
+    const podaci = Array.isArray(data) ? data : data?.podaci;
+    const imaPodatke = Array.isArray(podaci) ? podaci.length > 0 : podaci && Object.keys(podaci).length > 0;
+    if (!imaPodatke) {
+
+      toast.error(t('no_data_redirect') || "Nemate unete podatke za preuzimanje. Bićete preusmereni na stranicu za unos podataka.", { duration: 5000 });
+      setTimeout(() => {
+        router.push('/podaci-preuzimanja');
+      }, 2000);
+      return;
+    }
+
+    // Ima podatke, potvrdi porudžbinu
     const success = await potvrdiPorudzbinu();
     if (success) {
-      router.push('/podaci-preuzimanja');
+       toast.success('Potvrda porudžbine je poslata na email!',{duration:4000});
+       router.push('/');
+      // Pošalji email sa adresom, imenom i prezimenom iz prvog elementa niza
+      const info = Array.isArray(podaci) ? podaci[0] : podaci;
+      await fetch('/api/email/posalji', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: session?.user?.email,
+          subject: 'Potvrda porudžbine',
+        text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime} ${session.user.prezime} ${info.adresa}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
+        }),
+      });
+
     }
   };
 
