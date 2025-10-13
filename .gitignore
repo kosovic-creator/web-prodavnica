@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-
+ENV.MD
 # next.js
 /.next/
 /out/
