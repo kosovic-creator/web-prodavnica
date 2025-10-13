@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 // Slanje emaila korisniku - non-blocking
 import prisma from '@/lib/prisma';
-import nodemailer from 'nodemailer';
+
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -103,16 +103,18 @@ export async function POST(req: Request) {
   });
 
   // Slanje emaila korisniku
-  if (email) {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // postavite u .env
-        pass: process.env.EMAIL_PASS, // postavite u .env
-      },
-    });
-  }
+  //   if (email) {
+  //     const transporter = nodemailer.createTransport({
+  //       service: 'gmail',
+  //       auth: {
+  //         user: process.env.EMAIL_USER, // postavite u .env
+  //         pass: process.env.EMAIL_PASS, // postavite u .env
+  //       },
+  //     });
+  //   }
 
+  //   return NextResponse.json(porudzbina);
+  // }
   return NextResponse.json(porudzbina);
 }
 

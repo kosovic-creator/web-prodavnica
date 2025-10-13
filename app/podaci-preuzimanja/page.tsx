@@ -51,7 +51,19 @@ export default function PodaciPreuzimanjaPage() {
           body: JSON.stringify({
             email: session?.user?.email,
             subject: 'Podaci za preuzimanje su sačuvani',
-            text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nAdresa:  ${session.user.ime} ${session.user.prezime} ${form.adresa}\nGrad: ${form.grad}\nDržava: ${form.drzava}\nTelefon: ${form.telefon}`,
+            html: `<div style="font-family:Arial,sans-serif;max-width:400px;margin:auto;border:1px solid #e0e0e0;border-radius:8px;padding:24px;background:#fafcff;">
+              <h2 style="color:#2d7ef7;text-align:center;margin-bottom:16px;">✅ Vaši podaci za preuzimanje su uspešno sačuvani!</h2>
+              <table style="width:100%;font-size:16px;line-height:1.7;">
+                <tr><td style="font-weight:bold;width:120px;">Ime:</td><td>${session.user.ime}</td></tr>
+                <tr><td style="font-weight:bold;">Prezime:</td><td>${session.user.prezime}</td></tr>
+                <tr><td style="font-weight:bold;">Adresa:</td><td>${form.adresa}</td></tr>
+                <tr><td style="font-weight:bold;">Grad:</td><td>${form.grad}</td></tr>
+                <tr><td style="font-weight:bold;">Država:</td><td>${form.drzava}</td></tr>
+                <tr><td style="font-weight:bold;">Telefon:</td><td>${form.telefon}</td></tr>
+              </table>
+              <hr style="margin:24px 0;border:none;border-top:1px solid #e0e0e0;" />
+              <div style="text-align:center;color:#888;font-size:13px;">Hvala na povjerenju!<br>Web prodavnica</div>
+            </div>`,
           }),
         });
         router.push('/');

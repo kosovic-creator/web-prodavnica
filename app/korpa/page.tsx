@@ -198,7 +198,18 @@ export default function KorpaPage() {
         body: JSON.stringify({
           email: session?.user?.email,
           subject: 'Potvrda porudžbine',
-          text: `Vaši podaci za preuzimanje su uspešno sačuvani!\nIme:  ${session.user.ime}\nPrezime: ${session.user.prezime}\nGrad: ${info.grad}\nDržava: ${info.drzava}\nTelefon: ${info.telefon}`,
+          html: `<div style="font-family:Arial,sans-serif;max-width:400px;margin:auto;border:1px solid #e0e0e0;border-radius:8px;padding:24px;background:#fafcff;">
+            <h2 style="color:#2d7ef7;text-align:center;margin-bottom:16px;">✅ Vaši podaci za preuzimanje su uspešno sačuvani!</h2>
+            <table style="width:100%;font-size:16px;line-height:1.7;">
+              <tr><td style="font-weight:bold;width:120px;">Ime:</td><td>${session.user.ime}</td></tr>
+              <tr><td style="font-weight:bold;">Prezime:</td><td>${session.user.prezime}</td></tr>
+              <tr><td style="font-weight:bold;">Grad:</td><td>${info.grad}</td></tr>
+              <tr><td style="font-weight:bold;">Država:</td><td>${info.drzava}</td></tr>
+              <tr><td style="font-weight:bold;">Telefon:</td><td>${info.telefon}</td></tr>
+            </table>
+            <hr style="margin:24px 0;border:none;border-top:1px solid #e0e0e0;" />
+            <div style="text-align:center;color:#888;font-size:13px;">Hvala na povjerenju!<br>Web prodavnica</div>
+          </div>`,
         }),
       });
 

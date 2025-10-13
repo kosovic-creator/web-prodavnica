@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
   try {
-    const { email, subject, text } = await request.json();
+    const { email, subject, text, html } = await request.json();
 
-    if (!email || !subject || !text) {
+    if (!email || !subject || (!text && !html)) {
       return NextResponse.json({
-        error: 'Email, subject i text su obavezni'
+        error: 'Email, subject i sadržaj (text ili html) su obavezni'
       }, { status: 400 });
     }
 
@@ -31,7 +31,8 @@ export async function POST(request: Request) {
       from: process.env.EMAIL_USER,
       to: email,
       subject,
-      text,
+      text: text || undefined,
+      html: html || undefined,
     });
 
     return NextResponse.json({
