@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Porudzbina, StavkaPorudzbine } from '@/types';
 import { useTranslation } from 'react-i18next';
-import i18n from 'i18next';
 import { FaClipboardList, FaUser, FaCalendarAlt, FaEuroSign, FaChevronDown, FaChevronUp, FaImage, FaBox } from "react-icons/fa";
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -115,15 +114,6 @@ export default function MojePorudzbinePage() {
     });
   };
 
-  const statusMap: Record<string, { sr: string; en: string }> = {
-    'završeno': { sr: 'Završeno', en: 'Completed' },
-    'completed': { sr: 'Završeno', en: 'Completed' },
-    'na čekanju': { sr: 'Na čekanju', en: 'Pending' },
-    'pending': { sr: 'Na čekanju', en: 'Pending' },
-    'otkazano': { sr: 'Otkazano', en: 'Cancelled' },
-    'cancelled': { sr: 'Otkazano', en: 'Cancelled' },
-  };
-
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'završeno':
@@ -140,11 +130,7 @@ export default function MojePorudzbinePage() {
     }
   };
 
-  const getLocalizedStatus = (status: string) => {
-    const lang = i18n.language.startsWith('en') ? 'en' : 'sr';
-    const entry = statusMap[status.toLowerCase()];
-    return entry ? entry[lang] : status;
-  };
+  const getLocalizedStatus = (status: string) => t(status.toLowerCase());
 
   if (!session?.user) {
     return (

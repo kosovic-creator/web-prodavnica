@@ -50,6 +50,9 @@
   "obriši": "Obriši",
   "otkazi": "Otkaži",
   "akcija_se_ne_moze_ponistiti": "Ova akcija se ne može poništiti.",
-  "potvrda_brisanja": "Potvrda brisanja porudžbine"
+  "potvrda_brisanja": "Potvrda brisanja porudžbine",
+  "na čekanju": "Na čekanju",
+  "završeno": "Završeno",
+  "otkazano": "Otkazano"
 
 }

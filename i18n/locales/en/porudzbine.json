@@ -48,5 +48,8 @@
   "obrisi": "Delete",
   "otkazi": "Cancel",
   "akcija_se_ne_moze_ponistiti": "This action cannot be undone.",
-  "potvrda_brisanja": "Order deletion confirmation"
+  "potvrda_brisanja": "Order deletion confirmation",
+  "na čekanju": "Pending",
+  "završeno": "Completed",
+  "otkazano": "Cancelled"
 }
