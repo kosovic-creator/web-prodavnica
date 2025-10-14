@@ -101,23 +101,8 @@ export async function POST(req: Request) {
 
     return novaPorudzbina;
   });
-
-  // Slanje emaila korisniku
-  //   if (email) {
-  //     const transporter = nodemailer.createTransport({
-  //       service: 'gmail',
-  //       auth: {
-  //         user: process.env.EMAIL_USER, // postavite u .env
-  //         pass: process.env.EMAIL_PASS, // postavite u .env
-  //       },
-  //     });
-  //   }
-
-  //   return NextResponse.json(porudzbina);
-  // }
   return NextResponse.json(porudzbina);
 }
-
 export async function PUT(req: Request) {
   const body = await req.json();
   const { id, ...data } = body;

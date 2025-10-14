@@ -89,7 +89,7 @@ function AdminPage() {
               </div>
               <h2 className="text-xl font-semibold text-gray-800">Porudžbine</h2>
             </div>
-            <p className="text-gray-600">Praćenje i upravljanje porudžbinama</p>
+            <p className="text-gray-600">Praćenje porudžbinama</p>
           </div>
         </Link>
       </div>
