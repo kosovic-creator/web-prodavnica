@@ -15,8 +15,6 @@ interface PorudzbinaWithStavke extends Porudzbina {
   stavkePorudzbine?: StavkaPorudzbine[];
 }
 
-
-
 export default function MojePorudzbinePage() {
   const { t } = useTranslation('porudzbine');
   const { data: session } = useSession();
@@ -197,6 +195,7 @@ export default function MojePorudzbinePage() {
                           {t('porudzbina')} #{porudzbina.id.slice(-8)}
                         </h3>
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(porudzbina.status)}`}>
+                          {/* Lokalizacija statusa */}
                           {getLocalizedStatus(porudzbina.status)}
                         </span>
                       </div>
@@ -229,7 +228,7 @@ export default function MojePorudzbinePage() {
                           </>
                         ) : (
                           <>
-                              <span className="text-sm">{t('prikazi_detalje')}</span>
+                            <span className="text-sm">{t('prikazi_detalje')}</span>
                             <FaChevronDown />
                           </>
                         )}
@@ -308,7 +307,7 @@ export default function MojePorudzbinePage() {
                         ))}
                       </div>
                     ) : (
-                        <p className="text-gray-500 text-center py-4">{t('nema_dostupnih_stavki')}</p>
+                      <p className="text-gray-500 text-center py-4">{t('nema_dostupnih_stavki')}</p>
                     )}
 
                     {/* Order Total */}
@@ -332,11 +331,10 @@ export default function MojePorudzbinePage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
-                className={`px-4 py-2 rounded-lg font-medium transition ${
-                  page === 1
+                className={`px-4 py-2 rounded-lg font-medium transition ${page === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
               >
                 {t('prethodna')}
               </button>
@@ -348,11 +346,10 @@ export default function MojePorudzbinePage() {
               <button
                 disabled={page >= Math.ceil(total / pageSize)}
                 onClick={() => setPage(page + 1)}
-                className={`px-4 py-2 rounded-lg font-medium transition ${
-                  page >= Math.ceil(total / pageSize)
+                className={`px-4 py-2 rounded-lg font-medium transition ${page >= Math.ceil(total / pageSize)
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
               >
                 {t('sledeca')}
               </button>
