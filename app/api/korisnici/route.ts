@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   pageSize = Math.max(pageSize, 10);
   const skip = (page - 1) * pageSize;
   const [korisnici, total] = await Promise.all([
-    prisma.korisnik.findMany({ skip, take: pageSize, orderBy: { kreiran: 'desc' } }),
+    prisma.korisnik.findMany({ skip, take: pageSize, orderBy: { kreiran: 'desc' }, include: { podaciPreuzimanja: true } }),
     prisma.korisnik.count()
   ]);
   return NextResponse.json({ korisnici, total });

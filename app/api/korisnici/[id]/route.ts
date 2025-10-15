@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   if (!id) {
     return NextResponse.json({ error: 'ID je obavezan.' }, { status: 400 });
   }
-  const korisnik = await prisma.korisnik.findUnique({ where: { id } });
+  const korisnik = await prisma.korisnik.findUnique({ where: { id }, include: { podaciPreuzimanja: true } });
   if (!korisnik) {
     return NextResponse.json({ error: 'Korisnik nije pronađen.' }, { status: 404 });
   }
