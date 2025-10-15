@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get('korisnikId');
   if (!userId) return NextResponse.json({ error: 'Missing korisnikId' }, { status: 400 });
-  const podaci = await prisma.podaciPreuzimanja.findMany({ where: { korisnikId: userId } });
+  const podaci = await prisma.podaciPreuzimanja.findMany({ where: { korisnikId: userId }, include: { korisnik: true } });
   return NextResponse.json(podaci);
 }
 

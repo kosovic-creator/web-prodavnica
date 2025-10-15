@@ -43,25 +43,22 @@ export default function ProfilPage() {
     async function fetchData() {
       if (session?.user?.id) {
         try {
-          const [korisnikRes, podaciRes] = await Promise.all([
+          const [korisnikRes] = await Promise.all([
             fetch(`/api/korisnici/${session.user.id}`),
-            fetch(`/api/podaci-preuzimanja?korisnikId=${session.user.id}`)
           ]);
           const korisnik = korisnikRes.ok ? await korisnikRes.json() : null;
-          const podaciArr = podaciRes.ok ? await podaciRes.json() : [];
-          const podaci = podaciArr[0] || {};
           setForm({
             ime: korisnik?.ime || session.user.ime || '',
             prezime: korisnik?.prezime || session.user.prezime || '',
             email: korisnik?.email || session.user.email || '',
-            telefon: podaci?.telefon || '',
-            drzava: podaci?.drzava || '',
-            grad: podaci?.grad || '',
-            postanskiBroj: podaci?.postanskiBroj?.toString() || '',
-            adresa: podaci?.adresa || '',
+            telefon: korisnik?.podaciPreuzimanja.telefon || '',
+            drzava: korisnik?.podaciPreuzimanja.drzava || '',
+            grad: korisnik?.podaciPreuzimanja.grad || '',
+            postanskiBroj: korisnik?.podaciPreuzimanja.postanskiBroj?.toString() || '',
+            adresa: korisnik?.podaciPreuzimanja.adresa || '',
             uloga: korisnik?.uloga || 'korisnik',
             // ...existing code...
-            podaciId: podaci?.id || '',
+            podaciId: korisnik?.podaciPreuzimanja?.id || '',
           });
         } catch {
           toast.error(t('greska_pri_ocitavanju'));
