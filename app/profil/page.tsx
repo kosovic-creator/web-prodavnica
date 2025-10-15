@@ -7,15 +7,20 @@ import '@/i18n/config';
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { korisnikSchema } from '@/zod';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Loading from '@/components/Loadning';
-
+import { useCallback } from 'react';
 
 export default function ProfilPage() {
-  const { t } = useTranslation('profil');
+  const { t: tProfil } = useTranslation('profil');
+  const { t: tKorisnici } = useTranslation('korisnici');
+  // Helper za validaciju iz oba namespace-a
+  const t = useCallback((key: string) => tKorisnici(key) !== key ? tKorisnici(key) : tProfil(key), [tKorisnici, tProfil]);
   const { data: session, status } = useSession();
   const router = useRouter();
   const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
     ime: '',
@@ -51,13 +56,12 @@ export default function ProfilPage() {
             ime: korisnik?.ime || session.user.ime || '',
             prezime: korisnik?.prezime || session.user.prezime || '',
             email: korisnik?.email || session.user.email || '',
-            telefon: korisnik?.podaciPreuzimanja.telefon || '',
-            drzava: korisnik?.podaciPreuzimanja.drzava || '',
-            grad: korisnik?.podaciPreuzimanja.grad || '',
-            postanskiBroj: korisnik?.podaciPreuzimanja.postanskiBroj?.toString() || '',
-            adresa: korisnik?.podaciPreuzimanja.adresa || '',
+            telefon: korisnik?.podaciPreuzimanja?.telefon || '',
+            drzava: korisnik?.podaciPreuzimanja?.drzava || '',
+            grad: korisnik?.podaciPreuzimanja?.grad || '',
+            postanskiBroj: korisnik?.podaciPreuzimanja?.postanskiBroj ? korisnik.podaciPreuzimanja.postanskiBroj.toString() : '',
+            adresa: korisnik?.podaciPreuzimanja?.adresa || '',
             uloga: korisnik?.uloga || 'korisnik',
-            // ...existing code...
             podaciId: korisnik?.podaciPreuzimanja?.id || '',
           });
         } catch {
@@ -94,6 +98,21 @@ export default function ProfilPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFormErrors({});
+    // Zod validacija
+    // Zod validacija sa i18n
+    const schema = korisnikSchema(t).omit({ lozinka: true, slika: true });
+    const result = schema.safeParse(form);
+    if (!result.success) {
+      // Prikaz grešaka
+      const errors: Record<string, string> = {};
+      result.error.issues.forEach(err => {
+        if (err.path[0]) errors[String(err.path[0])] = err.message;
+      });
+      setFormErrors(errors);
+      setLoading(false);
+      return;
+    }
     try {
       // Update Korisnik
       const korisnikRes = await fetch('/api/korisnici', {
@@ -105,7 +124,6 @@ export default function ProfilPage() {
           prezime: form.prezime,
           email: form.email,
           uloga: form.uloga,
-          // ...existing code...
         }),
       });
       const korisnikData = await korisnikRes.json();
@@ -196,66 +214,90 @@ export default function ProfilPage() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <form onSubmit={handleUpdate} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  name="ime"
-                  value={form.ime}
-                  onChange={handleChange}
-                  placeholder={t('name')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-                />
-                <input
-                  name="prezime"
-                  value={form.prezime}
-                  onChange={handleChange}
-                  placeholder={t('surname')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-                />
+                <div>
+                  <input
+                    name="ime"
+                    value={form.ime}
+                    onChange={handleChange}
+                    placeholder={t('name')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.ime && <div className="text-red-500 text-sm mt-1">{formErrors.ime}</div>}
+                </div>
+                <div>
+                  <input
+                    name="prezime"
+                    value={form.prezime}
+                    onChange={handleChange}
+                    placeholder={t('surname')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.prezime && <div className="text-red-500 text-sm mt-1">{formErrors.prezime}</div>}
+                </div>
               </div>
-              <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder={t('email')}
-                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-              />
-              <input
-                name="telefon"
-                value={form.telefon}
-                onChange={handleChange}
-                placeholder={t('phone')}
-                className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
                 <input
-                  name="drzava"
-                  value={form.drzava}
+                  name="email"
+                  value={form.email}
                   onChange={handleChange}
-                  placeholder={t('country')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  placeholder={t('email')}
+                  className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
+                {formErrors.email && <div className="text-red-500 text-sm mt-1">{formErrors.email}</div>}
+              </div>
+              <div>
                 <input
-                  name="grad"
-                  value={form.grad}
+                  name="telefon"
+                  value={form.telefon}
                   onChange={handleChange}
-                  placeholder={t('city')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  placeholder={t('phone')}
+                  className="w-full border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
                 />
+                {formErrors.telefon && <div className="text-red-500 text-sm mt-1">{formErrors.telefon}</div>}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  name="postanskiBroj"
-                  value={form.postanskiBroj}
-                  onChange={handleChange}
-                  placeholder={t('postal_code')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-                />
-                <input
-                  name="adresa"
-                  value={form.adresa}
-                  onChange={handleChange}
-                  placeholder={t('address')}
-                  className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
-                />
+                <div>
+                  <input
+                    name="drzava"
+                    value={form.drzava}
+                    onChange={handleChange}
+                    placeholder={t('country')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.drzava && <div className="text-red-500 text-sm mt-1">{formErrors.drzava}</div>}
+                </div>
+                <div>
+                  <input
+                    name="grad"
+                    value={form.grad}
+                    onChange={handleChange}
+                    placeholder={t('city')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.grad && <div className="text-red-500 text-sm mt-1">{formErrors.grad}</div>}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <input
+                    name="postanskiBroj"
+                    value={form.postanskiBroj}
+                    onChange={handleChange}
+                    placeholder={t('postal_code')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.postanskiBroj && <div className="text-red-500 text-sm mt-1">{formErrors.postanskiBroj}</div>}
+                </div>
+                <div>
+                  <input
+                    name="adresa"
+                    value={form.adresa}
+                    onChange={handleChange}
+                    placeholder={t('address')}
+                    className="border border-gray-300 p-3 rounded-lg input-focustransition-all text-base"
+                  />
+                  {formErrors.adresa && <div className="text-red-500 text-sm mt-1">{formErrors.adresa}</div>}
+                </div>
               </div>
               {/* Polje za sliku uklonjeno */}
               <div className="flex flex-col sm:flex-row gap-3 mt-6">

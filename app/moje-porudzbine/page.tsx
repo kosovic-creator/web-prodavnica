@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Porudzbina, StavkaPorudzbine } from '@/types';
@@ -130,23 +131,23 @@ export default function MojePorudzbinePage() {
 
   const getLocalizedStatus = (status: string) => t(status.toLowerCase());
 
-  if (!session?.user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="text-center max-w-md">
-          <FaUser className="mx-auto text-6xl text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-700 mb-2">{t('must_login')}</h2>
-          <p className="text-gray-500 mb-6">{t('pregledajte_istoriju')}</p>
-          <Link
-            href="/auth/prijava"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
-          >
-            {t('login')}
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // if (!session?.user) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col items-center justify-center p-4">
+  //       <div className="text-center max-w-md">
+  //         <FaUser className="mx-auto text-6xl text-gray-400 mb-4" />
+  //         <h2 className="text-2xl font-bold text-gray-700 mb-2">{t('must_login')}</h2>
+  //         <p className="text-gray-500 mb-6">{t('pregledajte_istoriju')}</p>
+  //         <Link
+  //           href="/auth/prijava"
+  //           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+  //         >
+  //           {t('login')}
+  //         </Link>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (loading) {
     return <Loading />;

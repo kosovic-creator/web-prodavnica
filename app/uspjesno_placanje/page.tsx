@@ -18,81 +18,94 @@ export default function UspjesnoPlacanjePage() {
     // Detekcija providera
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('provider') === 'monripay' || urlParams.get('ShoppingCartID') || urlParams.get('Success')) {
-      setPaymentProvider('monripay');
-      console.log('MonriPay payment detected');
-    } else {
-      setPaymentProvider('unknown');
-      console.log('Unknown payment provider');
-    }
-
-    // Proces plaćanja
-    const processPaymentSuccess = async () => {
-      console.log('Pokretam obradu uspješnog plaćanja...');
-      console.log('Stavke u korpi:', stavke);
-
-      // 1. Umanji stanje proizvoda u bazi
-      try {
-        if (stavke && stavke.length > 0) {
-          for (const item of stavke) {
-            await fetch('/api/proizvodi/update-stanje', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ proizvodId: item.proizvodId, kolicina: item.kolicina }),
-            });
+      // Proces plaćanja
+      const processPaymentSuccess = async () => {
+        // Provjera podataka preuzimanja
+        if (session?.user?.id) {
+          try {
+            const res = await fetch(`/api/podaci-preuzimanja?korisnikId=${session.user.id}`);
+            const data = await res.json();
+            if (!data || !Array.isArray(data) || data.length === 0) {
+              // Nema podataka preuzimanja, preusmjeri na formu
+              router.push('/podaci-preuzimanja');
+              return;
+            }
+          } catch (error) {
+            console.error('Greška pri provjeri podataka preuzimanja:', error);
+            // U slučaju greške, preusmjeri na formu
+            router.push('/podaci-preuzimanja');
+            return;
           }
         }
-      } catch (error) {
-        console.error('Greška pri obradi plaćanja:', error);
-      }
 
-      // 2. Prazni korpu u bazi
-      if (session?.user?.id) {
+        console.log('Pokretam obradu uspješnog plaćanja...');
+        console.log('Stavke u korpi:', stavke);
+
+        // 1. Umanji stanje proizvoda u bazi
         try {
-          await fetch('/api/korpa/delete-all', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ korisnikId: session.user.id }),
-          });
-          console.log('Backend korpa je obrisana');
+          if (stavke && stavke.length > 0) {
+            for (const item of stavke) {
+              await fetch('/api/proizvodi/update-stanje', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ proizvodId: item.proizvodId, kolicina: item.kolicina }),
+              });
+            }
+          }
         } catch (error) {
-          console.error('Greška pri brisanju korpe u bazi:', error);
+          console.error('Greška pri obradi plaćanja:', error);
         }
-      }
-      // 3. Resetuj korpu na frontendu
-      resetKorpa();
 
-      // 3. Pošalji email potvrdu
-      if (session?.user?.email) {
-        try {
-          await fetch('/api/email/posalji', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: session.user.email,
-              subject: 'Potvrda plaćanja',
-              html: `<div style="font-family:Arial,sans-serif;max-width:400px;margin:auto;border:1px solid #e0e0e0;border-radius:8px;padding:24px;background:#fafcff;">
-    <h2 style="color:#2d7ef7;text-align:center;margin-bottom:16px;">✅ Vaše plaćanje je uspješno!</h2>
-    <table style="width:100%;font-size:16px;line-height:1.7;">
-      <tr><td style="font-weight:bold;width:120px;">Ime:</td><td>${session.user.ime}</td></tr>
-      <tr><td style="font-weight:bold;">Prezime:</td><td>${session.user.prezime}</td></tr>
-      <tr><td style="font-weight:bold;">Email:</td><td>${session.user.email}</td></tr>
-    </table>
-    <hr style="margin:24px 0;border:none;border-top:1px solid #e0e0e0;" />
-    <div style="text-align:center;color:#888;font-size:13px;">Hvala na povjerenju!<br>Web prodavnica</div>
-  </div>`,
-            }),
-          });
-          toast.success('Email potvrde je poslat', { duration: 3000 });
-          console.log('Email potvrde je poslat');
-          router.push('/');
-        } catch (error) {
-          console.error('Greška pri slanju email-a:', error);
+        // 2. Prazni korpu u bazi
+        if (session?.user?.id) {
+          try {
+            await fetch('/api/korpa/delete-all', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ korisnikId: session.user.id }),
+            });
+            console.log('Backend korpa je obrisana');
+          } catch (error) {
+            console.error('Greška pri brisanju korpe u bazi:', error);
+          }
         }
-      }
+        // 3. Resetuj korpu na frontendu
+        resetKorpa();
 
-      setIsLoading(false);
+        // 3. Pošalji email potvrdu
+        if (session?.user?.email) {
+          try {
+            await fetch('/api/email/posalji', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: session.user.email,
+                subject: 'Potvrda plaćanja',
+                html:
+                  '<div style="font-family:Arial,sans-serif;max-width:400px;margin:auto;border:1px solid #e0e0e0;border-radius:8px;padding:24px;background:#fafcff;">' +
+                  '<h2 style="color:#2d7ef7;text-align:center;margin-bottom:16px;">✅ Vaše plaćanje je uspješno!</h2>' +
+                  '<table style="width:100%;font-size:16px;line-height:1.7;">' +
+                  '<tr><td style="font-weight:bold;width:120px;">Ime:</td><td>' + session.user.ime + '</td></tr>' +
+                  '<tr><td style="font-weight:bold;">Prezime:</td><td>' + session.user.prezime + '</td></tr>' +
+                  '<tr><td style="font-weight:bold;">Email:</td><td>' + session.user.email + '</td></tr>' +
+                  '</table>' +
+                  '<hr style="margin:24px 0;border:none;border-top:1px solid #e0e0e0;" />' +
+                  '<div style="text-align:center;color:#888;font-size:13px;">Hvala na povjerenju!<br>Web prodavnica</div>' +
+                  '</div>'
+              }),
+            });
+            toast.success('Email potvrde je poslat', { duration: 3000 });
+            console.log('Email potvrde je poslat');
+            router.push('/');
+          } catch (error) {
+            console.error('Greška pri slanju email-a:', error);
+          }
+        }
+
+        setIsLoading(false);
+      };
+      processPaymentSuccess();
     };
-    processPaymentSuccess();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
