@@ -17,18 +17,55 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const data = await request.json();
-  const korisnik = await prisma.korisnik.create({ data });
+  const { email, lozinka, ime, prezime, uloga, adresa, drzava, grad, telefon, postanskiBroj } = data;
+  const korisnik = await prisma.korisnik.create({
+    data: {
+      email,
+      lozinka,
+      ime,
+      prezime,
+      uloga,
+      podaciPreuzimanja: {
+         create: {
+            adresa,
+            drzava,
+            grad,
+            telefon,
+            postanskiBroj
+          }
+      }
+    },
+    include: { podaciPreuzimanja: true }
+  });
   return NextResponse.json({ korisnik });
 }
 
 export async function PUT(request: Request) {
   const data = await request.json();
-  const { id, ...rest } = data;
-  // Ukloni postanskiBroj ako postoji u payloadu
-  if ('postanskiBroj' in rest) {
-    delete rest.postanskiBroj;
-  }
-  const korisnik = await prisma.korisnik.update({ where: { id }, data: rest });
+  const { id, email, lozinka, ime, prezime, uloga, adresa, drzava, grad, telefon, postanskiBroj } = data;
+  const korisnik = await prisma.korisnik.update({
+    where: { id },
+    data: {
+      email,
+      lozinka,
+      ime,
+      prezime,
+      uloga,
+      podaciPreuzimanja: {
+        update: {
+          where: { id: data.podaciPreuzimanjaId },
+          data: {
+            adresa,
+            drzava,
+            grad,
+            telefon,
+            postanskiBroj
+          }
+        }
+      }
+    },
+    include: { podaciPreuzimanja: true }
+  });
   return NextResponse.json({ korisnik });
 }
 
