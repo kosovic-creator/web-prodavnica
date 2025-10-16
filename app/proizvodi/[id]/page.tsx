@@ -60,9 +60,9 @@ export default function ProizvodPage() {
       localStorage.setItem('brojUKorpi', broj.toString());
       window.dispatchEvent(new Event('korpaChanged'));
 
-      toast.success('Proizvod je dodat u korpu!');
+      toast.success(t('dodato_u_korpu'));
     } catch (error) {
-      toast.error('Greška pri dodavanju u korpu.');
+      toast.error(t('greska_pri_dodavanju_u_korpu'));
     }
   };
 

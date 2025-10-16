@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Nedostaju obavezna polja.' }, { status: 400 });
   }
 
-  // Koristimo transakciju da se sve izvršava atomski
+
   const porudzbina = await prisma.$transaction(async (tx) => {
     // Kreiraj porudžbinu
     const novaPorudzbina = await tx.porudzbina.create({
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
             kolicina: s.kolicina,
             cena: proizvod.cena, // Cena u vreme kupovine
             slika: proizvod.slika || null, // Slika u vreme kupovine
-            opis: `Proizvod kupljen ${new Date().toLocaleDateString()}`, // Opciono
+            opis: `productPurchased ${new Date().toLocaleDateString()}`,
           };
 
           await tx.stavkaPorudzbine.create({

@@ -29,8 +29,6 @@ function OmiljeniContent() {
     return prevod ? prevod[field] : '';
   };
 
-
-
   useEffect(() => {
     setLoading(true);
     fetch(`/api/omiljeni?lang=${lang}`, {
@@ -65,6 +63,7 @@ function OmiljeniContent() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ korisnikId, proizvodId: omiljeni.proizvodId, kolicina: 1 })
     });
+    toast.success(t('dodato_u_korpu'));
     const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
     const data = await res.json();
     const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);

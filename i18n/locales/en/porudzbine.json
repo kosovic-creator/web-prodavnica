@@ -51,5 +51,6 @@
   "potvrda_brisanja": "Order deletion confirmation",
   "na čekanju": "Pending",
   "završeno": "Completed",
-  "otkazano": "Cancelled"
+  "otkazano": "Cancelled",
+  "productPurchased": "Product purchased"
 }
