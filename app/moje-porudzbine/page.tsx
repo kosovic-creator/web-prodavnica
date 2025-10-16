@@ -2,7 +2,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Porudzbina, StavkaPorudzbine } from '@/types';
-import PorudzbinaOpis from '@/components/PorudzbinaOpis';
 import { useTranslation } from 'react-i18next';
 import { FaClipboardList, FaUser, FaCalendarAlt, FaEuroSign, FaChevronDown, FaChevronUp, FaImage, FaBox } from "react-icons/fa";
 import { useSession } from 'next-auth/react';
@@ -273,7 +272,7 @@ export default function MojePorudzbinePage() {
                                     </h5>
                                     {stavka.opis && (
                                       <p className="text-sm text-gray-600 mt-1">
-                                        <PorudzbinaOpis opis={stavka.opis} />
+                                       {stavka.opis}
                                       </p>
                                     )}
                                   </div>

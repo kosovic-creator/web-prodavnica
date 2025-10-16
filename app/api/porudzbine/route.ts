@@ -55,6 +55,10 @@ export async function POST(req: Request) {
   }
 
 
+  // Odredi jezik iz Accept-Language headera
+  const langHeader = req.headers.get('accept-language') || '';
+  const lang = langHeader.startsWith('en') ? 'en' : 'sr';
+
   const porudzbina = await prisma.$transaction(async (tx) => {
     // Kreiraj porudžbinu
     const novaPorudzbina = await tx.porudzbina.create({
@@ -77,13 +81,16 @@ export async function POST(req: Request) {
 
         if (proizvod) {
           // Kreiraj stavku porudžbine sa podacima iz vremena kupovine
+          const opis = lang === 'en'
+            ? `Purchased ${new Date().toLocaleDateString()}`
+            : `Kupljeno ${new Date().toLocaleDateString()}`;
           const stavkaData = {
             porudzbinaId: novaPorudzbina.id,
             proizvodId: s.proizvodId,
             kolicina: s.kolicina,
             cena: proizvod.cena, // Cena u vreme kupovine
             slika: proizvod.slika || null, // Slika u vreme kupovine
-            opis: `productPurchased ${new Date().toLocaleDateString()}`,
+            opis,
           };
 
           await tx.stavkaPorudzbine.create({
