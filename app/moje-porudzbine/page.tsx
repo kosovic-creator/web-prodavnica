@@ -89,8 +89,7 @@ export default function MojePorudzbinePage() {
       });
 
       if (response.ok) {
-        toast.success(t('porudzbina_obrisana') || 'Porudžbina je uspešno obrisana!');
-        // Refresh data after deletion
+        toast.success('Porudžbina je uspešno obrisana!');
         await fetchMojePorudzbine();
         closeDeleteModal();
       } else {
