@@ -11,12 +11,15 @@ import '@/i18n/config';
 import { toast } from 'react-hot-toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Loading from '@/components/Loadning';
+import { useSearchParams } from 'next/navigation';
 
 interface PorudzbinaWithStavke extends Porudzbina {
   stavkePorudzbine?: StavkaPorudzbine[];
 }
 
-export default function MojePorudzbinePage() {
+import { Suspense } from 'react';
+
+function MojePorudzbinePage() {
   const { t } = useTranslation('porudzbine');
   const { data: session } = useSession();
   const [porudzbine, setPorudzbine] = useState<PorudzbinaWithStavke[]>([]);
@@ -33,6 +36,7 @@ export default function MojePorudzbinePage() {
     porudzbinaNaziv: ''
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const lang = useSearchParams().get('lang') || 'sr';
 
   const fetchMojePorudzbine = useCallback(async () => {
     try {
@@ -269,11 +273,15 @@ export default function MojePorudzbinePage() {
                                     <h5 className="font-medium text-gray-800 truncate">
                                       {stavka.proizvod?.naziv_sr || t('naziv_proizvoda')}
                                     </h5>
-                                    {stavka.opis && (
-                                      <p className="text-sm text-gray-600 mt-1">
-                                       {stavka.opis}
-                                      </p>
-                                    )}
+                                    {/* Prikaz opisa na jeziku korisnika */}
+                                    {(() => {
+                                      const opis = lang === 'en'
+                                        ? `Purchased ${new Date().toLocaleDateString()}`
+                                        : `Kupljeno ${new Date().toLocaleDateString()}`;
+                                      return opis ? (
+                                        <p className="text-sm text-gray-600 mt-1">{opis}</p>
+                                      ) : null;
+                                    })()}
                                   </div>
 
                                   <div className="text-right">
@@ -316,8 +324,8 @@ export default function MojePorudzbinePage() {
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
                 className={`px-4 py-2 rounded-lg font-medium transition ${page === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
                 {t('prethodna')}
@@ -331,8 +339,8 @@ export default function MojePorudzbinePage() {
                 disabled={page >= Math.ceil(total / pageSize)}
                 onClick={() => setPage(page + 1)}
                 className={`px-4 py-2 rounded-lg font-medium transition ${page >= Math.ceil(total / pageSize)
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
               >
                 {t('sledeca')}
@@ -355,5 +363,14 @@ export default function MojePorudzbinePage() {
         />
       </div>
     </div>
+  );
+}
+
+// Export sa Suspense wrapperom
+export default function PageWithSuspense() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <MojePorudzbinePage />
+    </Suspense>
   );
 }

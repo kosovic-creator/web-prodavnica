@@ -56,8 +56,8 @@ export async function POST(req: Request) {
 
 
   // Odredi jezik iz Accept-Language headera
-  const langHeader = req.headers.get('accept-language') || '';
-  const lang = langHeader.startsWith('en') ? 'en' : 'sr';
+  // const langHeader = req.headers.get('accept-language') || '';
+  // const lang = langHeader.startsWith('en') ? 'en' : 'sr';
 
   const porudzbina = await prisma.$transaction(async (tx) => {
     // Kreiraj porudžbinu
@@ -73,24 +73,44 @@ export async function POST(req: Request) {
 
     // Kreiraj stavke porudžbine i smanji količinu proizvoda
     if (stavke && Array.isArray(stavke)) {
-      for (const s of stavke) {
+      interface StavkaInput {
+        proizvodId: number;
+        kolicina: number;
+      }
+
+      interface Proizvod {
+        id: number;
+        cena: number;
+        slika?: string | null;
+        kolicina: number;
+      }
+
+      for (const s of stavke as StavkaInput[]) {
         // Dohvati proizvod da bi dobio trenutnu cenu i sliku
         const proizvod = await tx.proizvod.findUnique({
-          where: { id: s.proizvodId }
-        });
+          where: { id: String(s.proizvodId) }
+        }) as Proizvod | null;
 
-        if (proizvod) {
-          // Kreiraj stavku porudžbine sa podacima iz vremena kupovine
-          const opis = lang === 'en'
-            ? `Purchased ${new Date().toLocaleDateString()}`
-            : `Kupljeno ${new Date().toLocaleDateString()}`;
+        if (!proizvod) {
+          throw new Error(`Proizvod sa ID ${s.proizvodId} nije pronađen.`);
+        }
+
+        // if (proizvod) {
+        //   // Kreiraj stavku porudžbine sa podacima iz vremena kupovine
+        //   const opis: string = lang === 'en'
+        //     ? `Purchased ${new Date().toLocaleDateString()}`
+        //     : `Kupljeno ${new Date().toLocaleDateString()}`;
           const stavkaData = {
-            porudzbinaId: novaPorudzbina.id,
-            proizvodId: s.proizvodId,
             kolicina: s.kolicina,
             cena: proizvod.cena, // Cena u vreme kupovine
             slika: proizvod.slika || null, // Slika u vreme kupovine
-            opis,
+            opis: new Date().toLocaleDateString(),
+            porudzbina: {
+              connect: { id: String(novaPorudzbina.id) }
+            },
+            proizvod: {
+              connect: { id: String(s.proizvodId) }
+            }
           };
 
           await tx.stavkaPorudzbine.create({
@@ -99,10 +119,10 @@ export async function POST(req: Request) {
 
           // Smanji količinu proizvoda
           await tx.proizvod.update({
-            where: { id: s.proizvodId },
+            where: { id: String(s.proizvodId) },
             data: { kolicina: { decrement: s.kolicina } },
           });
-        }
+        // }
       }
     }
 
