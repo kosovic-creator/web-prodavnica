@@ -16,6 +16,17 @@ interface NavbarProps {
 
 // Komponenta koja koristi useSearchParams - mora biti u Suspense
 function NavbarContent({ setSidebarOpen }: NavbarProps) {
+  // Automatski učitaj jezik iz URL-a pri mountu
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      //učita lang bez reloadovanja stranice
+      const urlLang = new URL(window.location.href).searchParams.get('lang');
+      if (urlLang && urlLang !== i18n.language) {
+        i18n.changeLanguage(urlLang);
+        setCurrentLanguage(urlLang);
+      }
+    }
+  }, []);
   const { t } = useTranslation('navbar');
   const { data: session } = useSession();
   const [brojUKorpi, setBrojUKorpi] = useState(0);
@@ -84,6 +95,8 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
     i18n.changeLanguage(lang);
     setCurrentLanguage(lang);
     setLanguageDropdownOpen(false);
+
+
 
     try {
       const urlSearchParams = new URLSearchParams(window.location.search);
