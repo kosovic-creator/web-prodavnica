@@ -54,11 +54,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Nedostaju obavezna polja.' }, { status: 400 });
   }
 
-
-  // Odredi jezik iz Accept-Language headera
-  // const langHeader = req.headers.get('accept-language') || '';
-  // const lang = langHeader.startsWith('en') ? 'en' : 'sr';
-
   const porudzbina = await prisma.$transaction(async (tx) => {
     // Kreiraj porudžbinu
     const novaPorudzbina = await tx.porudzbina.create({
@@ -95,11 +90,6 @@ export async function POST(req: Request) {
           throw new Error(`Proizvod sa ID ${s.proizvodId} nije pronađen.`);
         }
 
-        // if (proizvod) {
-        //   // Kreiraj stavku porudžbine sa podacima iz vremena kupovine
-        //   const opis: string = lang === 'en'
-        //     ? `Purchased ${new Date().toLocaleDateString()}`
-        //     : `Kupljeno ${new Date().toLocaleDateString()}`;
           const stavkaData = {
             kolicina: s.kolicina,
             cena: proizvod.cena, // Cena u vreme kupovine
