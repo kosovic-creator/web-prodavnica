@@ -47,11 +47,17 @@ export default function ProizvodPage() {
     }
 
     try {
-      await fetch('/api/korpa', {
+      const addResponse = await fetch('/api/korpa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
       });
+
+      if (!addResponse.ok) {
+        const errData = await addResponse.json();
+        toast.error(errData?.error || t('greska_pri_dodavanju_u_korpu'));
+        return;
+      }
 
       // Ažuriraj broj stavki u korpi
       const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);

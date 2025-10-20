@@ -6,22 +6,39 @@ export async function POST(request: Request) {
   if (!korisnikId) {
     return NextResponse.json({ error: 'Niste prijavljeni' }, { status: 401 });
   }
-  // Dodaj ili ažuriraj stavku u korpi
-  const existing = await prisma.stavkaKorpe.findUnique({
-    where: { korisnikId_proizvodId: { korisnikId, proizvodId } }
-  });
-  let stavka;
-  if (existing) {
-    stavka = await prisma.stavkaKorpe.update({
-      where: { id: existing.id },
-      data: { kolicina: existing.kolicina + (kolicina || 1) }
-    });
-  } else {
-    stavka = await prisma.stavkaKorpe.create({
-      data: { korisnikId, proizvodId, kolicina: kolicina || 1 }
-    });
+  // Proveri da li korisnik postoji
+  const korisnik = await prisma.korisnik.findUnique({ where: { id: korisnikId } });
+  if (!korisnik) {
+    return NextResponse.json({ error: 'Korisnik ne postoji' }, { status: 400 });
   }
-  return NextResponse.json({ stavka });
+  // Dodaj ili ažuriraj stavku u korpi
+  try {
+    const existing = await prisma.stavkaKorpe.findUnique({
+      where: { korisnikId_proizvodId: { korisnikId, proizvodId } }
+    });
+    let stavka;
+    if (existing) {
+      stavka = await prisma.stavkaKorpe.update({
+        where: { id: existing.id },
+        data: { kolicina: existing.kolicina + (kolicina || 1) }
+      });
+    } else {
+      stavka = await prisma.stavkaKorpe.create({
+        data: { korisnikId, proizvodId, kolicina: kolicina || 1 }
+      });
+    }
+    return NextResponse.json({ stavka });
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2003'
+    ) {
+      return NextResponse.json({ error: 'Neispravan korisnik ili proizvod.' }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Greška prilikom dodavanja u korpu.' }, { status: 500 });
+  }
 }
 
 export async function GET(request: Request) {

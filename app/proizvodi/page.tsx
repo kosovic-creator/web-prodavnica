@@ -66,7 +66,9 @@ function ProizvodiContent() {
       });
 
       if (!addResponse.ok) {
-        throw new Error('Greška pri dodavanju u korpu');
+        const errData = await addResponse.json();
+        toast.error(errData?.error || 'Greška pri dodavanju u korpu', { duration: 4000 });
+        return;
       }
 
       // Ažuriraj broj stavki u korpi
