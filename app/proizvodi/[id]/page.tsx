@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 import { Proizvod } from '@/types';
-import { FaCartPlus, FaArrowLeft } from "react-icons/fa";
+import { FaCartPlus, FaArrowLeft, FaTimes } from "react-icons/fa";
 import toast, { Toaster } from 'react-hot-toast';
 import '@/i18n/config';
 import OmiljeniButton from '@/components/OmiljeniButton';
@@ -22,6 +22,7 @@ export default function ProizvodPage() {
   const id = params && typeof params.id === 'string' ? params.id : Array.isArray(params?.id) ? params?.id[0] : undefined;
   const [proizvod, setProizvod] = useState<Proizvod | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchProizvod() {
@@ -76,6 +77,32 @@ export default function ProizvodPage() {
     router.push(`/proizvodi?lang=${lang}`);
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  // ESC key handler for modal
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showModal) {
+        handleCloseModal();
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      document.body.style.overflow = 'auto';
+    };
+  }, [showModal]);
+
 
 
   if (loading) return <div className="p-4 text-center">Učitavanje proizvoda...</div>;
@@ -108,13 +135,33 @@ export default function ProizvodPage() {
             {/* Slika proizvoda */}
             <div className="md:w-1/2 p-8">
               {proizvod.slika ? (
-                <Image
-                  src={proizvod.slika}
-                  alt={naziv || 'Slika proizvoda'}
-                  width={500}
-                  height={400}
-                  className="w-full h-auto object-cover rounded-lg shadow-md"
-                />
+                <div>
+                  <div className="relative group cursor-pointer" onClick={() => setShowModal(true)}>
+                    <Image
+                      src={proizvod.slika}
+                      alt={naziv || 'Slika proizvoda'}
+                      width={500}
+                      height={400}
+                      className="w-full h-auto object-cover rounded-lg shadow-md border-2 border-gray-200 group-hover:border-blue-400 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+                    />
+                    {/* Jednostavan hover efekat samo sa ikonom */}
+                    <div className="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  {/* Mala ikonica ispod slike */}
+                  <div
+                    className="flex items-center justify-center mt-3 text-blue-600 text-sm bg-blue-50 border border-blue-200 rounded-lg py-2 px-3 hover:bg-blue-100 transition-colors cursor-pointer"
+                    onClick={() => setShowModal(true)}
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span className="font-medium">Kliknite za povećanje slike</span>
+                  </div>
+                </div>
               ) : (
                 <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
                   <span className="text-gray-500">Nema slike</span>
@@ -168,6 +215,55 @@ export default function ProizvodPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal za povećanu sliku */}
+      {showModal && proizvod?.slika && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              handleCloseModal();
+            }
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={handleCloseModal}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl z-60 bg-black bg-opacity-50 rounded-full p-2 transition-colors"
+            aria-label="Zatvori modal"
+          >
+            <FaTimes />
+          </button>
+
+          {/* Modal content */}
+          <div className="relative max-w-5xl max-h-[90vh] w-full">
+            <div className="relative">
+              <Image
+                src={proizvod.slika}
+                alt={naziv || 'Slika proizvoda'}
+                width={1200}
+                height={800}
+                className="w-full h-auto object-contain rounded-lg shadow-2xl"
+                priority
+              />
+
+              {/* Naziv proizvoda ispod slike */}
+              {naziv && (
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 rounded-b-lg">
+                  <h2 className="text-white text-xl font-semibold text-center">
+                    {naziv}
+                  </h2>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm opacity-75">
+            Kliknite bilo gdje da zatvorite ili pritisnite ESC
+          </div>
+        </div>
+      )}
     </div>
   );
 }

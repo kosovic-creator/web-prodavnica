@@ -34,6 +34,13 @@ function ProizvodiGrid() {
 
     setAddingToCart(proizvod.id);
 
+    // Debug logovi
+    console.log('Dodavanje u korpu:', {
+      korisnikId,
+      proizvodId: proizvod.id,
+      proizvod
+    });
+
     try {
       // Dodaj u korpu
       const addResponse = await fetch('/api/korpa', {
@@ -42,7 +49,11 @@ function ProizvodiGrid() {
         body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
       });
 
+      console.log('Odgovor addResponse:', addResponse);
+
       if (!addResponse.ok) {
+        const errorText = await addResponse.text();
+        console.error('Greška pri dodavanju u korpu, odgovor:', errorText);
         throw new Error('Greška pri dodavanju u korpu');
       }
 
