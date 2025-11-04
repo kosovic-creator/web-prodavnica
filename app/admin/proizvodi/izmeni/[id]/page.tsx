@@ -1,29 +1,35 @@
 'use client';
-import React, { useEffect, useState, Suspense } from 'react';
+
+import React, { useEffect, useState, Suspense, useTransition } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-// Removed i18n - using Serbian text directly
 import { noviProizvodSchemaStatic } from '@/zod';
 import ImageUpload from '@/components/ImageUpload';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import { Proizvod } from '@/types';
-
+import { getProizvodById, updateProizvod } from '@/lib/actions/proizvodi';
+import { toast } from 'react-hot-toast';
 
 function IzmeniProizvodContent() {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const router = useRouter();
-    // Removed useTranslation - using direct Serbian text
-
   const [form, setForm] = useState<Proizvod | null>(null);
-    const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [activeLanguage, setActiveLanguage] = useState<'sr' | 'en'>('sr');
+  const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (id) {
-      fetch(`/api/proizvodi/${id}`)
-        .then(res => res.json())
-        .then(data => {
+    const loadProizvod = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const result = await getProizvodById(id);
+        
+        if (result.success && result.data) {
+          const data = result.data;
           setForm({
             id: data.id ?? "",
             cena: data.cena ?? 0,
@@ -39,36 +45,54 @@ function IzmeniProizvodContent() {
             karakteristike_en: data.karakteristike_en ?? '',
             kategorija_sr: data.kategorija_sr ?? '',
             kategorija_en: data.kategorija_en ?? '',
-            naziv: data.naziv ?? '',
-            opis: data.opis ?? '',
-            kategorija: data.kategorija ?? '',
+            naziv: data.naziv_sr ?? '',
+            opis: data.opis_sr ?? '',
+            kategorija: data.kategorija_sr ?? '',
           });
-        });
-    }
+        } else {
+          setError(result.error || 'Greška pri učitavanju proizvoda');
+          toast.error(result.error || 'Greška pri učitavanju proizvoda');
+        }
+      } catch (error) {
+        console.error('Error loading proizvod:', error);
+        setError('Greška pri učitavanju proizvoda');
+        toast.error('Greška pri učitavanju proizvoda');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProizvod();
   }, [id]);
 
-  if (!form) return <div>Učitavanje...</div>;
-
-// Use React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> directly
-
-const handleChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-): void => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-};
+  ): void => {
+    if (form) {
+      setForm({ ...form, [e.target.name]: e.target.value });
+    }
+  };
 
-const handleImageChange = (imageUrl: string): void => {
-    setForm({ ...form, slika: imageUrl });
-};
+  const handleImageChange = (imageUrl: string): void => {
+    if (form) {
+      setForm({ ...form, slika: imageUrl });
+    }
+  };
 
-    const handleImageRemove = () => {
-        setForm({ ...form, slika: '' });
-    };
+  const handleImageRemove = () => {
+    if (form) {
+      setForm({ ...form, slika: '' });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form) return;
+    
     setError(null);
-      setFieldErrors({});
+    setFieldErrors({});
+
+    // Validate form data
     const parse = noviProizvodSchemaStatic.safeParse({
       naziv_sr: form.naziv_sr,
       naziv_en: form.naziv_en,
@@ -83,6 +107,7 @@ const handleImageChange = (imageUrl: string): void => {
       slika: form.slika,
       id: form.id,
     });
+
     if (!parse.success) {
       const newFieldErrors: { [key: string]: string } = {};
       parse.error.issues.forEach(issue => {
@@ -91,39 +116,62 @@ const handleImageChange = (imageUrl: string): void => {
       setFieldErrors(newFieldErrors);
       return;
     }
-    const res = await fetch('/api/proizvodi', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        naziv_sr: form.naziv_sr,
-        naziv_en: form.naziv_en,
-        opis_sr: form.opis_sr,
-        opis_en: form.opis_en,
-        karakteristike_sr: form.karakteristike_sr,
-        karakteristike_en: form.karakteristike_en,
-        kategorija_sr: form.kategorija_sr,
-        kategorija_en: form.kategorija_en,
-        cena: Number(form.cena),
-        kolicina: Number(form.kolicina),
-        slika: form.slika,
-        id: form.id,
-      }),
+
+    startTransition(async () => {
+      try {
+        const result = await updateProizvod({
+          id: form.id,
+          naziv_sr: form.naziv_sr || '',
+          naziv_en: form.naziv_en || '',
+          opis_sr: form.opis_sr,
+          opis_en: form.opis_en,
+          karakteristike_sr: form.karakteristike_sr,
+          karakteristike_en: form.karakteristike_en,
+          kategorija_sr: form.kategorija_sr || '',
+          kategorija_en: form.kategorija_en || '',
+          cena: Number(form.cena),
+          kolicina: Number(form.kolicina),
+          slika: form.slika,
+        });
+
+        if (result.success) {
+          toast.success('Proizvod je uspešno ažuriran!');
+          router.push('/admin/proizvodi');
+        } else {
+          setError(result.error || 'Greška pri ažuriranju proizvoda!');
+          toast.error(result.error || 'Greška pri ažuriranju proizvoda!');
+        }
+      } catch (error) {
+        console.error('Error updating product:', error);
+        setError('Greška pri ažuriranju proizvoda!');
+        toast.error('Greška pri ažuriranju proizvoda!');
+      }
     });
-    const result = await res.json();
-    if (!res.ok) {
-      setError(result.error || 'Greška!');
-      return;
-    }
+  };
+
+  const handleCancel = () => {
     router.push('/admin/proizvodi');
   };
 
-    const handleCancel = () => {
-        // Vrati se na admin stranicu bez čuvanja promena
-        router.push('/admin/proizvodi');
-    };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
-return (
-  <>
+  if (!form) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-600">
+          {error || 'Proizvod nije pronađen'}
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="admin-container">
       <h2 className="text-2xl text-blue-600 font-semibold mb-6">Izmeni proizvod</h2>
       <div className="flex gap-2 mb-4">
@@ -131,6 +179,7 @@ return (
           type="button"
           onClick={() => setActiveLanguage('sr')}
           className={`px-4 py-2 rounded-lg ${activeLanguage === 'sr' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          disabled={isPending}
         >
           Srpski
         </button>
@@ -138,80 +187,104 @@ return (
           type="button"
           onClick={() => setActiveLanguage('en')}
           className={`px-4 py-2 rounded-lg ${activeLanguage === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          disabled={isPending}
         >
           Engleski
         </button>
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-md">
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor={`naziv_${activeLanguage}`}>Naziv ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})</label>
+          <label className="block text-gray-700 font-medium mb-2" htmlFor={`naziv_${activeLanguage}`}>
+            Naziv ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
+          </label>
           <input
             id={`naziv_${activeLanguage}`}
             name={`naziv_${activeLanguage}`}
             value={form[`naziv_${activeLanguage}`] || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder={activeLanguage === 'sr' ? 'Unesite naziv proizvoda' : 'Enter product name'}
             required
+            disabled={isPending}
           />
           {fieldErrors[`naziv_${activeLanguage}`] && (
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`naziv_${activeLanguage}`]}</p>
           )}
         </div>
+        
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor={`opis_${activeLanguage}`}>Opis ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})</label>
+          <label className="block text-gray-700 font-medium mb-2" htmlFor={`opis_${activeLanguage}`}>
+            Opis ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
+          </label>
           <textarea
             id={`opis_${activeLanguage}`}
             name={`opis_${activeLanguage}`}
             value={form[`opis_${activeLanguage}`] || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder={activeLanguage === 'sr' ? 'Unesite opis proizvoda' : 'Enter product description'}
+            disabled={isPending}
+            rows={4}
           />
           {fieldErrors[`opis_${activeLanguage}`] && (
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`opis_${activeLanguage}`]}</p>
           )}
         </div>
+        
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor={`karakteristike_${activeLanguage}`}>Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})</label>
+          <label className="block text-gray-700 font-medium mb-2" htmlFor={`karakteristike_${activeLanguage}`}>
+            Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
+          </label>
           <input
             id={`karakteristike_${activeLanguage}`}
             name={`karakteristike_${activeLanguage}`}
             value={form[`karakteristike_${activeLanguage}`] || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder={activeLanguage === 'sr' ? 'Unesite karakteristike' : 'Enter features'}
+            disabled={isPending}
           />
           {fieldErrors[`karakteristike_${activeLanguage}`] && (
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`karakteristike_${activeLanguage}`]}</p>
           )}
         </div>
+        
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor={`kategorija_${activeLanguage}`}>Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})</label>
+          <label className="block text-gray-700 font-medium mb-2" htmlFor={`kategorija_${activeLanguage}`}>
+            Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
+          </label>
           <input
             id={`kategorija_${activeLanguage}`}
             name={`kategorija_${activeLanguage}`}
             value={form[`kategorija_${activeLanguage}`] || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder={activeLanguage === 'sr' ? 'Unesite kategoriju' : 'Enter category'}
+            disabled={isPending}
           />
           {fieldErrors[`kategorija_${activeLanguage}`] && (
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`kategorija_${activeLanguage}`]}</p>
           )}
         </div>
+        
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="cena">Cena</label>
           <input
             id="cena"
             name="cena"
             type="number"
+            step="0.01"
             value={form.cena || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
+            disabled={isPending}
           />
+          {fieldErrors.cena && (
+            <p className="text-red-500 text-sm mt-1">{fieldErrors.cena}</p>
+          )}
         </div>
+        
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="kolicina">Količina</label>
           <input
@@ -220,10 +293,15 @@ return (
             type="number"
             value={form.kolicina || ''}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
+            disabled={isPending}
           />
+          {fieldErrors.kolicina && (
+            <p className="text-red-500 text-sm mt-1">{fieldErrors.kolicina}</p>
+          )}
         </div>
+        
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="slika">Slika</label>
           <ImageUpload
@@ -233,27 +311,45 @@ return (
             productId={id}
           />
         </div>
+        
         <div className="flex gap-4 mt-6">
-          <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer">
-            <FaSave /> Sačuvaj
+          <button 
+            type="submit" 
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isPending}
+          >
+            <FaSave /> {isPending ? 'Čuva...' : 'Sačuvaj'}
           </button>
-          <button type="button" onClick={handleCancel} className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer">
+          <button 
+            type="button" 
+            onClick={handleCancel} 
+            className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isPending}
+          >
             <FaTimes /> Otkaži
           </button>
         </div>
-        {error && <div className="text-red-600 mt-4">{error}</div>}
+        
+        {error && (
+          <div className="text-red-600 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            {error}
+          </div>
+        )}
       </form>
     </div>
-  </>
-);
+  );
 }
 
 function IzmeniProizvodPage() {
-    return (
-        <Suspense fallback={<div>Učitavanje...</div>}>
-            <IzmeniProizvodContent />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <IzmeniProizvodContent />
+    </Suspense>
+  );
 }
 
 export default IzmeniProizvodPage;

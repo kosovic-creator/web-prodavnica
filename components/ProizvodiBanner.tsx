@@ -1,65 +1,53 @@
-import { useEffect, useState, Suspense } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'next/navigation';
 import '@/i18n/config';
-import { Proizvod } from '@/types';
 
-const ProizvodiBannerSkeleton: React.FC = () => {
-  return (
-    <div className="animate-pulse">
-      <div className="h-32 bg-gray-200 rounded-lg mb-4"></div>
-      <div className="h-6 bg-gray-200 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-    </div>
-  );
-};
+interface ProizvodServerAction {
+  id: string;
+  cena: number;
+  slika: string | null;
+  kolicina: number;
+  kreiran: Date;
+  azuriran: Date;
+  naziv_en: string;
+  naziv_sr: string;
+  opis_en: string | null;
+  opis_sr: string | null;
+  karakteristike_en: string | null;
+  karakteristike_sr: string | null;
+  kategorija_en: string;
+  kategorija_sr: string;
+}
 
-// Inner component that uses useSearchParams
-function ProizvodiBannerContent() {
+
+
+interface ProizvodiBannerProps {
+  initialProizvodi: ProizvodServerAction[];
+}
+
+export default function ProizvodiBanner({ initialProizvodi }: ProizvodiBannerProps) {
   const { t, i18n } = useTranslation('proizvodi');
-  const searchParams = useSearchParams();
-  const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
+  const [proizvodi, setProizvodi] = useState<ProizvodServerAction[]>(initialProizvodi);
   const [current, setCurrent] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
+  // Filter products with images for the banner
   useEffect(() => {
-    setLoading(true);
-    const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
-  fetch(`/api/proizvodi?lang=${currentLang}`)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        const proizvodiArr = Array.isArray(data.proizvodi) ? data.proizvodi : [];
-        if (proizvodiArr.length > 0) {
-          const proizvodiSaSlikama = proizvodiArr.filter((p: Proizvod) =>
-            p.slika &&
-            p.slika.trim() !== '' &&
-            (p.slika.startsWith('http') || p.slika.startsWith('/'))
-          );
-          if (proizvodiSaSlikama.length > 0) {
-            setProizvodi(proizvodiSaSlikama);
-          } else {
-            setProizvodi(proizvodiArr);
-          }
-        } else {
-          setError(t('nema_dostupnih_proizvoda'));
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching proizvodi:', error);
-        setError(t('greska_ucitavanje_proizvoda'));
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [t, i18n.language, searchParams]);
+    if (initialProizvodi.length > 0) {
+      const proizvodiSaSlikama = initialProizvodi.filter((p: ProizvodServerAction) =>
+        p.slika &&
+        p.slika.trim() !== '' &&
+        (p.slika.startsWith('http') || p.slika.startsWith('/'))
+      );
+      if (proizvodiSaSlikama.length > 0) {
+        setProizvodi(proizvodiSaSlikama);
+      } else {
+        setProizvodi(initialProizvodi);
+      }
+    }
+  }, [initialProizvodi]);
 
   useEffect(() => {
     if (proizvodi.length > 1) {
@@ -70,13 +58,9 @@ function ProizvodiBannerContent() {
     }
   }, [proizvodi]);
 
-  if (loading) {
-    return (
-     <ProizvodiBannerSkeleton />
-    );
-  }
 
-  if (error || proizvodi.length === 0) {
+
+  if (proizvodi.length === 0) {
     return (
       <div className="w-full h-80 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mb-8">
         <div className="text-white text-center">
@@ -87,12 +71,12 @@ function ProizvodiBannerContent() {
     );
   }
 
-  // Bez optimizacije - koristite originalnu sliku
   const currentProizvod = proizvodi[current];
   const imageUrl = currentProizvod?.slika || '';
-  const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
+  const currentLang = i18n.language || 'sr';
   const naziv = currentLang === 'en' ? currentProizvod?.naziv_en : currentProizvod?.naziv_sr;
   const cena = currentProizvod?.cena;
+
   return (
     <div className="w-full h-80 relative overflow-hidden mb-8 rounded-lg shadow-lg bg-white">
       {imageUrl ? (
@@ -138,14 +122,5 @@ function ProizvodiBannerContent() {
         </div>
       )}
     </div>
-  );
-}
-
-// Main component with Suspense
-export default function ProizvodiBanner() {
-  return (
-    <Suspense fallback={<ProizvodiBannerSkeleton />}>
-      <ProizvodiBannerContent />
-    </Suspense>
   );
 }

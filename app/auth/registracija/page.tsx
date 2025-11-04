@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import '@/i18n/config';
 import { useTranslation } from 'react-i18next';
 import { FaUserPlus, FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
-// ...existing code...
-
+import { registrujKorisnika } from '@/lib/actions';
 
 export default function RegistracijaPage() {
   const { t } = useTranslation('auth');
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState({
     email: "",
     lozinka: "",
@@ -21,37 +21,44 @@ export default function RegistracijaPage() {
   });
   const { email, lozinka, potvrdaLozinke, ime, prezime } = form;
 
-  // Ispravno pozicionirana handleChange funkcija
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email || !lozinka || !potvrdaLozinke || !ime || !prezime) {
       toast.error('Sva polja su obavezna.');
       return;
     }
+    
     if (lozinka !== potvrdaLozinke) {
       toast.error('Lozinke se ne poklapaju.');
       return;
     }
-    try {
-      const res = await fetch("/api/auth/registracija", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, lozinka, ime, prezime }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error || t('register.error_occurred'));
-      } else {
+
+    startTransition(async () => {
+      try {
+        const result = await registrujKorisnika({
+          email,
+          lozinka,
+          ime,
+          prezime
+        });
+
+        if (!result.success) {
+          toast.error(result.error || t('register.error_occurred'));
+          return;
+        }
+
         toast.success(t('register.register_success'));
         router.push('/auth/prijava');
+      } catch (error) {
+        console.error('Registration error:', error);
+        toast.error(t('register.error_occurred'));
       }
-    } catch {
-      toast.error(t('register.error_occurred'));
-    }
+    });
   };
 
   return (
@@ -74,6 +81,7 @@ export default function RegistracijaPage() {
               value={email}
               onChange={handleChange}
               placeholder={t('register.email')}
+              disabled={isPending}
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -88,6 +96,7 @@ export default function RegistracijaPage() {
                 value={ime}
                 onChange={handleChange}
                 placeholder={t('register.name')}
+                disabled={isPending}
               />
             </div>
             <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
@@ -101,6 +110,7 @@ export default function RegistracijaPage() {
                 value={prezime}
                 onChange={handleChange}
                 placeholder={t('register.surname')}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -115,6 +125,7 @@ export default function RegistracijaPage() {
               value={lozinka}
               onChange={handleChange}
               placeholder={t('register.password')}
+              disabled={isPending}
             />
           </div>
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
@@ -128,12 +139,26 @@ export default function RegistracijaPage() {
               value={potvrdaLozinke}
               onChange={handleChange}
               placeholder="Potvrda lozinke"
+              disabled={isPending}
             />
           </div>
 
-          <button type="submit" className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors text-base font-medium">
-            <FaUserPlus />
-            {t('register.register')}
+          <button 
+            type="submit" 
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+                Registruje se...
+              </>
+            ) : (
+              <>
+                <FaUserPlus />
+                {t('register.register')}
+              </>
+            )}
           </button>
         </form>
 
@@ -144,6 +169,7 @@ export default function RegistracijaPage() {
             <button
               onClick={() => router.push('/auth/prijava')}
               className="text-blue-600 hover:text-blue-800 font-medium underline transition-colors"
+              disabled={isPending}
             >
               {t('login.login')}
             </button>
@@ -153,4 +179,3 @@ export default function RegistracijaPage() {
     </div>
   );
 }
-

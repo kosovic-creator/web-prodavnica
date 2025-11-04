@@ -1,27 +1,46 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+
+import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import '@/i18n/config';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaEye, FaCartPlus } from 'react-icons/fa';
-import { Proizvod } from '@/types';
 import toast, { Toaster } from 'react-hot-toast';
 import OmiljeniButton from './OmiljeniButton';
+import { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
+import { dodajUKorpu, getKorpa } from '@/lib/actions';
 
-function ProizvodiGrid() {
+interface ProizvodServerAction {
+  id: string;
+  cena: number;
+  slika: string | null;
+  kolicina: number;
+  kreiran: Date;
+  azuriran: Date;
+  naziv_en: string;
+  naziv_sr: string;
+  opis_en: string | null;
+  opis_sr: string | null;
+  karakteristike_en: string | null;
+  karakteristike_sr: string | null;
+  kategorija_en: string;
+  kategorija_sr: string;
+}
+
+interface ProizvodiGridHomeProps {
+  initialProizvodi: ProizvodServerAction[];
+  session: Session | null;
+}
+
+export default function ProizvodiGridHome({ initialProizvodi, session }: ProizvodiGridHomeProps) {
   const { t, i18n } = useTranslation('proizvodi');
-  const searchParams = useSearchParams();
-  const { data: session } = useSession();
   const router = useRouter();
-  const [proizvodi, setProizvodi] = useState<Proizvod[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
-  const handleDodajUKorpu = async (proizvod: Proizvod) => {
+  const handleDodajUKorpu = async (proizvod: ProizvodServerAction) => {
     const korisnikId = session?.user?.id;
     if (!korisnikId) {
       toast.error(t('morate_biti_prijavljeni_za_korpu'), { duration: 4000 });
@@ -34,85 +53,38 @@ function ProizvodiGrid() {
 
     setAddingToCart(proizvod.id);
 
-    // Debug logovi
-    console.log('Dodavanje u korpu:', {
-      korisnikId,
-      proizvodId: proizvod.id,
-      proizvod
+    startTransition(async () => {
+      try {
+        const result = await dodajUKorpu({
+          korisnikId,
+          proizvodId: proizvod.id,
+          kolicina: 1
+        });
+
+        if (!result.success) {
+          toast.error(result.error || 'Greška pri dodavanju u korpu', { duration: 4000 });
+          return;
+        }
+
+        // Update local storage for cart count
+        const korpaResult = await getKorpa(korisnikId);
+        if (korpaResult.success && korpaResult.data) {
+          const brojStavki = korpaResult.data.stavke.reduce((acc: number, stavka: { kolicina: number }) => acc + stavka.kolicina, 0);
+          localStorage.setItem('brojUKorpi', brojStavki.toString());
+          window.dispatchEvent(new Event('korpaChanged'));
+        }
+
+        toast.success(t('proizvod_dodat_u_korpu'), { duration: 4000 });
+      } catch (error) {
+        console.error('Greška:', error);
+        toast.error('Došlo je do greške pri dodavanju u korpu', { duration: 4000 });
+      } finally {
+        setAddingToCart(null);
+      }
     });
-
-    try {
-      // Dodaj u korpu
-      const addResponse = await fetch('/api/korpa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ korisnikId, proizvodId: proizvod.id, kolicina: 1 })
-      });
-
-      console.log('Odgovor addResponse:', addResponse);
-
-      if (!addResponse.ok) {
-        const errorText = await addResponse.text();
-        console.error('Greška pri dodavanju u korpu, odgovor:', errorText);
-        throw new Error('Greška pri dodavanju u korpu');
-      }
-
-      // Ažuriraj broj stavki u korpi
-      const res = await fetch(`/api/korpa?korisnikId=${korisnikId}`);
-      if (!res.ok) {
-        throw new Error('Greška pri učitavanju korpe');
-      }
-
-      const data = await res.json();
-      const broj = data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
-      localStorage.setItem('brojUKorpi', broj.toString());
-      window.dispatchEvent(new Event('korpaChanged'));
-
-      toast.success(t('proizvod_dodat_u_korpu'), { duration: 4000 });
-    } catch (error) {
-      console.error('Greška:', error);
-      toast.error('Došlo je do greške pri dodavanju u korpu', { duration: 4000 });
-    } finally {
-      setAddingToCart(null);
-    }
   };
 
-  useEffect(() => {
-    const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
-    fetch(`/api/proizvodi?lang=${currentLang}`)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-          if (Array.isArray(data.proizvodi)) {
-            setProizvodi(data.proizvodi.slice(0, 12)); // Prikaži prvih 12 proizvoda
-          } else {
-            setError(t('nema_na_zalihama'));
-          }
-      })
-      .catch(error => {
-        console.error('Error fetching proizvodi:', error);
-        setError(t('t.greska_ucitavanje_proizvoda'));
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [t, i18n.language, searchParams]);
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-gray-200 animate-pulse rounded-lg p-6 h-96"></div>
-        ))}
-      </div>
-    );
-  }
-
-  if (error || proizvodi.length === 0) {
+  if (initialProizvodi.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 text-lg">{t('nema_proizvoda_prikaz')}</p>
@@ -124,8 +96,8 @@ function ProizvodiGrid() {
     <div>
       <Toaster position="top-center" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {proizvodi.map((proizvod) => {
-          const currentLang = searchParams?.get('lang') || i18n.language || 'sr';
+        {initialProizvodi.map((proizvod) => {
+          const currentLang = i18n.language || 'sr';
           return (
             <div
               key={proizvod.id}
@@ -201,7 +173,7 @@ function ProizvodiGrid() {
                 <button
                   className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={e => { e.stopPropagation(); handleDodajUKorpu(proizvod); }}
-                  disabled={proizvod.kolicina === 0 || addingToCart === proizvod.id}
+                  disabled={proizvod.kolicina === 0 || addingToCart === proizvod.id || isPending}
                 >
                   {addingToCart === proizvod.id ? (
                     <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
@@ -221,15 +193,6 @@ function ProizvodiGrid() {
         })}
       </div>
     </div>
-  );
-}
-
-// Main component with Suspense
-export default function ProizvodiHome() {
-  return (
-    <Suspense fallback={<div className="text-center p-4">Loading products...</div>}>
-      <ProizvodiGrid />
-    </Suspense>
   );
 }
 

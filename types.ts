@@ -21,6 +21,24 @@ export type Proizvod = {
   azuriran: Date;
 }
 
+// Tip koji odgovara strukturi Server Actions
+export type ProizvodServerAction = {
+  id: string;
+  cena: number;
+  slika: string | null;
+  kolicina: number;
+  kreiran: Date;
+  azuriran: Date;
+  naziv_sr: string;
+  naziv_en: string;
+  opis_sr: string | null;
+  opis_en: string | null;
+  karakteristike_sr: string | null;
+  karakteristike_en: string | null;
+  kategorija_sr: string;
+  kategorija_en: string;
+}
+
 // export type Proizvod = {
 //   id: string;
 //   // API polja

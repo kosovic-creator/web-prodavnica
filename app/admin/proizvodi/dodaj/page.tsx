@@ -1,16 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+
+import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import { FaPlus, FaTimes } from 'react-icons/fa';
-import { noviProizvodSchemaStatic } from '@/zod'; // prilagodi putanju
+import { noviProizvodSchemaStatic } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
-
-
+import { createProizvod } from '@/lib/actions/proizvodi';
 
 function DodajProizvodPage() {
     const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    
     const [form, setForm] = useState({
         cena: '',
         kolicina: '',
@@ -27,6 +29,7 @@ function DodajProizvodPage() {
         karakteristike_en: '',
         kategorija_en: '',
     });
+    
     const [activeLanguage, setActiveLanguage] = useState<'sr' | 'en'>('sr');
     const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -83,7 +86,7 @@ function DodajProizvodPage() {
         setError(null);
         setValidationErrors({});
 
-        // Pripremi payload za backend, ensure all fields are strings
+        // Pripremi payload za backend
         const payload = {
             cena: Number(form.cena),
             kolicina: Number(form.kolicina),
@@ -97,8 +100,6 @@ function DodajProizvodPage() {
             karakteristike_en: formTranslations.karakteristike_en || '',
             kategorija_en: formTranslations.kategorija_en || '',
         };
-        // Loguj payload
-        console.log('Payload za backend:', payload);
 
         // Validacija celog objekta
         try {
@@ -125,34 +126,31 @@ function DodajProizvodPage() {
             return;
         }
 
-        try {
-            // Create product with both translations
-            const res = await fetch('/api/proizvodi', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-
-            const result = await res.json();
-            if (!res.ok) {
-                setError(result.error || 'Greška pri kreiranju proizvoda!');
-                toast.error(result.error || 'Greška pri kreiranju proizvoda!');
-                return;
+        startTransition(async () => {
+            try {
+                console.log('Payload za Server Action:', payload);
+                
+                const result = await createProizvod(payload);
+                
+                if (result.success) {
+                    toast.success('Proizvod je uspešno dodat!');
+                    router.push('/admin/proizvodi');
+                } else {
+                    setError(result.error || 'Greška pri kreiranju proizvoda!');
+                    toast.error(result.error || 'Greška pri kreiranju proizvoda!');
+                }
+            } catch (error) {
+                console.error('Error creating product:', error);
+                setError('Greška pri kreiranju proizvoda!');
+                toast.error('Greška pri kreiranju proizvoda!');
             }
-
-            router.push('/admin/proizvodi');
-            toast.success('Proizvod je uspešno dodat!');
-        } catch {
-            setError('Greška pri kreiranju proizvoda!');
-            toast.error('Greška pri kreiranju proizvoda!');
-        }
+        });
     };
-    return (
-        <>
 
-            <div className="max-w-2xl mx-auto p-8">
-                <h2 className="text-2xl text-blue-600 font-semibold mb-6">Dodaj novi proizvod</h2>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    return (
+        <div className="max-w-2xl mx-auto p-8">
+            <h2 className="text-2xl text-blue-600 font-semibold mb-6">Dodaj novi proizvod</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
                 {/* Language Tabs */}
                 <div className="mb-6">
@@ -193,19 +191,20 @@ function DodajProizvodPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                         <label className="block font-medium mb-2" htmlFor="naziv">
-                                Naziv ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
+                            Naziv ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
                         </label>
                         <input
                             id="naziv"
                             name="naziv"
                             value={activeLanguage === 'sr' ? formTranslations.naziv_sr : formTranslations.naziv_en}
                             onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_naziv`]
+                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors[`${activeLanguage}_naziv`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 input-focus'
+                                : 'border-gray-300'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Naziv proizvoda' : 'Product name'}
                             required
+                            disabled={isPending}
                         />
                         {validationErrors[`${activeLanguage}_naziv`] && (
                             <p className="text-red-500 text-sm mt-1">{validationErrors[`${activeLanguage}_naziv`]}</p>
@@ -214,7 +213,7 @@ function DodajProizvodPage() {
 
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="kategorija">
-                                Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
+                            Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'English'}) *
                         </label>
                         <input
                             id="kategorija"
@@ -222,12 +221,13 @@ function DodajProizvodPage() {
                             value={activeLanguage === 'sr' ? formTranslations.kategorija_sr : formTranslations.kategorija_en}
                             onChange={handleChange}
                             type="text"
-                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_kategorija`]
+                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors[`${activeLanguage}_kategorija`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 input-focus'
+                                : 'border-gray-300'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Kategorija proizvoda' : 'Product category'}
                             required
+                            disabled={isPending}
                         />
                         {validationErrors[`${activeLanguage}_kategorija`] && (
                             <p className="text-red-500 text-sm mt-1">{validationErrors[`${activeLanguage}_kategorija`]}</p>
@@ -238,19 +238,20 @@ function DodajProizvodPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="opis">
-                                Opis ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
+                            Opis ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
                         </label>
                         <textarea
                             id="opis"
                             name="opis"
                             value={activeLanguage === 'sr' ? formTranslations.opis_sr : formTranslations.opis_en}
                             onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_opis`]
+                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors[`${activeLanguage}_opis`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 input-focus'
+                                : 'border-gray-300'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Opis proizvoda' : 'Product description'}
                             rows={4}
+                            disabled={isPending}
                         />
                         {validationErrors[`${activeLanguage}_opis`] && (
                             <p className="text-red-500 text-sm mt-1">{validationErrors[`${activeLanguage}_opis`]}</p>
@@ -259,19 +260,20 @@ function DodajProizvodPage() {
 
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-2" htmlFor="karakteristike">
-                                Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
+                            Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'English'})
                         </label>
                         <textarea
                             id="karakteristike"
                             name="karakteristike"
                             value={activeLanguage === 'sr' ? formTranslations.karakteristike_sr : formTranslations.karakteristike_en}
                             onChange={handleChange}
-                                className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors[`${activeLanguage}_karakteristike`]
+                            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors[`${activeLanguage}_karakteristike`]
                                 ? 'border-red-300 focus:ring-red-500'
-                                : 'border-gray-300 input-focus'
+                                : 'border-gray-300'
                                 }`}
                             placeholder={activeLanguage === 'sr' ? 'Karakteristike proizvoda' : 'Product features'}
                             rows={4}
+                            disabled={isPending}
                         />
                         {validationErrors[`${activeLanguage}_karakteristike`] && (
                             <p className="text-red-500 text-sm mt-1">{validationErrors[`${activeLanguage}_karakteristike`]}</p>
@@ -285,7 +287,7 @@ function DodajProizvodPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium mb-2" htmlFor="cena">
-                                    Cena *
+                                Cena *
                             </label>
                             <input
                                 id="cena"
@@ -294,12 +296,13 @@ function DodajProizvodPage() {
                                 step="0.01"
                                 value={form.cena}
                                 onChange={handleChange}
-                                    className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors['sr_cena'] || validationErrors['en_cena']
+                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors['sr_cena'] || validationErrors['en_cena']
                                     ? 'border-red-300 focus:ring-red-500'
-                                    : 'border-gray-300 input-focus'
+                                    : 'border-gray-300'
                                     }`}
                                 placeholder="0.00"
                                 required
+                                disabled={isPending}
                             />
                             {(validationErrors['sr_cena'] || validationErrors['en_cena']) && (
                                 <p className="text-red-500 text-sm mt-1">
@@ -310,7 +313,7 @@ function DodajProizvodPage() {
 
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium mb-2" htmlFor="kolicina">
-                                    Količina *
+                                Količina *
                             </label>
                             <input
                                 id="kolicina"
@@ -319,12 +322,13 @@ function DodajProizvodPage() {
                                 onChange={handleChange}
                                 type="number"
                                 min="0"
-                                    className={`w-full px-4 py-2 border rounded-lg input-focus${validationErrors['sr_kolicina'] || validationErrors['en_kolicina']
+                                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${validationErrors['sr_kolicina'] || validationErrors['en_kolicina']
                                     ? 'border-red-300 focus:ring-red-500'
-                                    : 'border-gray-300 input-focus'
+                                    : 'border-gray-300'
                                     }`}
                                 placeholder="0"
                                 required
+                                disabled={isPending}
                             />
                             {(validationErrors['sr_kolicina'] || validationErrors['en_kolicina']) && (
                                 <p className="text-red-500 text-sm mt-1">
@@ -350,38 +354,40 @@ function DodajProizvodPage() {
                 <div className="flex gap-4 mt-6">
                     <button
                         type="submit"
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer"
+                        disabled={isPending}
+                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <FaPlus />
-                            Sačuvaj
+                        {isPending ? 'Čuva...' : 'Sačuvaj'}
                     </button>
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer"
+                        disabled={isPending}
+                        className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <FaTimes />
-                            Otkaži
+                        Otkaži
                     </button>
                 </div>
 
-                                {error && (
-                                    <div className="text-red-600 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                        {error}
-                                        {/* Prikaz svih grešaka iz validationErrors koje nisu prikazane pored polja */}
-                                        {Object.entries(validationErrors).length > 0 && (
-                                            <ul className="mt-2 list-disc list-inside">
-                                                {Object.entries(validationErrors).map(([key, msg]) => (
-                                                    <li key={key} className="text-red-500 text-sm">{msg}</li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                )}
+                {error && (
+                    <div className="text-red-600 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        {error}
+                        {/* Prikaz svih grešaka iz validationErrors koje nisu prikazane pored polja */}
+                        {Object.entries(validationErrors).length > 0 && (
+                            <ul className="mt-2 list-disc list-inside">
+                                {Object.entries(validationErrors).map(([key, msg]) => (
+                                    <li key={key} className="text-red-500 text-sm">{msg}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )}
 
             </form>
         </div>
-        </>
     );
 }
+
 export default DodajProizvodPage;

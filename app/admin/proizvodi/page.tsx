@@ -1,12 +1,28 @@
 'use client';
-import React, { useEffect, useState } from 'react'
-import { Proizvod } from '@/types';
 
-
+import React, { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import Loading from '@/components/Loadning';
+import { getProizvodi, deleteProizvod } from '@/lib/actions/proizvodi';
+
+type Proizvod = {
+  id: string;
+  cena: number;
+  slika: string | null;
+  kolicina: number;
+  kreiran: Date;
+  azuriran: Date;
+  naziv_sr: string | null;
+  naziv_en: string | null;
+  opis_sr: string | null;
+  opis_en: string | null;
+  karakteristike_sr: string | null;
+  karakteristike_en: string | null;
+  kategorija_sr: string | null;
+  kategorija_en: string | null;
+};
 
 const ProizvodPage = () => {
   const router = useRouter();
@@ -22,28 +38,29 @@ const ProizvodPage = () => {
     proizvodId: '',
     proizvodNaziv: ''
   });
-  const [isDeleting, setIsDeleting] = useState(false);
 
-
-
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    const fetchProizvodi = async () => {
+    const loadProizvodi = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/proizvodi?page=${currentPage}&pageSize=${pageSize}`);
-        const data = await response.json();
-        console.log('Proizvodi data:', data);
-        setProizvodi(data.proizvodi || []);
-        setTotalProducts(data.total || 0);
+        const result = await getProizvodi(currentPage, pageSize);
+        if (result.success && result.data) {
+          setProizvodi(result.data.proizvodi);
+          setTotalProducts(result.data.total);
+        } else {
+          toast.error(result.error || 'Greška pri učitavanju proizvoda');
+        }
       } catch (error) {
         console.error('Error fetching proizvodi data:', error);
+        toast.error('Greška pri učitavanju proizvoda');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProizvodi();
+    loadProizvodi();
   }, [currentPage, pageSize]);
 
   const openDeleteModal = (id: string, naziv: string) => {
@@ -63,43 +80,36 @@ const ProizvodPage = () => {
   };
 
   const handleProizvodDelete = async () => {
-    setIsDeleting(true);
+    if (!deleteModal.proizvodId) return;
 
-    try {
-      const response = await fetch(`/api/proizvodi/${deleteModal.proizvodId}`, {
-        method: 'DELETE',
-      });
+    startTransition(async () => {
+      try {
+        const result = await deleteProizvod(deleteModal.proizvodId);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Product deleted:", data);
-        toast.success('Proizvod je uspešno obrisan!');
+        if (result.success) {
+          toast.success(result.message || 'Proizvod je uspešno obrisan!');
+          closeDeleteModal();
 
-        // Refresh the current page data after deletion
-        const response2 = await fetch(`/api/proizvodi?page=${currentPage}&pageSize=${pageSize}`);
-        const newData = await response2.json();
-        setProizvodi(newData.proizvodi || []);
-        setTotalProducts(newData.total || 0);
+          // Refresh data
+          const refreshResult = await getProizvodi(currentPage, pageSize);
+          if (refreshResult.success && refreshResult.data) {
+            setProizvodi(refreshResult.data.proizvodi);
+            setTotalProducts(refreshResult.data.total);
 
-        // If current page is empty and not the first page, go to previous page
-        if (newData.proizvodi.length === 0 && currentPage > 1) {
-          setCurrentPage(currentPage - 1);
+            // If current page is empty and not the first page, go to previous page
+            if (refreshResult.data.proizvodi.length === 0 && currentPage > 1) {
+              setCurrentPage(currentPage - 1);
+            }
+          }
+        } else {
+          toast.error(result.error || 'Greška pri brisanju proizvoda');
         }
-
-        closeDeleteModal();
-      } else {
-        const errorData = await response.json();
-        toast.error(`Greška pri brisanju: ${errorData.error}`);
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        toast.error('Došlo je do greške pri brisanju proizvoda.');
       }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      toast.error('Došlo je do greške pri brisanju proizvoda.');
-    } finally {
-      setIsDeleting(false);
-    }
+    });
   };
-
-
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -110,7 +120,7 @@ const ProizvodPage = () => {
     }).format(amount);
   };
 
-  const formatDate = (date: string) => {
+  const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('sr-RS', {
       year: 'numeric',
       month: 'long',
@@ -129,22 +139,19 @@ const ProizvodPage = () => {
   };
 
   // Get unique categories from current page
-  // Pretpostavljam da je default srpski, može se proširiti za en
-  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija)));
+  const categories = Array.from(new Set(proizvodi.map(p => p.kategorija_sr).filter(Boolean)));
 
-  // Note: With pagination, filtering should be done server-side for better performance
-  // For now, we'll use client-side filtering for the current page only
+  // Client-side filtering for the current page only
   const filteredProducts = proizvodi.filter(proizvod => {
-    const matchesSearch = (proizvod.naziv?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
-      (proizvod.opis?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === '' || proizvod.kategorija === filterCategory;
+    const matchesSearch = (proizvod.naziv_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+      (proizvod.opis_sr?.toLowerCase() ?? '').includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory === '' || proizvod.kategorija_sr === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
-
-    if (loading) {
-        return <Loading />;
-    }
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -157,7 +164,10 @@ const ProizvodPage = () => {
               <p className="text-gray-600 mt-1">Pregled i upravljanje inventarom proizvoda</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 input-focusfocus:ring-offset-2 input-focuscursor-pointer" onClick={() => router.push(`/admin/proizvodi/dodaj`)}>
+              <button
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
+                onClick={() => router.push(`/admin/proizvodi/dodaj`)}
+              >
                 <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -238,7 +248,7 @@ const ProizvodPage = () => {
                 id="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 input-focus"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Unesite naziv ili opis proizvoda..."
               />
               {(searchTerm || filterCategory) && (
@@ -269,11 +279,11 @@ const ProizvodPage = () => {
                 id="category"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Sve kategorije</option>
-                {categories.map((category, idx) => (
-                  <option key={category || idx} value={category}>{category}</option>
+                {categories.filter(category => category !== null).map((category, idx) => (
+                  <option key={category || idx} value={category || ''}>{category}</option>
                 ))}
               </select>
             </div>
@@ -287,9 +297,9 @@ const ProizvodPage = () => {
                 onChange={(e) => {
                   const newPageSize = Number(e.target.value);
                   setPageSize(newPageSize);
-                  setCurrentPage(1); // Reset to first page when changing page size
+                  setCurrentPage(1);
                 }}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -322,49 +332,48 @@ const ProizvodPage = () => {
                   const stockStatus = getStockStatus(proizvod.kolicina);
                   return (
                     <tr key={proizvod.id} className="hover:bg-gray-50 transition-colors duration-200">
-                      {/* Naziv */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-[200px] truncate">
                         {proizvod.naziv_sr}
                       </td>
-                      {/* Opis */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-[200px] truncate">
                         {proizvod.opis_sr}
                       </td>
-                      {/* Kategorija */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                           {proizvod.kategorija_sr || 'Nema kategorije'}
                         </span>
                       </td>
-                      {/* Cena */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-gray-900">
                           {formatCurrency(proizvod.cena)}
                         </div>
                       </td>
-                      {/* Na stanju */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {proizvod.kolicina} kom
                         </div>
                       </td>
-                      {/* Status */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stockStatus.color}`}>
                           {stockStatus.text}
                         </span>
                       </td>
-                      {/* Kreiran */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(proizvod.kreiran?.toString() ?? "")}
+                        {formatDate(proizvod.kreiran)}
                       </td>
-                      {/* Akcije */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-blue-600 hover:text-blue-900 mr-3  cursor-pointer" onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}>
+                        <button
+                          className="text-blue-600 hover:text-blue-900 mr-3 cursor-pointer"
+                          onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}
+                        >
                           Izmeni
                         </button>
-                        <button className="text-red-600 hover:text-red-900 cursor-pointer" onClick={() => openDeleteModal(proizvod.id, `${proizvod.naziv_sr || ''}`.trim() || proizvod.id)}>
-                          Obriši
+                        <button
+                          className="text-red-600 hover:text-red-900 cursor-pointer disabled:opacity-50"
+                          onClick={() => openDeleteModal(proizvod.id, proizvod.naziv_sr || proizvod.id)}
+                          disabled={isPending}
+                        >
+                          {isPending ? 'Briše...' : 'Obriši'}
                         </button>
                       </td>
                     </tr>
@@ -485,11 +494,11 @@ const ProizvodPage = () => {
           confirmText="Obriši"
           cancelText="Otkaži"
           isDestructive={true}
-          isLoading={isDeleting}
+          isLoading={isPending}
         />
       </div>
     </div>
-  )
+  );
 };
 
 export default ProizvodPage;

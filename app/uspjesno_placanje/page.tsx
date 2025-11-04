@@ -1,10 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { useKorpa } from '@/components/KorpaContext';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import {
+  getPodaciPreuzimanja,
+  ocistiKorpu,
+  updateProizvodStanje
+} from '@/lib/actions';
 
 export default function UspjesnoPlacanjePage() {
   const { stavke, resetKorpa } = useKorpa();
@@ -13,19 +17,21 @@ export default function UspjesnoPlacanjePage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     // Detekcija providera
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('provider') === 'monripay' || urlParams.get('ShoppingCartID') || urlParams.get('Success')) {
+      setPaymentProvider('monripay');
+
       // Proces plaćanja
       const processPaymentSuccess = async () => {
         // Provjera podataka preuzimanja
         if (session?.user?.id) {
           try {
-            const res = await fetch(`/api/podaci-preuzimanja?korisnikId=${session.user.id}`);
-            const data = await res.json();
-            if (!data || !Array.isArray(data) || data.length === 0) {
+            const result = await getPodaciPreuzimanja(session.user.id);
+            if (!result.success || !result.data) {
               // Nema podataka preuzimanja, preusmjeri na formu
               router.push('/podaci-preuzimanja');
               return;
@@ -41,71 +47,56 @@ export default function UspjesnoPlacanjePage() {
         console.log('Pokretam obradu uspješnog plaćanja...');
         console.log('Stavke u korpi:', stavke);
 
-        // 1. Umanji stanje proizvoda u bazi
-        try {
-          if (stavke && stavke.length > 0) {
-            for (const item of stavke) {
-              await fetch('/api/proizvodi/update-stanje', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ proizvodId: item.proizvodId, kolicina: item.kolicina }),
-              });
+        startTransition(async () => {
+          try {
+            // 1. Umanji stanje proizvoda u bazi
+            if (stavke && stavke.length > 0) {
+              for (const item of stavke) {
+                if (item.proizvod?.id && item.kolicina) {
+                  const result = await updateProizvodStanje(item.proizvod.id, item.kolicina);
+                  if (!result.success) {
+                    console.error('Greška pri ažuriranju stanja proizvoda:', result.error);
+                  }
+                }
+              }
             }
-          }
-        } catch (error) {
-          console.error('Greška pri obradi plaćanja:', error);
-        }
 
-        // 2. Prazni korpu u bazi
-        if (session?.user?.id) {
-          try {
-            await fetch('/api/korpa/delete-all', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ korisnikId: session.user.id }),
-            });
-            console.log('Backend korpa je obrisana');
+            // 2. Prazni korpu u bazi
+            if (session?.user?.id) {
+              const result = await ocistiKorpu(session.user.id);
+              if (result.success) {
+                console.log('Backend korpa je obrisana');
+              } else {
+                console.error('Greška pri brisanju korpe u bazi:', result.error);
+              }
+            }
+
+            // 3. Resetuj korpu na frontendu
+            resetKorpa();
+
+            // 4. Email sending would need to be implemented as a separate Server Action
+            // For now, we'll show success message
+            toast.success('Plaćanje je uspešno obrađeno!', { duration: 3000 });
+
+            setIsLoading(false);
+
+            // Redirect to home after showing success
+            setTimeout(() => {
+              router.push('/');
+            }, 2000);
+
           } catch (error) {
-            console.error('Greška pri brisanju korpe u bazi:', error);
+            console.error('Greška pri obradi plaćanja:', error);
+            setEmailError('Došlo je do greške pri obradi plaćanja');
+            setIsLoading(false);
           }
-        }
-        // 3. Resetuj korpu na frontendu
-        resetKorpa();
-
-        // 3. Pošalji email potvrdu
-        if (session?.user?.email) {
-          try {
-            await fetch('/api/email/posalji', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: session.user.email,
-                subject: 'Potvrda plaćanja',
-                html:
-                  '<div style="font-family:Arial,sans-serif;max-width:400px;margin:auto;border:1px solid #e0e0e0;border-radius:8px;padding:24px;background:#fafcff;">' +
-                  '<h2 style="color:#2d7ef7;text-align:center;margin-bottom:16px;">✅ Vaše plaćanje je uspješno!</h2>' +
-                  '<table style="width:100%;font-size:16px;line-height:1.7;">' +
-                  '<tr><td style="font-weight:bold;width:120px;">Ime:</td><td>' + session.user.ime + '</td></tr>' +
-                  '<tr><td style="font-weight:bold;">Prezime:</td><td>' + session.user.prezime + '</td></tr>' +
-                  '<tr><td style="font-weight:bold;">Email:</td><td>' + session.user.email + '</td></tr>' +
-                  '</table>' +
-                  '<hr style="margin:24px 0;border:none;border-top:1px solid #e0e0e0;" />' +
-                  '<div style="text-align:center;color:#888;font-size:13px;">Hvala na povjerenju!<br>Web prodavnica</div>' +
-                  '</div>'
-              }),
-            });
-            toast.success('Email potvrde je poslat', { duration: 3000 });
-            console.log('Email potvrde je poslat');
-            router.push('/');
-          } catch (error) {
-            console.error('Greška pri slanju email-a:', error);
-          }
-        }
-
-        setIsLoading(false);
+        });
       };
+
       processPaymentSuccess();
-    };
+    } else {
+      setIsLoading(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
@@ -116,20 +107,54 @@ export default function UspjesnoPlacanjePage() {
           <>
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
             <p className="text-gray-600">Obrađujem plaćanje...</p>
+            {isPending && (
+              <p className="text-sm text-blue-600 mt-2">Ažuriram stanje proizvoda...</p>
+            )}
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold mb-2">Plaćanje uspješno!</h1>
-            <p className="text-gray-600 mb-4">Vaša porudžbina je obrađena. Hvala na kupovini!</p>
+              <div className="mb-6">
+                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold text-green-600 mb-2">Plaćanje uspješno!</h1>
+                <p className="text-gray-600 mb-4">Vaša porudžbina je obrađena. Hvala na kupovini!</p>
+              </div>
+
             {paymentProvider === 'monripay' && (
-              <p className="text-green-600">MonriPay transakcija je uspješno završena.</p>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <p className="text-green-600 font-medium">MonriPay transakcija je uspješno završena.</p>
+                </div>
             )}
+
             {paymentProvider === 'unknown' && (
-              <p className="text-yellow-600">Transakcija je završena, ali nije prepoznat provider.</p>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <p className="text-yellow-600">Transakcija je završena, ali nije prepoznat provider.</p>
+                </div>
             )}
+
             {emailError && (
-              <p className="text-red-600 mt-4">{emailError}</p>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <p className="text-red-600">{emailError}</p>
+                </div>
             )}
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                <button
+                  onClick={() => router.push('/')}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                >
+                  Na početnu stranicu
+                </button>
+                <button
+                  onClick={() => router.push('/moje-porudzbine')}
+                  className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition font-medium"
+                >
+                  Moje porudžbine
+                </button>
+              </div>
           </>
         )}
       </div>

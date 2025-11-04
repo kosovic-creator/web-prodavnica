@@ -1,55 +1,41 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { getProizvodById } from '@/lib/actions';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Proizvod } from '@/types';
+import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-export default function SlikaPage() {
-  const params = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const lang = searchParams?.get('lang') || 'sr';
+interface SlikaPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+  searchParams: Promise<{
+    lang?: string;
+  }>;
+}
 
-  const id = params && typeof params.id === 'string' ? params.id : Array.isArray(params?.id) ? params?.id[0] : undefined;
-  const [proizvod, setProizvod] = useState<Proizvod | null>(null);
-  const [loading, setLoading] = useState(true);
+async function SlikaServerComponent({ id, lang }: { id: string; lang: string }) {
+  const result = await getProizvodById(id);
 
-  useEffect(() => {
-    async function fetchProizvod() {
-      if (!id) return;
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/proizvodi/${id}`);
-        const data = await res.json();
-        setProizvod(data.error ? null : data);
-      } catch (error) {
-        console.error('Greška pri učitavanju proizvoda:', error);
-        setProizvod(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProizvod();
-  }, [id]);
-
-  const handleNazad = () => {
-    router.push(`/proizvodi/${id}?lang=${lang}`);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-lg">Učitavanje...</div>
-      </div>
-    );
+  if (!result.success || !result.data) {
+    notFound();
   }
 
-  if (!proizvod || !proizvod.slika) {
+  const proizvod = result.data;
+
+  // Proverava da li proizvod ima sliku
+  if (!proizvod.slika) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600 text-lg">Slika nije dostupna</div>
+        <div className="text-center">
+          <div className="text-red-600 text-lg mb-4">Slika nije dostupna</div>
+          <Link
+            href={`/proizvodi/${id}?lang=${lang}`}
+            className="text-blue-600 hover:text-blue-700 underline"
+          >
+            Nazad na proizvod
+          </Link>
+        </div>
       </div>
     );
   }
@@ -60,13 +46,13 @@ export default function SlikaPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto p-4">
         {/* Dugme za nazad */}
-        <button
-          onClick={handleNazad}
+        <Link
+          href={`/proizvodi/${proizvod.id}?lang=${lang}`}
           className="flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-700 transition"
         >
           <FaArrowLeft />
           Nazad na proizvod
-        </button>
+        </Link>
 
         {/* Naslov */}
         <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">
@@ -85,8 +71,56 @@ export default function SlikaPage() {
               priority
             />
           </div>
+
+          {/* Informacije o proizvodu ispod slike */}
+          <div className="mt-6 text-center">
+            <div className="text-xl font-bold text-blue-700 mb-2">{proizvod.cena} €</div>
+            <div className={`text-sm font-semibold ${proizvod.kolicina === 0 ? 'text-red-600' : 'text-green-600'}`}>
+              {proizvod.kolicina === 0 ? 'Nema na zalihama' : `Dostupno: ${proizvod.kolicina}`}
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function SlikaLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto p-4">
+        {/* Back button skeleton */}
+        <div className="mb-6">
+          <div className="w-32 h-6 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+
+        {/* Title skeleton */}
+        <div className="mb-6 flex justify-center">
+          <div className="w-64 h-8 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+
+        {/* Image skeleton */}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="flex justify-center">
+            <div className="w-full max-w-4xl h-96 bg-gray-200 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default async function SlikaPage({ params, searchParams }: SlikaPageProps) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const lang = resolvedSearchParams.lang || 'sr';
+
+  return (
+    <Suspense fallback={<SlikaLoading />}>
+      <SlikaServerComponent
+        id={resolvedParams.id}
+        lang={lang}
+      />
+    </Suspense>
   );
 }
