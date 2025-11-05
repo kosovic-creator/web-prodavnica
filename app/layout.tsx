@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -9,10 +10,22 @@ import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
 import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
+import { usePathname } from 'next/navigation';
 
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+
+export default function RootLayout({
+  children,
+  banner,
+  grid
+}: {
+  children: React.ReactNode;
+  banner?: React.ReactNode;
+  grid?: React.ReactNode;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith('/admin');
 
   const handleSidebarClose = () => {
     setSidebarOpen(false);
@@ -44,29 +57,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SearchProvider>
             <KorpaProvider>
               <div className="min-h-screen flex flex-col">
-                {/* Navbar */}
-                <Navbar setSidebarOpen={setSidebarOpen} />
+                {/* Navbar - samo za non-admin stranice */}
+                {!isAdminRoute && <Navbar setSidebarOpen={setSidebarOpen} />}
 
                 {/* Main content area sa sidebar-om - modifikujemo */}
                 <div className="flex flex-1 relative">
-                  {/* Sidebar */}
-                  <Sidebar
-                    open={sidebarOpen}
-                    onClose={handleSidebarClose}
-                  />
+                  {/* Sidebar - samo za non-admin stranice */}
+                  {!isAdminRoute && (
+                    <Sidebar
+                      open={sidebarOpen}
+                      onClose={handleSidebarClose}
+                    />
+                  )}
 
                   {/* Page content - dodajemo transition i margin */}
                   <main className={`
-                    flex-1 transition-all duration-300 ease-in-out
-                    ${sidebarOpen ? 'md:ml-0 ml-64' : 'ml-0'}
-                  `}>
-                    {children}
+      flex-1 transition-all duration-300 ease-in-out
+      ${sidebarOpen && !isAdminRoute ? 'md:ml-0 ml-64' : 'ml-0'}
+    `}>
+                    {isAdminRoute ? (
+                      // Admin rute ne koriste parallel routes
+                      <div key="layout-children">{children}</div>
+                    ) : (
+                      // Obične rute koriste parallel routes
+                      <React.Fragment>
+                        {children && <div key="layout-children">{children}</div>}
+                        {banner && <div key="layout-banner">{banner}</div>}
+                        {grid && <div key="layout-grid">{grid}</div>}
+                      </React.Fragment>
+                    )}
                   </main>
-
                 </div>
 
-                {/* Footer - fiksiran na dnu */}
-                <Footer />
+                {/* Footer - samo za non-admin stranice */}
+                {!isAdminRoute && <Footer />}
               </div>
 
               {/* Toast notifications */}
