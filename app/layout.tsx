@@ -20,8 +20,8 @@ export default function RootLayout({
   grid
 }: {
   children: React.ReactNode;
-  banner?: React.ReactNode;
-  grid?: React.ReactNode;
+    banner: React.ReactNode;
+    grid: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
