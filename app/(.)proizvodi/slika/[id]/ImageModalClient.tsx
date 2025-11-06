@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ProizvodServerAction } from '@/types';
 
 interface ImageModalClientProps {
@@ -91,20 +92,19 @@ export default function ImageModalClient({ proizvod }: ImageModalClientProps) {
         >
           ✕
         </button>
-
         {/* Clean image */}
         {proizvod.slika && (
-          <img
+          <Image
             src={proizvod.slika}
             alt={proizvod.naziv_sr || 'Proizvod'}
+            width={1200}     // Povećajte širinu
+            height={900}     // Povećajte visinu
             style={{
-              maxWidth: '90vw',
-              maxHeight: '80vh',
-              width: 'auto',
-              height: 'auto',
+              maxWidth: '98vw',      // Dozvolite skoro punu širinu prozora
+              maxHeight: '95vh',     // Veća maksimalna visina
               objectFit: 'contain',
               borderRadius: '8px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+              boxShadow: '0 6px 30px rgba(0,0,0,0.8)',
             }}
             onClick={(e) => e.stopPropagation()}
             onLoad={() => console.log('✅ Image loaded successfully in modal')}
