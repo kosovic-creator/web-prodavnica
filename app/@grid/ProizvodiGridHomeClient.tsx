@@ -101,6 +101,7 @@ export default function ProizvodiGridHome({ initialProizvodi, session }: Proizvo
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {initialProizvodi.map((proizvod) => {
           const currentLang = i18n.language || 'sr';
+
           return (
             <div
               key={proizvod.id}

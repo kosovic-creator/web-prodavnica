@@ -4,7 +4,7 @@ import React from 'react';
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Sidebar from '../components/Sidebar';
-import Footer from '@/components/footer';
+import Footer from '@/components/Footer';
 import { useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
@@ -20,8 +20,8 @@ export default function RootLayout({
   grid
 }: {
   children: React.ReactNode;
-    banner: React.ReactNode;
-    grid: React.ReactNode;
+  banner: React.ReactNode;
+  grid: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
