@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Session } from 'next-auth';
 import { toast } from 'react-hot-toast';
 import { createPodaciPreuzimanja, updatePodaciPreuzimanja } from '@/lib/actions';
 
@@ -15,14 +14,12 @@ interface PodaciPreuzimanja {
   telefon: string;
 }
 
-interface PodaciPreuzimanjaClientProps {
-  session: Session;
+interface PodaciFormProps {
+  userId: string;
   initialPodaci: PodaciPreuzimanja | null;
 }
 
-
-
-export default function PodaciPreuzimanjaClient({ session, initialPodaci }: PodaciPreuzimanjaClientProps) {
+export default function PodaciForm({ userId, initialPodaci }: PodaciFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState({
@@ -53,10 +50,10 @@ export default function PodaciPreuzimanjaClient({ session, initialPodaci }: Poda
         let result;
         if (initialPodaci) {
           // Update existing data
-          result = await updatePodaciPreuzimanja(session.user.id, podaciData);
+          result = await updatePodaciPreuzimanja(userId, podaciData);
         } else {
           // Create new data
-          result = await createPodaciPreuzimanja(session.user.id, podaciData);
+          result = await createPodaciPreuzimanja(userId, podaciData);
         }
 
         if (!result.success) {
@@ -65,10 +62,6 @@ export default function PodaciPreuzimanjaClient({ session, initialPodaci }: Poda
         }
 
         toast.success('Podaci su uspešno sačuvani!');
-
-        // Send email notification - this would need to be implemented as a separate Server Action
-        // For now we'll skip the email sending as it requires email service setup
-
         router.push('/');
       } catch (error) {
         console.error('Error saving delivery data:', error);

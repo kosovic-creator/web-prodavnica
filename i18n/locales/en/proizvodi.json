@@ -92,5 +92,6 @@
   "greska_uklanjanje_omiljeni": "Error while removing from favorites.",
   "ucitavanje_omiljenih": "Loading favorite products...",
   "dodato_u_korpu": "Article has been added to the cart.",
-  "our_products": "Our Products"
+  "our_products": "Our Products",
+  "Greška pri učitavanju proizvoda": "Error loading products"
 }
