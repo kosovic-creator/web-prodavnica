@@ -30,7 +30,7 @@ Na Vercel dashboard-u:
 - Slike će se sada čuvati na Cloudinary-ju umesto lokalno
 - URL slike će biti u formatu: https://res.cloudinary.com/dykz9ack1
 - Slike će biti organizovane u folder `web-trgovina`
-
+treba se ulogovati na drasko.kosovic@gmail.com. Media
 ## Napomene
 
 - Cloudinary besplatan plan ima limit od 25,000 transformacija mesečno
