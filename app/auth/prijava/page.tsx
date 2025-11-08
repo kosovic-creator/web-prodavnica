@@ -111,7 +111,14 @@ export default function PrijavaForm() {
           localStorage.removeItem('rememberMe');
         }
 
-        router.push("/");
+        // Proveri da li je admin korisnik
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        if (session?.user?.uloga === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       } else {
         setError(t('login.invalidCredentials'));
       }

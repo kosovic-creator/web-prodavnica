@@ -11,6 +11,7 @@ import { KorpaProvider } from "@/components/KorpaContext";
 import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
 import { usePathname } from 'next/navigation';
+import { AdminRedirector } from './AdminRedirector';
 
 
 
@@ -54,7 +55,9 @@ export default function RootLayout({
       </head>
       <body className="w-full bg-gray-50 overflow-x-hidden">
         <SessionProvider>
+
           <SearchProvider>
+            <AdminRedirector />
             <KorpaProvider>
               <div className="min-h-screen flex flex-col">
                 {/* Navbar - samo za non-admin stranice */}

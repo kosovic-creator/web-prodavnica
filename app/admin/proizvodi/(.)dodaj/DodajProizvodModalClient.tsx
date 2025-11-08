@@ -1,13 +1,15 @@
 'use client';
 
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaTimes, FaSave, FaBox } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function DodajProizvodModalClient() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     naziv_sr: '',
     naziv_en: '',
     opis_sr: '',
@@ -15,7 +17,8 @@ export default function DodajProizvodModalClient() {
     kategorija_sr: '',
     kategorija_en: '',
     cena: '',
-    kolicina: ''
+    kolicina: '',
+    slika: ''
   });
 
   const handleClose = () => {
@@ -28,18 +31,44 @@ export default function DodajProizvodModalClient() {
     }
   };
 
+  const handleImageChange = (imageUrl: string) => {
+    setForm((prev) => ({ ...prev, slika: imageUrl }));
+  };
+
+  const handleImageRemove = () => {
+    setForm((prev) => ({ ...prev, slika: '' }));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would call your API to create the product
-    toast.success('Proizvod je kreiran! (Demo funkcionalnost)');
-    handleClose();
+    try {
+      const payload = {
+        ...form,
+        cena: form.cena ? parseFloat(form.cena) : 0,
+        kolicina: form.kolicina ? parseInt(form.kolicina) : 0,
+      };
+      const res = await fetch('/api/proizvodi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        toast.success('Proizvod je uspešno dodat!');
+        handleClose();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Greška pri dodavanju proizvoda');
+      }
+    } catch {
+      toast.error('Greška pri dodavanju proizvoda');
+    }
   };
 
   return (
@@ -73,7 +102,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="text"
                 name="naziv_sr"
-                value={formData.naziv_sr}
+                value={form.naziv_sr}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Unesite naziv proizvoda"
@@ -88,7 +117,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="text"
                 name="naziv_en"
-                value={formData.naziv_en}
+                value={form.naziv_en}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter product name"
@@ -105,7 +134,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="number"
                 name="cena"
-                value={formData.cena}
+                value={form.cena}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="0.00"
@@ -122,7 +151,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="number"
                 name="kolicina"
-                value={formData.kolicina}
+                value={form.kolicina}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="0"
@@ -141,7 +170,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="text"
                 name="kategorija_sr"
-                value={formData.kategorija_sr}
+                value={form.kategorija_sr}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="npr. bicikla, patike..."
@@ -155,7 +184,7 @@ export default function DodajProizvodModalClient() {
               <input
                 type="text"
                 name="kategorija_en"
-                value={formData.kategorija_en}
+                value={form.kategorija_en}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g. bike, shoes..."
@@ -170,7 +199,7 @@ export default function DodajProizvodModalClient() {
             </label>
             <textarea
               name="opis_sr"
-              value={formData.opis_sr}
+              value={form.opis_sr}
               onChange={handleChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -184,11 +213,21 @@ export default function DodajProizvodModalClient() {
             </label>
             <textarea
               name="opis_en"
-              value={formData.opis_en}
+              value={form.opis_en}
               onChange={handleChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Short product description..."
+            />
+          </div>
+          {/* Image Upload */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-4 text-gray-700">Slika proizvoda</h3>
+            <ImageUpload
+              currentImage={form.slika}
+              onImageChange={handleImageChange}
+              onImageRemove={handleImageRemove}
+              productId={`new-${Date.now()}`}
             />
           </div>
 
