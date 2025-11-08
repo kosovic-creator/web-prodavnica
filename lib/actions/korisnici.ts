@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import bcrypt from 'bcryptjs';
 
 export type KorisnikData = {
   email: string;
@@ -275,12 +276,12 @@ export async function registrujKorisnika(data: RegistracijaData) {
       };
     }
 
-    // Hash password (in production, you should use proper hashing)
-    // For now, we'll assume the password is already hashed or will be hashed by NextAuth
+    // Hash password pre upisa u bazu
+    const hash = await bcrypt.hash(lozinka, 10);
     const korisnik = await prisma.korisnik.create({
       data: {
         email,
-        lozinka, // In production, this should be hashed
+        lozinka: hash,
         ime,
         prezime,
         uloga

@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Korisnik" ALTER COLUMN "uloge" SET NOT NULL,
+ALTER COLUMN "uloge" SET DEFAULT 'korisnik',
+ALTER COLUMN "uloge" SET DATA TYPE TEXT;
