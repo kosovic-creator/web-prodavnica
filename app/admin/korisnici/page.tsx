@@ -39,7 +39,7 @@ async function KorisniciTable({ page = 1, pageSize = 10 }: { page?: number, page
 
   return (
     <>
-   
+
 
      {/* Korisnici tabela */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -134,12 +134,12 @@ export default async function AdminKorisniciPage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Upravljanje korisnicima</h1>
-        <Link
+        {/* <Link
           href="/admin/korisnici/dodaj"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Dodaj Korisnika
-        </Link>
+        </Link> */}
       </div>
 
       <Suspense fallback={

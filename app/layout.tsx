@@ -11,7 +11,7 @@ import { KorpaProvider } from "@/components/KorpaContext";
 import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
 import { usePathname } from 'next/navigation';
-import { AdminRedirector } from './AdminRedirector';
+import { AdminRedirector } from '@/components/AdminRedirector';
 
 
 
