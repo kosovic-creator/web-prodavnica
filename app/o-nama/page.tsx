@@ -1,9 +1,5 @@
-import React from 'react'
+import OnamaClient from './O-namaClient';
 
-const page = () => {
-  return (
-    <div>O nama </div>
-  )
+export default function OnamaPage() {
+  return <OnamaClient />;
 }
-
-export default page

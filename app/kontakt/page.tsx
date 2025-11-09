@@ -1,9 +1,5 @@
-import React from 'react'
+import KontaktClient from './KontaktClient';
 
-const page = () => {
-  return (
-    <div>Kontakt</div>
-  )
+export default function KontaktPage() {
+  return <KontaktClient />;
 }
-
-export default page

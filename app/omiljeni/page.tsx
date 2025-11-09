@@ -1,27 +1,35 @@
 'use client';
 
-import { useState, useEffect, Suspense, useTransition } from 'react';
+import { Suspense, useState, useEffect, useTransition } from 'react';
 import { useSession } from 'next-auth/react';
 import { Omiljeni } from '@/types';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { FaCartPlus, FaEye, FaHeart, FaMinus } from "react-icons/fa";
 import '@/i18n/config';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import Loading from '@/components/Loadning';
 import { getOmiljeni, ukloniIzOmiljenih } from '@/lib/actions/omiljeni';
 import { dodajUKorpu, getKorpa } from '@/lib/actions/korpa';
 
+export default function OmiljeniPage() {
+  return (
+    <Suspense fallback={<div>Učitavanje...</div>}>
+      <OmiljeniContent />
+    </Suspense>
+  );
+}
+
 function OmiljeniContent() {
-  const { t } = useTranslation('proizvodi');
+  const searchParams = useSearchParams();
+  const lang = searchParams.get('lang') || 'sr';
+  const { t } = useTranslation('proizvodi', { lng: lang });
   const { data: session } = useSession();
   const [omiljeni, setOmiljeni] = useState<Omiljeni[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const searchParams = useSearchParams();
-  const lang = searchParams?.get('lang') || 'sr';
   const router = useRouter();
 
   // Helper function za prikaz polja prema jeziku
@@ -39,7 +47,6 @@ function OmiljeniContent() {
         setLoading(false);
         return;
       }
-
       setLoading(true);
       try {
         const result = await getOmiljeni(session.user.id);
@@ -57,7 +64,6 @@ function OmiljeniContent() {
         setLoading(false);
       }
     };
-
     loadOmiljeni();
   }, [session?.user?.id, lang]);
 
@@ -76,7 +82,6 @@ function OmiljeniContent() {
       );
       return;
     }
-
     startTransition(async () => {
       try {
         const result = await dodajUKorpu({
@@ -84,11 +89,8 @@ function OmiljeniContent() {
           proizvodId: omiljeni.proizvodId,
           kolicina: 1
         });
-
         if (result.success) {
           toast.success(t('dodato_u_korpu'));
-          
-          // Update localStorage cart count
           const korpaResult = await getKorpa(korisnikId);
           if (korpaResult.success && korpaResult.data) {
             const broj = korpaResult.data.stavke.reduce((acc: number, s: { kolicina: number }) => acc + s.kolicina, 0);
@@ -116,11 +118,9 @@ function OmiljeniContent() {
       );
       return;
     }
-
     startTransition(async () => {
       try {
         const result = await ukloniIzOmiljenih(korisnikId, omiljeni.proizvodId);
-        
         if (result.success) {
           setOmiljeni(prevOmiljeni => prevOmiljeni.filter(o => o.id !== omiljeni.id));
           toast.success(result.message || t('uklonjen_iz_omiljenih'));
@@ -157,13 +157,12 @@ function OmiljeniContent() {
         <Loading />
       </div>
     ) : (
-      <> 
+        <>
         <Toaster position="top-center" />
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
           <FaHeart className="text-red-600" />
           {t('omiljeni_proizvodi')}
-        </h1>
-        
+          </h1>
         {omiljeni.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
             <FaHeart className="text-gray-300 text-6xl mb-4" />
@@ -199,20 +198,18 @@ function OmiljeniContent() {
                     <FaMinus />
                   </button>
                 </div>
-                
                 {/* Product image */}
                 {o.proizvod.slika && (
                   <div className="mb-3 flex justify-center">
-                    <Image 
-                      src={o.proizvod.slika} 
-                      alt={getField(o.proizvod, 'naziv') || ''} 
-                      width={100} 
-                      height={100} 
-                      className="object-cover rounded-md" 
+                    <Image
+                      src={o.proizvod.slika}
+                      alt={getField(o.proizvod, 'naziv') || ''}
+                      width={100}
+                      height={100}
+                      className="object-cover rounded-md"
                     />
                   </div>
                 )}
-                
                 <div className="flex-1 space-y-2">
                   <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
                     {getField(o.proizvod, 'naziv')}
@@ -248,9 +245,9 @@ function OmiljeniContent() {
                       disabled={o.proizvod.kolicina === 0 || isPending}
                     >
                       <FaCartPlus />
-                      {isPending ? 'Dodaje...' : 
-                        o.proizvod.kolicina === 0 ? 
-                          (t('nema_na_zalihama') || 'Nema na zalihama') : 
+                      {isPending ? 'Dodaje...' :
+                        o.proizvod.kolicina === 0 ?
+                          (t('nema_na_zalihama') || 'Nema na zalihama') :
                           (t('dodaj_u_korpu') || 'Dodaj u korpu')
                       }
                     </button>
@@ -262,13 +259,5 @@ function OmiljeniContent() {
         )}
       </>
     )
-  );
-}
-
-export default function OmiljeniPage() {
-  return (
-    <Suspense fallback={<div className="p-4 text-center">Učitavanje omiljenih proizvoda...</div>}>
-      <OmiljeniContent />
-    </Suspense>
   );
 }

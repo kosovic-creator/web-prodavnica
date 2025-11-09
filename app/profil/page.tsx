@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getServerSession } from 'next-auth';
 import { getKorisnikById } from '@/lib/actions';
 import { redirect } from 'next/navigation';
