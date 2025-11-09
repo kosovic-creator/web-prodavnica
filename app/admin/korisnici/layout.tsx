@@ -27,11 +27,14 @@ export default function KorisniciLayout({
     }
   ];
 
+  // Modal overlay logika
+  // const isDodajModal = pathname === '/admin/korisnici/dodaj';
+
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Upravljanje korisnicima</h1>
-        <p className="text-gray-600">Dodaj, izmijeni ili ukloni korisničke naloge</p>
+        <p className="text-gray-600">Dodaj, izmijeni ili ukloni korisnidke naloge</p>
       </div>
 
       {/* Sub-navigation */}
@@ -63,6 +66,22 @@ export default function KorisniciLayout({
       <div>
         {children}
       </div>
+
+      {/* Modal Overlay */}
+      {/* {isDodajModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 relative min-w-[350px] max-w-full">
+            {children}
+            <Link
+              href="/admin/korisnici"
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+              aria-label="Zatvori modal"
+            >
+              &times;
+            </Link>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }

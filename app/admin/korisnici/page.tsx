@@ -39,6 +39,9 @@ async function KorisniciTable({ page = 1, pageSize = 10 }: { page?: number, page
 
   return (
     <>
+   
+
+     {/* Korisnici tabela */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
