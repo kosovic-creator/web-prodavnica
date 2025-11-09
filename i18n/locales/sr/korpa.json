@@ -23,7 +23,9 @@
   "artikal_izbrisan": "Artikal je uspešno izbrisan",
   "error": "Došlo je do greške. Pokušajte ponovo.",
   "must_login": "Morate biti prijavljeni da vidite korpu.",
-  "'no_data_redirect'": "Nema podataka. Bićete preusmereni na početnu stranicu.",
-  "cart_emptied": "Korpa je uspešno obrisana"
+  "no_data_redirect": "Nemate unete podatke za preuzimanje. Bićete preusmereni na stranicu za unos podataka.",
+  "isprazni_korpu": "Isprazni korpu",
+  "order_success": "Potvrda porudžbine je poslata na email!",
+  "cart_emptied": "Korpa je ispražnjena"
 
 }

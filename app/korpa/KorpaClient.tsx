@@ -117,7 +117,7 @@ export default function KorpaClient({ lang }: KorpaClientProps) {
       <div className="max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
           <FaShoppingCart className="text-blue-600" />
-          {t('title') || 'Korpa'}
+          {t('naslov') || 'Korpa'}
           {isRefreshing && (
             <div className="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full" />
           )}

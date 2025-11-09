@@ -26,6 +26,14 @@ import notFound_en from './locales/en/notFound.json';
 import notFound_sr from './locales/sr/notFound.json';
 import placanje_en from './locales/en/placanje.json';
 import placanje_sr from './locales/sr/placanje.json';
+import moje_porudzbine_en from './locales/en/moje_porudzbine.json';
+import moje_porudzbine_sr from './locales/sr/moje_porudzbine.json';
+import omiljeni_en from './locales/en/omiljeni.json';
+import omiljeni_sr from './locales/sr/omiljeni.json';
+import podaci_preuzimanja_en from './locales/en/podaci-preuzimanja.json';
+import podaci_preuzimanja_sr from './locales/sr/podaci-preuzimanja.json';
+import uspjesno_placanje_en from './locales/en/uspjesno_placanje.json';
+import uspjesno_placanje_sr from './locales/sr/uspjesno_placanje.json';
 
 // Jednostavna konfiguracija i18next-a
 i18n
@@ -46,6 +54,10 @@ i18n
         porudzbine: porudzbine_en,
         notFound: notFound_en,
         placanje: placanje_en,
+        moje_porudzbine: moje_porudzbine_en,
+        omiljeni: omiljeni_en,
+        podaci_preuzimanja: podaci_preuzimanja_en,
+        uspjesno_placanje: uspjesno_placanje_en,
       },
       sr: {
         common: common_sr,
@@ -60,7 +72,11 @@ i18n
         porudzbine: porudzbine_sr,
         notFound: notFound_sr,
         placanje: placanje_sr,
-      },
+        moje_porudzbine: moje_porudzbine_sr,
+        omiljeni: omiljeni_sr,
+        podaci_preuzimanja: podaci_preuzimanja_sr,
+        uspjesno_placanje: uspjesno_placanje_sr,
+      }
     },
 
     // Srpski je glavni jezik

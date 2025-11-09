@@ -27,6 +27,9 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
   const [recentLogins, setRecentLogins] = useState<RecentLogin[]>([]);
   const [showRecentLogins, setShowRecentLogins] = useState(false);
 
+    // Sprečava hydration mismatch: renderuj tek kad jezik bude postavljen
+
+
   useEffect(() => {
     // Set language if different
     if (i18n.language !== lang) {
@@ -38,7 +41,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
         const parsed = JSON.parse(saved);
         setRecentLogins(parsed);
       } catch (error) {
-        console.error('Greška pri učitavanju skorašnjih prijava:', error);
+          console.error(t('login.errorLoadingRecent'), error);
       }
     }
     const savedEmail = localStorage.getItem('savedEmail');
@@ -47,7 +50,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
       setEmail(savedEmail);
       setRememberMe(true);
     }
-  }, [lang, i18n]);
+  }, [lang, i18n, t]);
 
   const saveRecentLogin = (email: string) => {
     const newLogin: RecentLogin = {
@@ -110,21 +113,22 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
           router.push("/");
         }
       } else {
-        setError(t('login.invalidCredentials'));
+          setError(t('login.invalidCredentials'));
       }
     } catch {
-      setError(t('login.errorOccurred') || 'An error occurred');
+        setError(t('login.errorOccurred') || t('login.errorOccurred'));
     } finally {
       setLoading(false);
     }
   };
 
+    if (i18n.language !== lang) return null;
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-2 text-center">
           <FaSignInAlt className="text-blue-600" />
-          {t('login.title')}
+                  {t('login.title')}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative recent-logins-container">
@@ -132,7 +136,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
               <FaEnvelope className="text-blue-600 text-lg flex-shrink-0" />
               <input
                 type="email"
-                placeholder={t('login.email')}
+                              placeholder={t('login.email')}
                 className="flex-1 outline-none bg-transparent text-base"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -182,7 +186,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
                       onClick={(e) => removeRecentLogin(login.email, e)}
                       className="p-2 mr-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-200"
                       disabled={loading}
-                      title="Ukloni"
+                            title={t('login.remove')}
                     >
                       ✕
                     </button>
@@ -195,7 +199,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
             <FaLock className="text-blue-600 text-lg flex-shrink-0" />
             <input
               type="password"
-              placeholder={t('login.password')}
+                          placeholder={t('login.password')}
               className="flex-1 outline-none bg-transparent text-base"
               value={lozinka}
               onChange={e => setLozinka(e.target.value)}
@@ -220,7 +224,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
                   {rememberMe && <FaCheck className="text-white text-xs" />}
                 </div>
               </div>
-              {t('login.rememberMe')}
+                          {t('login.rememberMe')}
             </label>
           </div>
           <button
@@ -229,7 +233,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
             className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
           >
             {loading ? <FaSpinner className="animate-spin" /> : <FaSignInAlt />}
-            {loading ? t('login.loggingIn') : t('login.login')}
+                      {loading ? t('login.loggingIn') : t('login.login')}
           </button>
         </form>
         {error && (
@@ -252,7 +256,7 @@ export default function PrijavaClient({ lang }: PrijavaClientProps) {
             className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base font-medium cursor-pointer"
           >
             <FaGoogle className="google-icon text-red-400" />
-            {t('login.loginWithGoogle')}
+                      {t('login.continueWithGoogle')}
           </button>
         </div>
         <div className="mt-6 text-center border-t pt-4">

@@ -31,11 +31,11 @@ export default function RegistracijaClient({ lang }: RegistracijaClientProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !lozinka || !potvrdaLozinke || !ime || !prezime) {
-      toast.error('Sva polja su obavezna.');
+      toast.error(t('register.fill_all_fields'));
       return;
     }
     if (lozinka !== potvrdaLozinke) {
-      toast.error('Lozinke se ne poklapaju.');
+      toast.error(t('register.passwords_do_not_match'));
       return;
     }
     startTransition(async () => {
@@ -91,7 +91,7 @@ export default function RegistracijaClient({ lang }: RegistracijaClientProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={ime}
               onChange={handleChange}
-              placeholder={t('register.ime')}
+              placeholder={t('register.name')}
             />
           </div>
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
@@ -104,7 +104,7 @@ export default function RegistracijaClient({ lang }: RegistracijaClientProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={prezime}
               onChange={handleChange}
-              placeholder={t('register.prezime')}
+              placeholder={t('register.surname')}
             />
           </div>
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
@@ -117,7 +117,7 @@ export default function RegistracijaClient({ lang }: RegistracijaClientProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={lozinka}
               onChange={handleChange}
-              placeholder={t('register.lozinka')}
+              placeholder={t('register.password')}
             />
           </div>
           <div className="flex items-center gap-3 border border-gray-300 p-3 rounded-lg hover:border-blue-400 transition-colors">
@@ -130,7 +130,7 @@ export default function RegistracijaClient({ lang }: RegistracijaClientProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md input-focushover:border-blue-400 transition-colors !input-focus!ring-0"
               value={potvrdaLozinke}
               onChange={handleChange}
-              placeholder={t('register.potvrda_lozinke')}
+              placeholder={t('register.confirm_password')}
             />
           </div>
           <button
