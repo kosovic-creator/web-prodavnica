@@ -25,7 +25,7 @@ export default function OmiljeniPage() {
 function OmiljeniContent() {
   const searchParams = useSearchParams();
   const lang = searchParams.get('lang') || 'sr';
-  const { t } = useTranslation('proizvodi', { lng: lang });
+  const { t } = useTranslation('omiljeni_page', { lng: lang });
   const { data: session } = useSession();
   const [omiljeni, setOmiljeni] = useState<Omiljeni[]>([]);
   const [loading, setLoading] = useState(true);
@@ -167,16 +167,16 @@ function OmiljeniContent() {
           <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
             <FaHeart className="text-gray-300 text-6xl mb-4" />
             <h2 className="text-xl font-semibold text-gray-600 mb-2">
-              Nema omiljenih proizvoda
+                {t('nema_omiljenih_proizvoda')}
             </h2>
             <p className="text-gray-500 mb-4">
-              Dodajte proizvode u omiljene da biste ih videli ovde
+                {t('dodajte_u_omiljene_opis')}
             </p>
             <Link
               href="/proizvodi"
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Pregled proizvoda
+                {t('pregled_proizvoda')}
             </Link>
           </div>
         ) : (
@@ -245,7 +245,7 @@ function OmiljeniContent() {
                       disabled={o.proizvod.kolicina === 0 || isPending}
                     >
                       <FaCartPlus />
-                      {isPending ? 'Dodaje...' :
+                      {isPending ? t('dodaje') :
                         o.proizvod.kolicina === 0 ?
                           (t('nema_na_zalihama') || 'Nema na zalihama') :
                           (t('dodaj_u_korpu') || 'Dodaj u korpu')

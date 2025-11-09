@@ -181,7 +181,7 @@ export default function EditProfilPage() {
       <div className="max-w-2xl mx-auto px-4">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-2 text-center justify-center">
           <FaUser className="text-blue-600" />
-          {t('title')} - Izmena
+          {t('title')} 
         </h1>
 
         <div className="bg-white rounded-lg shadow-md p-6">
