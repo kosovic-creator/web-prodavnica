@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import Loading from '@/components/Loadning';
-import { getProizvodi } from '@/lib/actions/proizvodi';
+import { getProizvodi,deleteProizvod } from '@/lib/actions/proizvodi';
 
 type Proizvod = {
   id: string;
@@ -45,6 +45,24 @@ const ProizvodPage = () => {
   if (loading) {
     return <Loading />;
   }
+ const handleDeleteProizvod = async (id: string) => {
+    const confirmDelete = window.confirm('Da li ste sigurni da želite da obrišete ovaj proizvod?');
+    if (!confirmDelete) return;
+
+    try {
+      const result = await deleteProizvod(id);
+      if (result.success) {
+        toast.success('Proizvod uspešno obrisan');
+        // Osveži listu proizvoda nakon brisanja
+        setProizvodi((prevProizvodi) => prevProizvodi.filter((proizvod) => proizvod.id !== id));
+      } else {
+        toast.error(result.error || 'Greška pri brisanju proizvoda');
+      }
+    } catch (error) {
+      console.error('Error deleting proizvod:', error);
+      toast.error('Greška pri brisanju proizvoda');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -89,6 +107,12 @@ const ProizvodPage = () => {
                       onClick={() => router.push(`/admin/proizvodi/izmeni/${proizvod.id}`)}
                     >
                       Izmeni
+                    </button>
+                    <button
+                      className="text-red-600 hover:text-red-900 cursor-pointer"
+                      onClick={() => handleDeleteProizvod(proizvod.id)}
+                    >
+                      Obriši
                     </button>
                   </td>
                 </tr>

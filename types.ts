@@ -76,7 +76,7 @@ export type Korisnik = {
   postanskiBroj: number;
   adresa: string;
   slika?: string | null;
-  emailVerifikovan: boolean;
+  emailVerifikovan?: boolean;
   emailVerifikacijaToken?: string | null;
   emailVerifikacijaIstice?: Date | null;
   kreiran: Date;

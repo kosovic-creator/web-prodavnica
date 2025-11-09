@@ -1,12 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FaBoxOpen, FaUser, FaTimes, FaShoppingBag, FaChartBar, FaCog, FaPhone, FaInfoCircle } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
-import i18n from '@/i18n/config';
 import '@/i18n/config';
 
 interface SidebarProps {
@@ -14,28 +13,17 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-function SidebarContent({ open, onClose }: SidebarProps) {
-  console.log('Sidebar render - open:', open); // Debug log
 
-  const { t } = useTranslation('sidebar');
+function SidebarContent({ open, onClose }: SidebarProps) {
+  // Always get language from URL
+  const searchParams = useSearchParams();
+  const currentLanguage = searchParams?.get('lang') || 'sr';
+  const { t } = useTranslation('sidebar', { lng: currentLanguage });
   const pathname = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentLanguage, setCurrentLanguage] = useState('sr');
 
   const isAdmin = session?.user?.uloga === 'admin';
-
-  // Initialize language based on URL params
-  useEffect(() => {
-    const currentLang = searchParams?.get('lang') || 'sr';
-    setCurrentLanguage(currentLang);
-
-    if (i18n.language !== currentLang) {
-      i18n.changeLanguage(currentLang);
-    }
-  }, [searchParams, t]);
 
   // Funkcija za navigaciju koja zadržava trenutni jezik
   const navigateWithLang = (path: string) => {
@@ -90,7 +78,7 @@ function SidebarContent({ open, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🛒</span>
             <h2 className="font-bold text-blue-700 text-lg">
-              {isAdmin ? t('admin_panel') : t('menu')}
+              {/* {isAdmin ? t('admin_panel') : t('meni')} */}
             </h2>
           </div>
           <button
@@ -152,24 +140,6 @@ function SidebarContent({ open, onClose }: SidebarProps) {
               );
             })}
           </ul>
-
-          {/* Dodaj dugme za odjavu ako je korisnik ulogovan */}
-          {/* {session?.user && (
-            <div className="px-3 mt-6">
-              <hr className="border-gray-200 mb-4" />
-              <button
-                onClick={() => {
-                  signOut({ callbackUrl: '/' });
-                  onClose();
-                }}
-                className="w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-red-600 hover:bg-red-50"
-              >
-                <span className="text-lg">🚪</span>
-                <FaSignOutAlt className="w-4 h-4" />
-                <span className="font-medium text-sm">{t('logout') || 'Odjavi se'}</span>
-              </button>
-            </div> */}
-          {/* )} */}
         </nav>
 
         {/* Footer - flex-shrink-0 da ostane na dnu */}

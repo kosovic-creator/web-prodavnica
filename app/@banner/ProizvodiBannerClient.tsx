@@ -88,7 +88,10 @@ export default function ProizvodiBannerClient({ initialProizvodi }: ProizvodiBan
             onError={(e) => {
               console.error('Image failed to load:', imageUrl);
               const target = e.target as HTMLImageElement;
-              target.src = currentProizvod.slika ?? '';
+              // Fallback: prvo pokušaj sa currentProizvod.slika, ako ni to ne postoji, koristi lokalni placeholder
+              if (target.src !== '/placeholder.jpg') {
+                target.src = '/placeholder.jpg';
+              }
             }}
             onLoad={() => {
               console.log('Image loaded successfully:', imageUrl);
