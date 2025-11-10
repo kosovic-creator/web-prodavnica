@@ -27,6 +27,7 @@ export default function RootLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith('/admin');
+  const isProizvodDetail = pathname?.startsWith('/proizvodi/') && pathname.split('/').length === 3;
 
   const handleSidebarClose = () => {
     setSidebarOpen(false);
@@ -85,7 +86,8 @@ export default function RootLayout({
                       // Obične rute koriste parallel routes
                       <React.Fragment>
                         {children && <div key="layout-children">{children}</div>}
-                        {banner && <div key="layout-banner">{banner}</div>}
+                          {/* Banner se ne prikazuje na stranici detalja proizvoda */}
+                          {!isProizvodDetail && banner && <div key="layout-banner">{banner}</div>}
                         {grid && <div key="layout-grid">{grid}</div>}
                       </React.Fragment>
                     )}
