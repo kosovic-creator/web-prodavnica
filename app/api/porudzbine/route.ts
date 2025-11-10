@@ -26,7 +26,7 @@ export async function GET(req: Request) {
               select: {
                 id: true,
                 cena: true,
-                slika: true,
+                slike: true,
                 kolicina: true
               }
             }

@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const noviProizvodSchema = (t: TranslateFn) => z.object({
     cena: z.number().positive({ message: t('cena_error') }),
     kolicina: z.number().min(0, { message: t('kolicina_error') }),
-    slika: z.string().url({ message: t('slika_error') }),
+    slike: z.array(z.string().url({ message: t('slika_error') })).min(1, { message: t('slika_error') }),
     naziv_sr: z.string().min(1, { message: t('naziv_sr_error') }),
     kategorija_sr: z.string().min(1, { message: t('kategorija_sr_error') }),
     opis_sr: z.string().optional(),
@@ -19,7 +19,7 @@ export const noviProizvodSchema = (t: TranslateFn) => z.object({
 export const noviProizvodSchemaStatic = z.object({
     cena: z.number().positive({ message: 'Cena mora biti pozitivna' }),
     kolicina: z.number().min(0, { message: 'Količina ne može biti negativna' }),
-    slika: z.string().url({ message: 'Slika mora biti validna URL adresa' }),
+    slike: z.array(z.string().url({ message: 'Slika mora biti validna URL adresa' })).min(1, { message: 'Slika je obavezna i mora biti validna URL adresa' }),
     naziv_sr: z.string().min(1, { message: 'Naziv na srpskom je obavezan' }),
     kategorija_sr: z.string().min(1, { message: 'Kategorija na srpskom je obavezna' }),
     opis_sr: z.string().optional(),

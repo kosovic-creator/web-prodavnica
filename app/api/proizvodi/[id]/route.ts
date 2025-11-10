@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     select: {
       id: true,
       cena: true,
-      slika: true,
+      slike: true,
       kolicina: true,
       kreiran: true,
       azuriran: true,
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     id: proizvod.id,
     cena: proizvod.cena,
-    slika: proizvod.slika,
+    slike: proizvod.slike || [],
     kolicina: proizvod.kolicina,
     kreiran: proizvod.kreiran,
     azuriran: proizvod.azuriran,

@@ -42,7 +42,12 @@ export default function PregledProizvodaClient({ id }: PregledProizvodaClientPro
         const result = await getProizvodById(id);
 
         if (result.success && result.data) {
-          setProizvod(result.data as Proizvod);
+          // Map 'slike' array to 'slika' property for Proizvod type
+          const data = {
+            ...result.data,
+            slika: Array.isArray(result.data.slike) && result.data.slike.length > 0 ? result.data.slike[0] : null,
+          };
+          setProizvod(data as Proizvod);
         } else {
           toast.error(result.error || 'Greška pri učitavanju proizvoda');
         }

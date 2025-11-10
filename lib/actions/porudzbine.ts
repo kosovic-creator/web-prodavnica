@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
-export type KreirajPorudzbinuData = {
+type KreirajPorudzbinuData = {
   korisnikId: string;
   ukupno: number;
   status: string;
@@ -13,7 +13,7 @@ export type KreirajPorudzbinuData = {
     kolicina: number;
     cena: number;
     opis?: string;
-    slika?: string;
+    slike?: string[];
   }[];
 };
 
@@ -42,7 +42,7 @@ export async function getPorudzbine(page: number = 1, pageSize: number = 10) {
                   id: true,
                   naziv_sr: true,
                   naziv_en: true,
-                  slika: true
+                  slike: true
                 }
               }
             }
@@ -90,7 +90,7 @@ export async function getPorudzbineKorisnika(korisnikId: string, page: number = 
                   id: true,
                   naziv_sr: true,
                   naziv_en: true,
-                  slika: true,
+                  slike: true,
                   cena: true
                 }
               }
@@ -137,7 +137,7 @@ export async function getPorudzbinuById(id: string) {
                 naziv_en: true,
                 opis_sr: true,
                 opis_en: true,
-                slika: true,
+                slike: true,
                 cena: true
               }
             }
@@ -199,7 +199,7 @@ export async function kreirajPorudzbinu(data: KreirajPorudzbinuData) {
               kolicina: stavka.kolicina,
               cena: stavka.cena,
               opis: stavka.opis,
-              slika: stavka.slika
+              slika: Array.isArray(stavka.slike) ? stavka.slike[0] : stavka.slike
             }
           })
         )

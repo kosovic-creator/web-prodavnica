@@ -16,7 +16,7 @@ export type Proizvod = {
   kategorija_en?: string;
   cena: number;
   kolicina: number;
-  slika?: string;
+  slike?: string[];
   kreiran: Date;
   azuriran: Date;
 }

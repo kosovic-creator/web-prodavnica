@@ -19,7 +19,7 @@ export async function getOmiljeni(korisnikId: string) {
           select: {
             id: true,
             cena: true,
-            slika: true,
+            slike: true,
             kolicina: true,
             kreiran: true,
             azuriran: true,
@@ -43,7 +43,7 @@ export async function getOmiljeni(korisnikId: string) {
       proizvod: {
         id: item.proizvod.id,
         cena: item.proizvod.cena,
-        slika: item.proizvod.slika,
+        slika: Array.isArray(item.proizvod.slike) ? item.proizvod.slike[0] : item.proizvod.slike,
         kolicina: item.proizvod.kolicina,
         kreiran: item.proizvod.kreiran,
         azuriran: item.proizvod.azuriran,
@@ -118,7 +118,7 @@ export async function dodajUOmiljene(korisnikId: string, proizvodId: string) {
           select: {
             id: true,
             cena: true,
-            slika: true,
+            slike: true,
             kolicina: true,
             naziv_en: true,
             naziv_sr: true,

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 export type ProizvodData = {
   cena: number;
-  slika?: string;
+  slike: string[];
   kolicina?: number;
   naziv_sr: string;
   opis_sr?: string;
@@ -33,7 +33,7 @@ export async function getProizvodi(page: number = 1, pageSize: number = 10) {
         select: {
           id: true,
           cena: true,
-          slika: true,
+          slike: true,
           kolicina: true,
           kreiran: true,
           azuriran: true,
@@ -54,7 +54,7 @@ export async function getProizvodi(page: number = 1, pageSize: number = 10) {
     const proizvodiSaPrevod = proizvodi.map(proizvod => ({
       id: proizvod.id,
       cena: proizvod.cena,
-      slika: proizvod.slika,
+      slike: proizvod.slike,
       kolicina: proizvod.kolicina,
       kreiran: proizvod.kreiran,
       azuriran: proizvod.azuriran,
@@ -88,7 +88,7 @@ export async function getProizvodById(id: string) {
       select: {
         id: true,
         cena: true,
-        slika: true,
+        slike: true,
         kolicina: true,
         kreiran: true,
         azuriran: true,

@@ -18,7 +18,7 @@ export async function GET() {
           select: {
             id: true,
             cena: true,
-            slika: true,
+            slike: true,
             kolicina: true,
             kreiran: true,
             azuriran: true,

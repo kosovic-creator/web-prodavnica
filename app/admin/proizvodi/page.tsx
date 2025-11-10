@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -27,7 +28,17 @@ const ProizvodPage = () => {
       try {
         const result = await getProizvodi(1, 50);
         if (result.success && result.data) {
-          setProizvodi(result.data.proizvodi);
+          setProizvodi(
+            result.data.proizvodi.map((p: any) => ({
+              id: p.id,
+              cena: p.cena,
+              slika: Array.isArray(p.slike) && p.slike.length > 0 ? p.slike[0] : null,
+              kolicina: p.kolicina,
+              kreiran: p.kreiran,
+              naziv_sr: p.naziv_sr ?? null,
+              kategorija_sr: p.kategorija_sr ?? null,
+            }))
+          );
         } else {
           toast.error(result.error || 'Greška pri učitavanju proizvoda');
         }

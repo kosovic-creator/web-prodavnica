@@ -1,5 +1,4 @@
 import { getKorisnici } from '@/lib/actions/korisnici';
-import Link from 'next/link';
 import DeleteButton from './DeleteButton';
 import { Suspense } from 'react';
 

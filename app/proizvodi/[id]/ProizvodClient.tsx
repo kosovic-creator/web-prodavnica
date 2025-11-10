@@ -55,9 +55,23 @@ export default function ProizvodClient({ proizvod, lang }: { proizvod: any, lang
       }
     });
   };
+  // Galerija slika
+
+  const slike: string[] = Array.isArray(proizvod.slike) && proizvod.slike.length > 0 ? proizvod.slike : (proizvod.slika ? [proizvod.slika] : []);
+  const [glavnaSlikaIdx, setGlavnaSlikaIdx] = useState(0);
+  const glavnaSlika = slike[glavnaSlikaIdx] || '';
+
+  const handlePrev = () => {
+    setGlavnaSlikaIdx((prev) => (prev - 1 + slike.length) % slike.length);
+  };
+  const handleNext = () => {
+    setGlavnaSlikaIdx((prev) => (prev + 1) % slike.length);
+  };
+
   const handleNazad = () => {
     router.push(`/proizvodi?lang=${lang}`);
   };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <Toaster position="top-center" />
@@ -76,28 +90,71 @@ export default function ProizvodClient({ proizvod, lang }: { proizvod: any, lang
             <OmiljeniButton proizvodId={proizvod.id} />
           </div>
           <div className="md:flex">
-            {/* Slika proizvoda */}
+            {/* Galerija slika proizvoda */}
             <div className="md:w-1/2 p-8">
-              {proizvod.slika ? (
+              {slike.length > 0 ? (
                 <div>
-                  <Link href={`/proizvodi/slika/${proizvod.id}`} className="block">
-                    <div className="relative group cursor-pointer">
+                  <div className="relative group cursor-pointer flex items-center justify-center">
+                    {/* Strelica lijevo */}
+                    {slike.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={handlePrev}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-blue-100 transition"
+                        aria-label="Prethodna slika"
+                      >
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                    )}
+                    {/* Glavna slika sa zoom efektom */}
+                    <div className="overflow-hidden rounded-lg border-2 border-gray-200 group-hover:border-blue-400 shadow-md group-hover:shadow-xl transition-all duration-300">
                       <Image
-                        src={proizvod.slika}
+                        src={glavnaSlika}
                         alt={naziv || 'Slika proizvoda'}
                         width={500}
                         height={400}
-                        className="w-full h-auto object-cover rounded-lg shadow-md border-2 border-gray-200 group-hover:border-blue-400 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+                        className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110"
                         unoptimized
                         priority
                       />
-                      <div className="absolute top-2 right-2 bg-white bg-opacity-80 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
-                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </div>
                     </div>
-                  </Link>
+                    {/* Strelica desno */}
+                    {slike.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-blue-100 transition"
+                        aria-label="Sledeća slika"
+                      >
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  {/* Thumbnails */}
+                  <div className="flex gap-2 mt-4 justify-center">
+                    {slike.map((img, idx) => (
+                      <button
+                        key={img + idx}
+                        type="button"
+                        onClick={() => setGlavnaSlikaIdx(idx)}
+                        className={`border-2 rounded-lg p-1 transition-all ${glavnaSlikaIdx === idx ? 'border-blue-500' : 'border-gray-200'}`}
+                        style={{ outline: glavnaSlikaIdx === idx ? '2px solid #2563eb' : 'none' }}
+                        aria-label={`Prikaži sliku ${idx + 1}`}
+                      >
+                        <Image
+                          src={img}
+                          alt={`Mala slika ${idx + 1}`}
+                          width={64}
+                          height={64}
+                          className="object-cover w-16 h-16 rounded"
+                        />
+                      </button>
+                    ))}
+                  </div>
                   <Link href={`/proizvodi/slika/${proizvod.id}`}>
                     <div className="flex items-center justify-center mt-3 text-blue-600 text-sm bg-blue-50 border border-blue-200 rounded-lg py-2 px-3 hover:bg-blue-100 transition-colors cursor-pointer">
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

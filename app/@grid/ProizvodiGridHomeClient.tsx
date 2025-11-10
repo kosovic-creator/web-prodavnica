@@ -15,7 +15,8 @@ import { dodajUKorpu, getKorpa } from '@/lib/actions';
 interface ProizvodServerAction {
   id: string;
   cena: number;
-  slika: string | null;
+  slike?: string[];
+  slika?: string | null; // for backward compatibility
   kolicina: number;
   kreiran: Date;
   azuriran: Date;
@@ -101,6 +102,10 @@ export default function ProizvodiGridHome({ initialProizvodi, session }: Proizvo
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {initialProizvodi.map((proizvod) => {
           const currentLang = i18n.language || 'sr';
+          // Use the first image from 'slike' array if available, otherwise fallback to 'slika' or placeholder
+          const imageUrl = Array.isArray(proizvod.slike) && proizvod.slike.length > 0
+            ? getCloudinaryOptimizedUrl(proizvod.slike[0])
+            : (proizvod.slika ? getCloudinaryOptimizedUrl(proizvod.slika) : null);
 
           return (
             <div
@@ -111,10 +116,10 @@ export default function ProizvodiGridHome({ initialProizvodi, session }: Proizvo
                 <OmiljeniButton proizvodId={proizvod.id} />
               </div>
               <div className="flex justify-center mb-4">
-                {proizvod.slika ? (
+                {imageUrl ? (
                   <div className="relative w-24 h-24">
                     <Image
-                      src={getCloudinaryOptimizedUrl(proizvod.slika)}
+                      src={imageUrl}
                       alt={
                         (currentLang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr) || 'Proizvod'
                       }

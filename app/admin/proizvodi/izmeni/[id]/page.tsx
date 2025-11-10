@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useEffect, useState, Suspense, useTransition } from 'react';
@@ -23,17 +24,17 @@ function IzmeniProizvodContent() {
   useEffect(() => {
     const loadProizvod = async () => {
       if (!id) return;
-      
+
       setLoading(true);
       try {
         const result = await getProizvodById(id);
-        
+
         if (result.success && result.data) {
           const data = result.data;
           setForm({
             id: data.id ?? "",
             cena: data.cena ?? 0,
-            slika: data.slika ?? "",
+            slike: Array.isArray(data.slike) ? data.slike : [],
             kolicina: data.kolicina ?? 0,
             kreiran: data.kreiran ?? "",
             azuriran: data.azuriran ?? "",
@@ -73,22 +74,22 @@ function IzmeniProizvodContent() {
     }
   };
 
-  const handleImageChange = (imageUrl: string): void => {
+  const handleImageAdd = (imageUrl: string): void => {
     if (form) {
-      setForm({ ...form, slika: imageUrl });
+      setForm({ ...form, slike: [...(form.slike || []), imageUrl] });
     }
   };
 
-  const handleImageRemove = () => {
+  const handleImageRemove = (index: number) => {
     if (form) {
-      setForm({ ...form, slika: '' });
+      setForm({ ...form, slike: (form.slike || []).filter((_, i) => i !== index) });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
-    
+
     setError(null);
     setFieldErrors({});
 
@@ -104,7 +105,7 @@ function IzmeniProizvodContent() {
       kategorija_en: form.kategorija_en,
       cena: Number(form.cena),
       kolicina: Number(form.kolicina),
-      slika: form.slika,
+      slike: form.slike || [],
       id: form.id,
     });
 
@@ -131,7 +132,7 @@ function IzmeniProizvodContent() {
           kategorija_en: form.kategorija_en || '',
           cena: Number(form.cena),
           kolicina: Number(form.kolicina),
-          slika: form.slika,
+          slike: form.slike || [],
         });
 
         if (result.success) {
@@ -211,7 +212,7 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`naziv_${activeLanguage}`]}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor={`opis_${activeLanguage}`}>
             Opis ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
@@ -230,7 +231,7 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`opis_${activeLanguage}`]}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor={`karakteristike_${activeLanguage}`}>
             Karakteristike ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
@@ -248,7 +249,7 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`karakteristike_${activeLanguage}`]}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor={`kategorija_${activeLanguage}`}>
             Kategorija ({activeLanguage === 'sr' ? 'Srpski' : 'Engleski'})
@@ -266,7 +267,7 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors[`kategorija_${activeLanguage}`]}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="cena">Cena</label>
           <input
@@ -284,7 +285,7 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors.cena}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2" htmlFor="kolicina">Količina</label>
           <input
@@ -301,35 +302,51 @@ function IzmeniProizvodContent() {
             <p className="text-red-500 text-sm mt-1">{fieldErrors.kolicina}</p>
           )}
         </div>
-        
+
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2" htmlFor="slika">Slika</label>
-          <ImageUpload
-            currentImage={form.slika || ''}
-            onImageChange={handleImageChange}
-            onImageRemove={handleImageRemove}
-            productId={id}
-          />
+          <label className="block text-gray-700 font-medium mb-2" htmlFor="slike">Slike proizvoda</label>
+          <div className="flex flex-wrap gap-4 mb-2">
+            {form.slike && form.slike.map((img, idx) => (
+              <div key={img + idx} className="relative group">
+                <img src={img} alt="Slika proizvoda" className="w-24 h-24 object-cover rounded border" />
+                <button
+                  type="button"
+                  onClick={() => handleImageRemove(idx)}
+                  className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-red-600 hover:text-red-800 shadow group-hover:opacity-100 opacity-80"
+                  title="Ukloni sliku"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            ))}
+            <ImageUpload
+              currentImage={''}
+              onImageChange={handleImageAdd}
+              onImageRemove={() => { }}
+              productId={id}
+            />
+          </div>
+          <div className="text-sm text-gray-500">Možete dodati više slika. Prva slika će biti glavna.</div>
         </div>
-        
+
         <div className="flex gap-4 mt-6">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isPending}
           >
             <FaSave /> {isPending ? 'Čuva...' : 'Sačuvaj'}
           </button>
-          <button 
-            type="button" 
-            onClick={handleCancel} 
+          <button
+            type="button"
+            onClick={handleCancel}
             className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isPending}
           >
             <FaTimes /> Otkaži
           </button>
         </div>
-        
+
         {error && (
           <div className="text-red-600 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             {error}

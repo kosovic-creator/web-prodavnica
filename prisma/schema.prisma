@@ -98,7 +98,7 @@ model Omiljeni {
 model Proizvod {
   id               String   @id @default(uuid())
   cena             Float
-  slika            String?
+  slike            String[] // Polje za više slika
   kolicina         Int      @default(1)
   kreiran          DateTime @default(now())
   azuriran         DateTime @updatedAt

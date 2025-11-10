@@ -8,15 +8,16 @@ import { noviProizvodSchemaStatic } from '@/zod';
 import { ZodError } from 'zod';
 import { toast } from 'react-hot-toast';
 import { createProizvod } from '@/lib/actions/proizvodi';
+import Image from 'next/image';
 
 function DodajProizvodPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    
+
     const [form, setForm] = useState({
         cena: '',
         kolicina: '',
-        slika: '',
+        slike: [] as string[],
     });
 
     const [formTranslations, setFormTranslations] = useState({
@@ -29,7 +30,7 @@ function DodajProizvodPage() {
         karakteristike_en: '',
         kategorija_en: '',
     });
-    
+
     const [activeLanguage, setActiveLanguage] = useState<'sr' | 'en'>('sr');
     const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
@@ -38,7 +39,7 @@ function DodajProizvodPage() {
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (['cena', 'kolicina', 'slika'].includes(name)) {
+        if (['cena', 'kolicina'].includes(name)) {
             setForm({ ...form, [name]: value });
         } else {
             // Mapiraj polja za oba jezika
@@ -50,12 +51,12 @@ function DodajProizvodPage() {
         }
     };
 
-    const handleImageChange = (imageUrl: string) => {
-        setForm({ ...form, slika: imageUrl });
+    const handleImageAdd = (imageUrl: string) => {
+        setForm((prev) => ({ ...prev, slike: [...prev.slike, imageUrl] }));
     };
 
-    const handleImageRemove = () => {
-        setForm({ ...form, slika: '' });
+    const handleImageRemove = (index: number) => {
+        setForm((prev) => ({ ...prev, slike: prev.slike.filter((_, i) => i !== index) }));
     };
 
     const handleCancel = () => {
@@ -63,7 +64,7 @@ function DodajProizvodPage() {
         setForm({
             cena: '',
             kolicina: '',
-            slika: '',
+            slike: [],
         });
         setFormTranslations({
             naziv_sr: '',
@@ -90,7 +91,7 @@ function DodajProizvodPage() {
         const payload = {
             cena: Number(form.cena),
             kolicina: Number(form.kolicina),
-            slika: form.slika || '',
+            slike: form.slike,
             naziv_sr: formTranslations.naziv_sr || '',
             opis_sr: formTranslations.opis_sr || '',
             karakteristike_sr: formTranslations.karakteristike_sr || '',
@@ -129,9 +130,9 @@ function DodajProizvodPage() {
         startTransition(async () => {
             try {
                 console.log('Payload za Server Action:', payload);
-                
+
                 const result = await createProizvod(payload);
-                
+
                 if (result.success) {
                     toast.success('Proizvod je uspešno dodat!');
                     router.push('/admin/proizvodi');
@@ -341,13 +342,35 @@ function DodajProizvodPage() {
 
                 {/* Image Upload */}
                 <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-4 text-gray-700">Slika proizvoda</h3>
-                    <ImageUpload
-                        currentImage={form.slika}
-                        onImageChange={handleImageChange}
-                        onImageRemove={handleImageRemove}
-                        productId={`new-${Date.now()}`}
-                    />
+                    <h3 className="text-lg font-medium mb-4 text-gray-700">Slike proizvoda</h3>
+                    <div className="flex flex-wrap gap-4 mb-4">
+                        {form.slike.map((img, idx) => (
+                            <div key={idx} className="relative group">
+                                <Image
+                                    src={img}
+                                    alt="Slika proizvoda"
+                                    width={96}
+                                    height={96}
+                                    className="w-24 h-24 object-cover rounded border"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => handleImageRemove(idx)}
+                                    className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 text-red-600 hover:text-red-800 shadow group-hover:opacity-100 opacity-80"
+                                    title="Ukloni sliku"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                        ))}
+                        <ImageUpload
+                            currentImage={''}
+                            onImageChange={handleImageAdd}
+                            onImageRemove={() => { }}
+                            productId={`new-${Date.now()}`}
+                        />
+                    </div>
+                    <div className="text-sm text-gray-500">Možete dodati više slika. Prva slika će biti glavna.</div>
                 </div>
 
                 {/* Form Actions */}

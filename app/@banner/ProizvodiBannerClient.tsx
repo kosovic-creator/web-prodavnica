@@ -8,7 +8,8 @@ import '@/i18n/config';
 interface ProizvodServerAction {
   id: string;
   cena: number;
-  slika: string | null;
+  slike?: string[];
+  slika?: string | null; // for backward compatibility
   kolicina: number;
   kreiran: Date;
   azuriran: Date;
@@ -34,11 +35,11 @@ export default function ProizvodiBannerClient({ initialProizvodi }: ProizvodiBan
   // Filter products with images for the banner
   useEffect(() => {
     if (initialProizvodi && initialProizvodi.length > 0) {
-      const proizvodiSaSlikama = initialProizvodi.filter((p: ProizvodServerAction) =>
-        p.slika &&
-        p.slika.trim() !== '' &&
-        (p.slika.startsWith('http') || p.slika.startsWith('/'))
-      );
+      // Use first image from 'slike' array if available, otherwise fallback to 'slika'
+      const proizvodiSaSlikama = initialProizvodi.filter((p: ProizvodServerAction) => {
+        const img = Array.isArray(p.slike) && p.slike.length > 0 ? p.slike[0] : p.slika;
+        return img && img.trim() !== '' && (img.startsWith('http') || img.startsWith('/'));
+      });
       if (proizvodiSaSlikama.length > 0) {
         setProizvodi(proizvodiSaSlikama);
       } else {
@@ -68,7 +69,9 @@ export default function ProizvodiBannerClient({ initialProizvodi }: ProizvodiBan
   }
 
   const currentProizvod = proizvodi[current];
-  const imageUrl = currentProizvod?.slika || '';
+  const imageUrl = currentProizvod && Array.isArray(currentProizvod.slike) && currentProizvod.slike.length > 0
+    ? currentProizvod.slike[0]
+    : (currentProizvod?.slika || '');
   const currentLang = i18n.language || 'sr';
   const naziv = currentLang === 'en' ? currentProizvod?.naziv_en : currentProizvod?.naziv_sr;
   const cena = currentProizvod?.cena;

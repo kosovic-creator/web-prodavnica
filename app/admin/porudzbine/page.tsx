@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useEffect, useState, useTransition } from 'react';
@@ -43,7 +44,25 @@ const PorudzbinePage = () => {
       try {
         const result = await getPorudzbine();
         if (result.success && result.data) {
-          setPorudzbine(result.data.porudzbine);
+          setPorudzbine(
+            result.data.porudzbine.map((p: any) => ({
+              ...p,
+              stavkePorudzbine: p.stavkePorudzbine.map((stavka: any) => ({
+                ...stavka,
+                proizvod: {
+                  ...stavka.proizvod,
+                  slika:
+                    typeof stavka.proizvod.slika !== 'undefined'
+                      ? stavka.proizvod.slika
+                      : Array.isArray(stavka.proizvod.slike) && stavka.proizvod.slike.length > 0
+                        ? stavka.proizvod.slike[0]
+                        : null,
+                  naziv_sr: stavka.proizvod.naziv_sr ?? null,
+                  naziv_en: stavka.proizvod.naziv_en ?? null,
+                },
+              })),
+            }))
+          );
         } else {
           toast.error(result.error || 'Greška pri učitavanju porudžbina');
         }
@@ -66,7 +85,7 @@ const PorudzbinePage = () => {
         if (result.success) {
           toast.success(result.message || 'Status je uspešno ažuriran');
           // Update local state
-          setPorudzbine(prev => 
+          setPorudzbine(prev =>
             prev.map(p => p.id === id ? { ...p, status: newStatus } : p)
           );
         } else {
