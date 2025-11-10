@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
 import { usePathname } from 'next/navigation';
 import { AdminRedirector } from '@/components/AdminRedirector';
-import Footer from '@/components/Footer';
+import Footer from '@/components/footer';
 
 
 
