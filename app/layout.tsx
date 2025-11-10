@@ -4,7 +4,6 @@ import React from 'react';
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import Sidebar from '../components/Sidebar';
-// import Footer from '@/components/Footer';
 import { useState } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { KorpaProvider } from "@/components/KorpaContext";
@@ -12,6 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import { SearchProvider } from '@/components/SearchContext';
 import { usePathname } from 'next/navigation';
 import { AdminRedirector } from '@/components/AdminRedirector';
+import Footer from '@/components/footer';
 
 
 
@@ -75,9 +75,9 @@ export default function RootLayout({
 
                   {/* Page content - dodajemo transition i margin */}
                   <main className={`
-      flex-1 transition-all duration-300 ease-in-out
-      ${sidebarOpen && !isAdminRoute ? 'md:ml-0 ml-64' : 'ml-0'}
-    `}>
+  flex-1 transition-all duration-300 ease-in-out
+  ${sidebarOpen && !isAdminRoute ? 'md:ml-0 ml-64' : 'ml-0'}
+`}>
                     {isAdminRoute ? (
                       // Admin rute ne koriste parallel routes
                       <div key="layout-children">{children}</div>
@@ -91,9 +91,10 @@ export default function RootLayout({
                     )}
                   </main>
                 </div>
-
                 {/* Footer - samo na Home stranici */}
                 {/* {pathname === '/' && <Footer />} */}
+
+                <Footer />
               </div>
 
               {/* Toast notifications */}
