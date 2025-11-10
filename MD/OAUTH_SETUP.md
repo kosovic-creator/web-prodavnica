@@ -4,7 +4,7 @@ GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIEN### Google greške
 - Proverite da li su redirect URI-jevi tačno unešeni
 - Uverite se da je Google+ API omogućen
-
+#
 ### Opšte greškeour-google-client-secret
 ```## Pregled
 
