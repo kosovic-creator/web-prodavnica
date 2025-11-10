@@ -92,8 +92,8 @@ export default function RootLayout({
                   </main>
                 </div>
 
-                {/* Footer - prikazuje se svuda */}
-                <Footer />
+                {/* Footer - samo na Home stranici */}
+                {pathname === '/' && <Footer />}
               </div>
 
               {/* Toast notifications */}
