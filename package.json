@@ -52,5 +52,8 @@
     "prisma": "^6.19.0",
     "tailwindcss": "^4.1.12",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
