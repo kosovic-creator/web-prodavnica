@@ -118,8 +118,7 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (localSearch.trim()) {
-      setSearchTerm(localSearch.trim());
-      navigateWithLang('/proizvodi');
+      router.push(`/proizvodi?search=${encodeURIComponent(localSearch.trim())}&lang=${currentLanguage}`);
       setShowMobileSearch(false);
     }
   };
@@ -180,7 +179,12 @@ function NavbarContent({ setSidebarOpen }: NavbarProps) {
                       type="button"
                       onClick={() => {
                         setLocalSearch('');
-                        setSearchTerm('');
+                        // Resetuje search parametar u URL-u
+                        const params = new URLSearchParams(window.location.search);
+                        params.delete('search');
+                        // Očuvaj lang parametar ako postoji
+                        const lang = params.get('lang') || currentLanguage;
+                        router.push(`/proizvodi?lang=${lang}`);
                       }}
                       className="text-gray-400 hover:text-red-600 w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center text-lg font-bold flex-shrink-0"
                       title="Obriši pretragu"

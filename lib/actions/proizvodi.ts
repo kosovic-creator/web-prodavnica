@@ -21,15 +21,27 @@ export type UpdateProizvodData = ProizvodData & {
   id: string;
 };
 
-export async function getProizvodi(page: number = 1, pageSize: number = 10) {
+export async function getProizvodi(page: number = 1, pageSize: number = 10, search?: string) {
   try {
     const skip = (page - 1) * pageSize;
+
+    const where = search && search.trim() !== '' ? {
+      OR: [
+        { naziv_sr: { contains: search, mode: 'insensitive' as const } },
+        { naziv_en: { contains: search, mode: 'insensitive' as const } },
+        { opis_sr: { contains: search, mode: 'insensitive' as const } },
+        { opis_en: { contains: search, mode: 'insensitive' as const } },
+        { kategorija_sr: { contains: search, mode: 'insensitive' as const } },
+        { kategorija_en: { contains: search, mode: 'insensitive' as const } },
+      ]
+    } : undefined;
 
     const [proizvodi, total] = await Promise.all([
       prisma.proizvod.findMany({
         skip,
         take: pageSize,
         orderBy: { kreiran: 'desc' },
+        where,
         select: {
           id: true,
           cena: true,
@@ -47,7 +59,7 @@ export async function getProizvodi(page: number = 1, pageSize: number = 10) {
           kategorija_sr: true,
         },
       }),
-      prisma.proizvod.count(),
+      prisma.proizvod.count({ where }),
     ]);
 
     // Transform data to include both language fields

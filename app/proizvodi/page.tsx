@@ -20,7 +20,7 @@ export default async function ProizvodiPage({ searchParams }: ProizvodiPageProps
   const lang = resolvedSearchParams.lang || 'sr';
   const search = resolvedSearchParams.search || '';
 
-  const result = await getProizvodi(page, pageSize);
+  const result = await getProizvodi(page, pageSize, search);
   if (!result.success || !result.data) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -32,7 +32,7 @@ export default async function ProizvodiPage({ searchParams }: ProizvodiPageProps
       </div>
     );
   }
-
+  console.log('ProizvodiPage fetched data:', { pageSize, search });
   const { proizvodi, total } = result.data;
 
   return (

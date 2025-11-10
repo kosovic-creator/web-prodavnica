@@ -16,20 +16,6 @@ export default function ProizvodiClient({ proizvodi, total, page, pageSize, lang
   const { t } = useTranslation('proizvodi', { lng: lang });
   const searchParams = useSearchParams();
 
-  // Client-side search filtering
-  const filteredProizvodi = search
-    ? proizvodi.filter((p: any) => {
-      const naziv = lang === 'en' ? p.naziv_en : p.naziv_sr;
-      const opis = lang === 'en' ? p.opis_en : p.opis_sr;
-      const kategorija = lang === 'en' ? p.kategorija_en : p.kategorija_sr;
-      const searchTerm = search.toLowerCase();
-      return (
-        (naziv ?? '').toLowerCase().includes(searchTerm) ||
-        (opis ?? '').toLowerCase().includes(searchTerm) ||
-        (kategorija ?? '').toLowerCase().includes(searchTerm)
-      );
-    })
-    : proizvodi;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,10 +25,10 @@ export default function ProizvodiClient({ proizvodi, total, page, pageSize, lang
           {t('artikli') || 'Artikli'}
         </h1>
 
-        <SearchInfo search={search} resultsCount={filteredProizvodi.length} />
+        <SearchInfo search={search} resultsCount={total} />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-          {filteredProizvodi.length === 0 ? (
+          {proizvodi.length === 0 ? (
             <div className="col-span-full text-center text-gray-500 py-12">
               <FaBoxOpen className="text-4xl mx-auto mb-4 opacity-50" />
               <p className="text-lg">
@@ -50,7 +36,7 @@ export default function ProizvodiClient({ proizvodi, total, page, pageSize, lang
               </p>
             </div>
           ) : (
-            filteredProizvodi.map((proizvod: any) => {
+              proizvodi.map((proizvod: any) => {
               const naziv = lang === 'en' ? proizvod.naziv_en : proizvod.naziv_sr;
               const opis = lang === 'en' ? proizvod.opis_en : proizvod.opis_sr;
               const karakteristike = lang === 'en' ? proizvod.karakteristike_en : proizvod.karakteristike_sr;

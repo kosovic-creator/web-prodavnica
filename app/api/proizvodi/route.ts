@@ -8,12 +8,25 @@ export async function GET(req: Request) {
   let pageSize = Number(searchParams.get('pageSize')) || 10;
   pageSize = Math.max(pageSize, 10);
   const skip = (page - 1) * pageSize;
+  const search = searchParams.get('search') || '';
+
+  const where = search && search.trim() !== '' ? {
+    OR: [
+      { naziv_sr: { contains: search, mode: 'insensitive' as const } },
+      { naziv_en: { contains: search, mode: 'insensitive' as const } },
+      { opis_sr: { contains: search, mode: 'insensitive' as const } },
+      { opis_en: { contains: search, mode: 'insensitive' as const } },
+      { kategorija_sr: { contains: search, mode: 'insensitive' as const } },
+      { kategorija_en: { contains: search, mode: 'insensitive' as const } },
+    ]
+  } : undefined;
 
   const [proizvodi, total] = await Promise.all([
     prisma.proizvod.findMany({
       skip,
       take: pageSize,
       orderBy: { kreiran: 'desc' },
+      where,
       select: {
         id: true,
         cena: true,
@@ -31,7 +44,7 @@ export async function GET(req: Request) {
         kategorija_sr: true,
       },
     }),
-    prisma.proizvod.count(),
+    prisma.proizvod.count({ where }),
   ]);
 
   // Vraća sva polja za oba jezika za svaki proizvod
